@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 Test Módulo 4 - API Functions PostgreSQL</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 20px 20px 0 0;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .test-section { 
+            margin: 25px 0; 
+            padding: 25px; 
+            border: 2px solid #e0e6ed; 
+            border-radius: 16px; 
+            background: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .test-section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+        
+        .success { 
+            border-color: #10b981; 
+            background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%);
+        }
+        .error { 
+            border-color: #ef4444; 
+            background: linear-gradient(135deg, #fef2f2 0%, #fefcfc 100%);
+        }
+        .pending { 
+            border-color: #f59e0b; 
+            background: linear-gradient(135deg, #fffbeb 0%, #fefce8 100%);
+        }
+        .info { 
+            border-color: #3b82f6; 
+            background: linear-gradient(135deg, #eff6ff 0%, #f0f9ff 100%);
+        }
+        
+        .credentials { 
+            background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%);
+            padding: 30px; 
+            border-radius: 16px; 
+            margin: 30px 0;
+            border: 2px solid #0ea5e9;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .form-grid input {
+            grid-column: span 1;
+        }
+        
+        .form-grid input:first-child,
+        .form-grid input:nth-child(2) {
+            grid-column: 1 / -1;
+        }
+        
+        input {
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        button {
+            padding: 14px 24px;
+            margin: 8px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+        }
+        
+        .btn-info {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        pre {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 20px;
+            border-radius: 12px;
+            overflow-x: auto;
+            font-size: 13px;
+            line-height: 1.5;
+            border-left: 4px solid #3b82f6;
+        }
+        
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        
+        .status-success { background: #dcfce7; color: #166534; }
+        .status-error { background: #fecaca; color: #991b1b; }
+        .status-pending { background: #fef3c7; color: #92400e; }
+        .status-info { background: #dbeafe; color: #1e40af; }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .metric-card {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: 2px solid #f3f4f6;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .metric-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+        
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+        
+        .metric-label {
+            color: #6b7280;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .api-info {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border: 2px solid #cbd5e1;
+            border-left: 6px solid #0ea5e9;
+            padding: 25px;
+            margin: 25px 0;
+            border-radius: 12px;
+        }
+        
+        .api-info h4 {
+            color: #0f172a;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .api-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .api-list li {
+            background: white;
+            margin: 8px 0;
+            padding: 12px 16px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        .api-list code {
+            background: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            color: #0ea5e9;
+            font-weight: 600;
+        }
+        
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #f3f4f6;
+            border-radius: 50%;
+            border-top-color: #667eea;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        details summary {
+            cursor: pointer;
+            padding: 12px;
+            background: #f8fafc;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-weight: 600;
+            color: #374151;
+            border: 1px solid #e5e7eb;
+        }
+        
+        details summary:hover {
+            background: #f1f5f9;
+        }
+        
+        .test-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Test Suite - Módulo 4</h1>
+            <p>API Functions PostgreSQL - Endpoints Avanzados</p>
+        </div>
+        
+        <div class="content">
+            <div class="credentials">
+                <h3 style="margin-bottom: 20px; color: #0f172a;">🔑 Configuración de Conexión</h3>
+                <div class="form-grid">
+                    <input type="text" id="supabaseUrl" placeholder="Supabase URL" 
+                           value="https://trlbsfktusefvpheoudn.supabase.co">
+                    <input type="text" id="supabaseKey" placeholder="Anon Key" value="">
+                    <input type="email" id="email" placeholder="Email de usuario" value="test@ejemplo.com">
+                    <input type="password" id="password" placeholder="Contraseña" value="Test123456!">
+                </div>
+                <div class="test-controls">
+                    <button class="btn-primary" onclick="authenticate()">
+                        <span class="spinner" id="authSpinner" style="display: none;"></span>
+                        🔑 Autenticar Usuario
+                    </button>
+                    <button class="btn-success" onclick="runAllTests()" id="runTestsBtn" disabled>
+                        🧪 Ejecutar Todos los Tests
+                    </button>
+                    <button class="btn-info" onclick="runQuickTest()" id="quickTestBtn" disabled>
+                        ⚡ Test Rápido
+                    </button>
+                </div>
+                <div id="authStatus"></div>
+            </div>
+
+            <div class="api-info">
+                <h4>📋 Funciones API a Probar</h4>
+                <ul class="api-list">
+                    <li><code>api_crear_ingreso_avanzado()</code> - Crear ingreso con validaciones completas</li>
+                    <li><code>api_obtener_ingresos_avanzado()</code> - Obtener ingresos con filtros y estadísticas</li>
+                    <li><code>api_dashboard_completo()</code> - Dashboard con métricas, alertas e insights</li>
+                    <li><code>api_crear_ingresos_lote()</code> - Creación masiva de ingresos</li>
+                </ul>
+            </div>
+
+            <div id="testMetrics" style="display: none;">
+                <h3 style="margin-bottom: 20px; color: #0f172a;">📊 Métricas de Testing en Tiempo Real</h3>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-value" id="totalTests">0</div>
+                        <div class="metric-label">Tests Ejecutados</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="passedTests">0</div>
+                        <div class="metric-label">Tests Exitosos</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="failedTests">0</div>
+                        <div class="metric-label">Tests Fallidos</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="executionTime">0</div>
+                        <div class="metric-label">Tiempo Total (s)</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="testResults"></div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script>
+        let supabase;
+        let currentUser;
+        let testStats = { total: 0, passed: 0, failed: 0, startTime: null };
+
+        async function authenticate() {
+            const spinner = document.getElementById('authSpinner');
+            const url = document.getElementById('supabaseUrl').value;
+            const key = document.getElementById('supabaseKey').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            if (!url || !key || !email || !password) {
+                showAuthStatus('❌ Por favor completa todos los campos', 'error');
+                return;
+            }
+
+            spinner.style.display = 'inline-block';
+
+            try {
+                supabase = window.supabase.createClient(url, key);
+
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+
+                if (error) throw error;
+
+                currentUser = data.user;
+                
+                showAuthStatus(`✅ Autenticado como: ${currentUser.email}`, 'success');
+                
+                document.getElementById('runTestsBtn').disabled = false;
+                document.getElementById('quickTestBtn').disabled = false;
+            } catch (error) {
+                showAuthStatus(`❌ Error: ${error.message}`, 'error');
+            } finally {
+                spinner.style.display = 'none';
+            }
+        }
+
+        function showAuthStatus(message, type) {
+            const statusClass = type === 'success' ? 'status-success' : 'status-error';
+            document.getElementById('authStatus').innerHTML = `
+                <div style="text-align: center; margin-top: 20px;">
+                    ${message}
+                    <span class="status-badge ${statusClass}">
+                        ${type === 'success' ? '✅ CONECTADO' : '❌ ERROR'}
+                    </span>
+                </div>
+            `;
+        }
+
+        async function runAllTests() {
+            testStats = { total: 0, passed: 0, failed: 0, startTime: Date.now() };
+            document.getElementById('testMetrics').style.display = 'block';
+            document.getElementById('testResults').innerHTML = '';
+            
+            const tests = [
+                { 
+                    name: '🔄 Test 1: Crear Ingreso Avanzado', 
+                    func: testCrearIngresoAvanzado,
+                    description: 'Validaciones completas y auditoría automática'
+                },
+                { 
+                    name: '📦 Test 2: Crear Ingresos en Lote', 
+                    func: testCrearIngresosLote,
+                    description: 'Procesamiento masivo con control de errores'
+                },
+                { 
+                    name: '🔍 Test 3: Obtener Ingresos con Filtros', 
+                    func: testObtenerIngresosAvanzado,
+                    description: 'Filtros avanzados y estadísticas automáticas'
+                },
+                { 
+                    name: '📊 Test 4: Dashboard Completo', 
+                    func: testDashboardCompleto,
+                    description: 'Métricas, alertas e insights en tiempo real'
+                },
+                { 
+                    name: '🚀 Test 5: Performance y Límites', 
+                    func: testPerformanceLimites,
+                    description: 'Validación de límites y tiempos de respuesta'
+                }
+            ];
+
+            for (let test of tests) {
+                await runTest(test.name, test.func, test.description);
+                updateMetrics();
+                await new Promise(resolve => setTimeout(resolve, 500)); // Pausa visual
+            }
+
+            showFinalSummary();
+        }
+
+        async function runQuickTest() {
+            testStats = { total: 0, passed: 0, failed: 0, startTime: Date.now() };
+            document.getElementById('testMetrics').style.display = 'block';
+            document.getElementById('testResults').innerHTML = '';
+
+            await runTest('⚡ Quick Test: Dashboard', testDashboardCompleto, 'Test rápido de conectividad');
+            updateMetrics();
+            showFinalSummary();
+        }
+
+        async function runTest(testName, testFunc, description) {
+            testStats.total++;
+            
+            const testDiv = document.createElement('div');
+            testDiv.className = 'test-section pending';
+            testDiv.innerHTML = `
+                <h3>${testName}</h3>
+                <p style="color: #6b7280; margin: 10px 0;">${description}</p>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span class="spinner"></span>
+                    <span>Ejecutando test...</span>
+                    <span class="status-badge status-pending">EN PROGRESO</span>
+                </div>
+            `;
+            document.getElementById('testResults').appendChild(testDiv);
+
+            const startTime = Date.now();
+            
+            try {
+                const result = await testFunc();
+                const duration = Date.now() - startTime;
+                
+                testStats.passed++;
+                testDiv.className = 'test-section success';
+                testDiv.innerHTML = `
+                    <h3>✅ ${testName}</h3>
+                    <p style="color: #6b7280; margin: 10px 0;">${description}</p>
+                    <div style="margin-bottom: 15px; display: flex; align-items: center; gap: 15px;">
+                        <span class="status-badge status-success">✅ EXITOSO</span>
+                        <span style="color: #6b7280;">⏱️ ${duration}ms</span>
+                        ${result.data && typeof result.data === 'object' ? 
+                            `<span style="color: #6b7280;">📊 ${Object.keys(result.data).length} campos</span>` : ''}
+                    </div>
+                    <details>
+                        <summary>Ver Respuesta Completa</summary>
+                        <pre>${JSON.stringify(result, null, 2)}</pre>
+                    </details>
+                `;
+            } catch (error) {
+                const duration = Date.now() - startTime;
+                
+                testStats.failed++;
+                testDiv.className = 'test-section error';
+                testDiv.innerHTML = `
+                    <h3>❌ ${testName}</h3>
+                    <p style="color: #6b7280; margin: 10px 0;">${description}</p>
+                    <div style="margin-bottom: 15px; display: flex; align-items: center; gap: 15px;">
+                        <span class="status-badge status-error">❌ FALLÓ</span>
+                        <span style="color: #6b7280;">⏱️ ${duration}ms</span>
+                    </div>
+                    <div style="color: #dc2626; font-weight: 600; margin: 10px 0;">
+                        Error: ${error.message}
+                    </div>
+                    <details>
+                        <summary>Ver Detalles Técnicos</summary>
+                        <pre style="color: #dc2626;">${error.stack || error.message}</pre>
+                    </details>
+                `;
+            }
+        }
+
+        function updateMetrics() {
+            document.getElementById('totalTests').textContent = testStats.total;
+            document.getElementById('passedTests').textContent = testStats.passed;
+            document.getElementById('failedTests').textContent = testStats.failed;
+            
+            if (testStats.startTime) {
+                const elapsed = ((Date.now() - testStats.startTime) / 1000).toFixed(1);
+                document.getElementById('executionTime').textContent = elapsed;
+            }
+        }
+
+        function showFinalSummary() {
+            const executionTime = ((Date.now() - testStats.startTime) / 1000).toFixed(2);
+            const successRate = ((testStats.passed / testStats.total) * 100).toFixed(1);
+            
+            const summaryDiv = document.createElement('div');
+            summaryDiv.className = testStats.failed === 0 ? 'test-section success' : 'test-section error';
+            summaryDiv.innerHTML = `
+                <h3>🏁 Resumen Final de Ejecución</h3>
+                <div class="metrics-grid">
+                    <div style="text-align: center;">
+                        <div style="font-size: 24px; font-weight: bold;">${testStats.total}</div>
+                        <div>Tests Totales</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 24px; font-weight: bold; color: #10b981;">${testStats.passed}</div>
+                        <div>Exitosos</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 24px; font-weight: bold; color: #ef4444;">${testStats.failed}</div>
+                        <div>Fallidos</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 24px; font-weight: bold; color: #3b82f6;">${successRate}%</div>
+                        <div>Tasa de Éxito</div>
+                    </div>
+                </div>
+                <div style="text-align: center; margin-top: 20px; padding: 20px; background: #f8fafc; border-radius: 12px;">
+                    <strong>Estado Final:</strong> 
+                    ${testStats.failed === 0 ? 
+                        `<span style="color: #10b981;">✅ Todos los tests pasaron exitosamente</span>` : 
+                        `<span style="color: #ef4444;">❌ ${testStats.failed} test(s) presentaron errores</span>`
+                    }
+                    <br>
+                    <span style="color: #6b7280;">Tiempo total de ejecución: ${executionTime}s</span>
+                </div>
+            `;
+            document.getElementById('testResults').appendChild(summaryDiv);
+        }
+
+        // Tests específicos
+        async function testCrearIngresoAvanzado() {
+            const { data, error } = await supabase.rpc('api_crear_ingreso_avanzado', {
+                p_usuario_id: currentUser.id,
+                p_descripcion: 'Test Módulo 4 - Ingreso Avanzado',
+                p_monto: 85000,
+                p_categoria: 'salario',
+                p_fecha: new Date().toISOString().split('T')[0]
+            });
+
+            if (error) throw new Error(`Error en función: ${error.message}`);
+            
+            const result = typeof data === 'string' ? JSON.parse(data) : data;
+            
+            if (!result.success) {
+                throw new Error(`API retornó error: ${result.message}`);
+            }
+
+            return result;
+        }
+
+        async function testCrearIngresosLote() {
+            const ingresosLote = [
+                { descripcion: 'Freelance Proyecto X', monto: 30000, categoria: 'freelance' },
+                { descripcion: 'Venta Marketplace', monto: 15000, categoria: 'negocio' },
+                { descripcion: 'Rendimientos Crypto', monto: 8000, categoria: 'inversiones' }
+            ];
+
+            const { data, error } = await supabase.rpc('api_crear_ingresos_lote', {
+                p_usuario_id: currentUser.id,
+                p_ingresos: ingresosLote
+            });
+
+            if (error) throw new Error(`Error en función: ${error.message}`);
+            
+            const result = typeof data === 'string' ? JSON.parse(data) : data;
+            
+            if (!result.success) {
+                throw new Error(`API retornó error: ${result.message}`);
+            }
+
+            return result;
+        }
+
+        async function testObtenerIngresosAvanzado() {
+            const { data, error } = await supabase.rpc('api_obtener_ingresos_avanzado', {
+                p_usuario_id: currentUser.id,
+                p_categoria: null,
+                p_fecha_desde: null,
+                p_fecha_hasta: null,
+                p_limite: 10,
+                p_incluir_stats: true
+            });
+
+            if (error) throw new Error(`Error en función: ${error.message}`);
+            
+            const result = typeof data === 'string' ? JSON.parse(data) : data;
+            
+            if (!result.success) {
+                throw new Error(`API retornó error: ${result.message}`);
+            }
+
+            return result;
+        }
+
+        async function testDashboardCompleto() {
+            const { data, error } = await supabase.rpc('api_dashboard_completo', {
+                p_usuario_id: currentUser.id,
+                p_periodo: 'month'
+            });
+
+            if (error) throw new Error(`Error en función: ${error.message}`);
+            
+            const result = typeof data === 'string' ? JSON.parse(data) : data;
+            
+            if (!result.success) {
+                throw new Error(`API retornó error: ${result.message}`);
+            }
+
+            // Validar estructura esperada
+            const requiredFields = ['balance', 'trends', 'categories'];
+            for (let field of requiredFields) {
+                if (!result.data || !(field in result.data)) {
+                    throw new Error(`Campo requerido '${field}' faltante en respuesta`);
+                }
+            }
+
+            return result;
+        }
+
+        async function testPerformanceLimites() {
+            const startTime = Date.now();
+            
+            // Test de múltiples llamadas concurrentes
+            const promises = [];
+            for (let i = 0; i < 3; i++) {
+                promises.push(
+                    supabase.rpc('api_dashboard_completo', {
+                        p_usuario_id: currentUser.id,
+                        p_periodo: 'month'
+                    })
+                );
+            }
+
+            const results = await Promise.all(promises);
+            const endTime = Date.now();
+            
+            // Verificar que todas las llamadas fueron exitosas
+            for (let i = 0; i < results.length; i++) {
+                if (results[i].error) {
+                    throw new Error(`Falló llamada concurrente ${i + 1}: ${results[i].error.message}`);
+                }
+            }
+
+            const totalTime = endTime - startTime;
+            const avgTime = totalTime / 3;
+
+            if (avgTime > 3000) {
+                throw new Error(`Performance insuficiente: ${avgTime}ms promedio (máximo aceptable: 3000ms)`);
+            }
+
+            return {
+                success: true,
+                performance_metrics: {
+                    total_requests: 3,
+                    total_time_ms: totalTime,
+                    average_time_ms: Math.round(avgTime),
+                    requests_per_second: Number((3 * 1000 / totalTime).toFixed(2)),
+                    status: 'performance_acceptable'
+                }
+            };
+        }
+    </script>
+</body>
+</html>
