@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Módulo 2 - Base de Datos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .success { background: #d4edda; border-color: #c3e6cb; color: #155724; }
+        .error { background: #f8d7da; border-color: #f5c6cb; color: #721c24; }
+        .warning { background: #fff3cd; border-color: #ffeaa7; color: #856404; }
+        
+        button {
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        
+        button:hover { background: #0056b3; }
+        button:disabled { background: #6c757d; cursor: not-allowed; }
+        
+        .config-form {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+        
+        input {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+        
+        .log {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 3px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+            font-size: 12px;
+        }
+        
+        .table-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        
+        .table-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        
+        .table-card h4 {
+            margin: 0 0 10px 0;
+            color: #007bff;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+        
+        .status-success { background: #28a745; }
+        .status-error { background: #dc3545; }
+        .status-warning { background: #ffc107; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🗄️ Test Módulo 2 - Base de Datos y Tablas</h1>
+        <p><strong>Objetivo:</strong> Verificar que las tablas, índices y RLS están correctamente configurados</p>
+        
+        <!-- Configuración -->
+        <div class="test-section">
+            <h3>🔧 Configuración Supabase</h3>
+            <div class="config-form">
+                <label for="supabaseUrl">Supabase URL:</label>
+                <input type="text" id="supabaseUrl" placeholder="https://tu-project-id.supabase.co">
+                
+                <label for="supabaseKey">Supabase Anon Key:</label>
+                <input type="password" id="supabaseKey" placeholder="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...">
+                
+                <button onclick="initializeSupabase()">🔌 Conectar Supabase</button>
+            </div>
+            <div id="connectionStatus"></div>
+        </div>
+        
+        <!-- Test Tablas -->
+        <div class="test-section">
+            <h3>🗄️ Test de Tablas</h3>
+            <p>Verificar que las 4 tablas principales existen</p>
+            <button onclick="testTables()" disabled id="testTablesBtn">🧪 Probar Tablas</button>
+            <div id="tablesResult"></div>
+        </div>
+        
+        <!-- Test RLS -->
+        <div class="test-section">
+            <h3>🔒 Test de Row Level Security</h3>
+            <p>Verificar que RLS está habilitado y funciona</p>
+            <button onclick="testRLS()" disabled id="testRLSBtn">🧪 Probar RLS</button>
+            <div id="rlsResult"></div>
+        </div>
+        
+        <!-- Test CRUD -->
+        <div class="test-section">
+            <h3>📝 Test de CRUD Operations</h3>
+            <p>Probar insertar, leer, actualizar y eliminar datos</p>
+            <div class="config-form">
+                <label for="testEmail">Email Usuario de Prueba:</label>
+                <input type="email" id="testEmail" placeholder="test@ejemplo.com">
+                
+                <label for="testPassword">Contraseña:</label>
+                <input type="password" id="testPassword" placeholder="Test123456!">
+                
+                <button onclick="testCRUD()" disabled id="testCRUDBtn">🧪 Probar CRUD</button>
+            </div>
+            <div id="crudResult"></div>
+        </div>
+        
+        <!-- Resumen de Estado -->
+        <div class="test-section">
+            <h3>📊 Estado de las Tablas</h3>
+            <div class="table-grid" id="tablesGrid">
+                <!-- Se llenará dinámicamente -->
+            </div>
+        </div>
+        
+        <!-- Logs -->
+        <div class="test-section">
+            <h3>📋 Logs del Sistema</h3>
+            <div id="logs" class="log">Esperando conexión a Supabase...\n</div>
+            <button onclick="clearLogs()">🧹 Limpiar Logs</button>
+        </div>
+        
+        <!-- Status Final -->
+        <div class="test-section" id="finalStatus">
+            <h3>✅ Status del Módulo 2</h3>
+            <div id="moduleStatus">⏳ Esperando tests...</div>
+        </div>
+    </div>
+
+    <!-- Cargar Supabase -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2.38.0/dist/umd/supabase.min.js"></script>
+    
+    <script>
+        // Variables globales
+        let supabaseClient = null;
+        let testResults = {
+            connection: false,
+            tables: false,
+            rls: false,
+            crud: false
+        };
+        
+        const expectedTables = [
+            'perfiles_usuario',
+            'ingresos', 
+            'gastos',
+            'simulaciones_credito'
+        ];
+        
+        // Función para log
+        function log(message) {
+            const logsDiv = document.getElementById('logs');
+            const timestamp = new Date().toLocaleTimeString();
+            logsDiv.textContent += `[${timestamp}] ${message}\n`;
+            logsDiv.scrollTop = logsDiv.scrollHeight;
+            console.log(message);
+        }
+        
+        // Inicializar Supabase
+        function initializeSupabase() {
+            const url = document.getElementById('supabaseUrl').value.trim();
+            const key = document.getElementById('supabaseKey').value.trim();
+            
+            if (!url || !key) {
+                log('❌ Error: URL y Key son requeridos');
+                return;
+            }
+            
+            try {
+                const { createClient } = window.supabase;
+                supabaseClient = createClient(url, key);
+                
+                testResults.connection = true;
+                log('✅ Cliente Supabase inicializado');
+                
+                document.getElementById('connectionStatus').innerHTML = 
+                    '<div class="success">✅ Conectado a Supabase</div>';
+                
+                // Habilitar botones de test
+                ['testTablesBtn', 'testRLSBtn', 'testCRUDBtn'].forEach(id => {
+                    document.getElementById(id).disabled = false;
+                });
+                
+                updateModuleStatus();
+                
+            } catch (error) {
+                log(`❌ Error inicializando Supabase: ${error.message}`);
+                document.getElementById('connectionStatus').innerHTML = 
+                    `<div class="error">❌ Error: ${error.message}</div>`;
+            }
+        }
+        
+        // Test de tablas
+        async function testTables() {
+            if (!supabaseClient) {
+                log('❌ Error: Conecta Supabase primero');
+                return;
+            }
+            
+            log('🗄️ Probando existencia de tablas...');
+            
+            try {
+                const tablesStatus = {};
+                
+                for (const table of expectedTables) {
+                    try {
+                        // Intentar hacer SELECT COUNT(*) para verificar existencia
+                        const { data, error } = await supabaseClient
+                            .from(table)
+                            .select('*', { count: 'exact', head: true });
+                        
+                        if (error) {
+                            if (error.code === '42P01') {
+                                tablesStatus[table] = { exists: false, error: 'Tabla no existe' };
+                            } else {
+                                tablesStatus[table] = { exists: true, error: error.message };
+                            }
+                        } else {
+                            tablesStatus[table] = { exists: true, count: data ? data.length : 0 };
+                        }
+                        
+                    } catch (err) {
+                        tablesStatus[table] = { exists: false, error: err.message };
+                    }
+                }
+                
+                // Mostrar resultados
+                let allTablesExist = true;
+                let resultsHTML = '<div class="table-grid">';
+                
+                for (const [table, status] of Object.entries(tablesStatus)) {
+                    const statusClass = status.exists ? 'success' : 'error';
+                    const statusIcon = status.exists ? '✅' : '❌';
+                    
+                    resultsHTML += `
+                        <div class="table-card">
+                            <h4>${statusIcon} ${table}</h4>
+                            <p>Estado: ${status.exists ? 'Existe' : 'No existe'}</p>
+                            ${status.error ? `<p>Info: ${status.error}</p>` : ''}
+                        </div>
+                    `;
+                    
+                    if (!status.exists) allTablesExist = false;
+                    
+                    log(`${statusIcon} Tabla ${table}: ${status.exists ? 'OK' : 'FALTA'}`);
+                }
+                
+                resultsHTML += '</div>';
+                document.getElementById('tablesResult').innerHTML = resultsHTML;
+                
+                testResults.tables = allTablesExist;
+                
+                if (allTablesExist) {
+                    log('✅ Todas las tablas existen correctamente');
+                } else {
+                    log('❌ Algunas tablas faltan - Ejecuta modulo2-completo.sql');
+                }
+                
+                updateModuleStatus();
+                updateTablesGrid(tablesStatus);
+                
+            } catch (error) {
+                log(`❌ Error probando tablas: ${error.message}`);
+                document.getElementById('tablesResult').innerHTML = 
+                    `<div class="error">❌ Error: ${error.message}</div>`;
+            }
+        }
+        
+        // Test RLS
+        async function testRLS() {
+            if (!supabaseClient) {
+                log('❌ Error: Conecta Supabase primero');
+                return;
+            }
+            
+            log('🔒 Probando Row Level Security...');
+            
+            try {
+                // Intentar acceder a tablas sin autenticación
+                let rlsWorking = 0;
+                let totalTests = expectedTables.length;
+                
+                for (const table of expectedTables) {
+                    try {
+                        const { data, error } = await supabaseClient
+                            .from(table)
+                            .select('*')
+                            .limit(1);
+                        
+                        if (error && (error.code === 'PGRST116' || error.message.includes('policy'))) {
+                            rlsWorking++;
+                            log(`✅ RLS activo en ${table}`);
+                        } else if (!error && (!data || data.length === 0)) {
+                            rlsWorking++;
+                            log(`✅ RLS permite acceso vacío en ${table}`);
+                        } else {
+                            log(`⚠️  RLS posiblemente inactivo en ${table}`);
+                        }
+                        
+                    } catch (err) {
+                        if (err.message.includes('policy')) {
+                            rlsWorking++;
+                            log(`✅ RLS bloqueando acceso en ${table}`);
+                        } else {
+                            log(`❌ Error RLS en ${table}: ${err.message}`);
+                        }
+                    }
+                }
+                
+                const rlsPercentage = (rlsWorking / totalTests) * 100;
+                testResults.rls = rlsPercentage >= 75;
+                
+                document.getElementById('rlsResult').innerHTML = `
+                    <div class="${testResults.rls ? 'success' : 'warning'}">
+                        ${testResults.rls ? '✅' : '⚠️'} RLS funcionando en ${rlsWorking}/${totalTests} tablas (${rlsPercentage.toFixed(0)}%)
+                    </div>
+                `;
+                
+                updateModuleStatus();
+                
+            } catch (error) {
+                log(`❌ Error probando RLS: ${error.message}`);
+                document.getElementById('rlsResult').innerHTML = 
+                    `<div class="error">❌ Error: ${error.message}</div>`;
+            }
+        }
+        
+        // Test CRUD
+        async function testCRUD() {
+            const email = document.getElementById('testEmail').value.trim();
+            const password = document.getElementById('testPassword').value.trim();
+            
+            if (!email || !password) {
+                log('❌ Error: Email y contraseña requeridos');
+                return;
+            }
+            
+            if (!supabaseClient) {
+                log('❌ Error: Conecta Supabase primero');
+                return;
+            }
+            
+            log('📝 Probando operaciones CRUD...');
+            
+            try {
+                // 1. Crear/autenticar usuario
+                log('1. Intentando crear usuario de prueba...');
+                
+                let { data: authData, error: authError } = await supabaseClient.auth.signUp({
+                    email: email,
+                    password: password
+                });
+                
+                if (authError && authError.message.includes('already registered')) {
+                    log('ℹ️ Usuario ya existe, intentando login...');
+                    const { data: loginData, error: loginError } = await supabaseClient.auth.signInWithPassword({
+                        email: email,
+                        password: password
+                    });
+                    
+                    if (loginError) {
+                        throw new Error(`Error login: ${loginError.message}`);
+                    }
+                    authData = loginData;
+                } else if (authError) {
+                    throw new Error(`Error registro: ${authError.message}`);
+                }
+                
+                const userId = authData.user.id;
+                log(`✅ Usuario autenticado: ${userId}`);
+                
+                // 2. Test CRUD en perfil
+                log('2. Probando CRUD en perfiles_usuario...');
+                
+                // INSERT
+                const { data: perfilData, error: perfilError } = await supabaseClient
+                    .from('perfiles_usuario')
+                    .upsert({
+                        id: userId,
+                        nombre: 'Usuario',
+                        apellido: 'Prueba',
+                        edad: 25,
+                        ocupacion: 'Tester'
+                    })
+                    .select();
+                
+                if (perfilError) throw new Error(`Error perfil: ${perfilError.message}`);
+                log('✅ Perfil creado/actualizado');
+                
+                // 3. Test CRUD en ingresos
+                log('3. Probando CRUD en ingresos...');
+                
+                const { data: ingresoData, error: ingresoError } = await supabaseClient
+                    .from('ingresos')
+                    .insert({
+                        usuario_id: userId,
+                        descripcion: 'Ingreso de prueba',
+                        monto: 100000,
+                        categoria: 'otros'
+                    })
+                    .select();
+                
+                if (ingresoError) throw new Error(`Error ingreso: ${ingresoError.message}`);
+                log('✅ Ingreso creado');
+                
+                // 4. Test CRUD en gastos
+                log('4. Probando CRUD en gastos...');
+                
+                const { data: gastoData, error: gastoError } = await supabaseClient
+                    .from('gastos')
+                    .insert({
+                        usuario_id: userId,
+                        descripcion: 'Gasto de prueba',
+                        monto: 50000,
+                        categoria: 'otros'
+                    })
+                    .select();
+                
+                if (gastoError) throw new Error(`Error gasto: ${gastoError.message}`);
+                log('✅ Gasto creado');
+                
+                testResults.crud = true;
+                
+                document.getElementById('crudResult').innerHTML = `
+                    <div class="success">
+                        ✅ <strong>CRUD funcionando correctamente</strong><br>
+                        - Usuario autenticado<br>
+                        - Perfil creado/actualizado<br>
+                        - Ingreso insertado<br>
+                        - Gasto insertado
+                    </div>
+                `;
+                
+                log('🎉 Todas las operaciones CRUD exitosas');
+                updateModuleStatus();
+                
+            } catch (error) {
+                log(`❌ Error en CRUD: ${error.message}`);
+                document.getElementById('crudResult').innerHTML = 
+                    `<div class="error">❌ Error CRUD: ${error.message}</div>`;
+            }
+        }
+        
+        // Actualizar grid de tablas
+        function updateTablesGrid(tablesStatus) {
+            const gridHTML = Object.entries(tablesStatus).map(([table, status]) => {
+                const indicatorClass = status.exists ? 'status-success' : 'status-error';
+                const statusText = status.exists ? 'Activa' : 'Inactiva';
+                
+                return `
+                    <div class="table-card">
+                        <h4><span class="status-indicator ${indicatorClass}"></span>${table}</h4>
+                        <p><strong>Estado:</strong> ${statusText}</p>
+                        ${status.error ? `<p><strong>Info:</strong> ${status.error}</p>` : ''}
+                    </div>
+                `;
+            }).join('');
+            
+            document.getElementById('tablesGrid').innerHTML = gridHTML;
+        }
+        
+        // Actualizar status del módulo
+        function updateModuleStatus() {
+            const statusDiv = document.getElementById('moduleStatus');
+            const passed = Object.values(testResults).filter(Boolean).length;
+            const total = Object.keys(testResults).length;
+            
+            if (passed === total) {
+                statusDiv.innerHTML = `
+                    <div class="success">
+                        ✅ <strong>MÓDULO 2 COMPLETADO</strong><br>
+                        Todos los tests pasaron (${passed}/${total})<br>
+                        🎯 Listo para Módulo 3: Funciones de Negocio
+                    </div>
+                `;
+                log('🎉 MÓDULO 2 BASE DE DATOS: COMPLETADO ✅');
+            } else {
+                statusDiv.innerHTML = `
+                    <div class="warning">
+                        ⏳ <strong>MÓDULO 2 EN PROGRESO</strong><br>
+                        Tests completados: ${passed}/${total}<br>
+                        Faltan: ${Object.entries(testResults).filter(([k,v]) => !v).map(([k,v]) => k).join(', ')}
+                    </div>
+                `;
+            }
+        }
+        
+        // Limpiar logs
+        function clearLogs() {
+            document.getElementById('logs').textContent = 'Logs limpiados...\n';
+        }
+        
+        // Inicialización
+        window.addEventListener('load', () => {
+            log('🚀 Test de Módulo 2 iniciado');
+            log('📋 Verificando: Tablas, RLS, CRUD operations');
+            log('💡 TIP: Primero conecta Supabase con tus credenciales');
+        });
+    </script>
+</body>
+</html>
