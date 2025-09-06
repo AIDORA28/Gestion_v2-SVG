@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔐 Login/Register - Gestión Financiera</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <style>
+        /* Estilos específicos para auth */
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .auth-container {
+            width: 100%;
+            max-width: 400px;
+            padding: 2rem;
+        }
+        
+        .auth-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .auth-header h1 {
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+        
+        .auth-header p {
+            color: #6b7280;
+            margin: 0;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #374151;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 1rem;
+            background-color: #ffffff;
+            color: #1f2937;  /* Texto oscuro visible */
+            transition: border-color 0.2s;
+        }
+
+        .form-group input::placeholder {
+            color: #9ca3af;  /* Placeholder gris claro */
+        }
+
+        .form-group input[type="password"] {
+            background-color: #ffffff;
+            color: #1f2937;  /* Asegurar que password sea visible */
+            font-family: monospace;  /* Fuente monoespaciada para passwords */
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #2563eb;
+            background-color: #ffffff;  /* Fondo blanco al hacer focus */
+        }
+        
+        .form-group input.error {
+            border-color: #dc2626;
+        }
+        
+        .field-error {
+            color: #dc2626;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+        
+        .auth-submit {
+            width: 100%;
+            padding: 0.75rem;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .auth-submit:hover {
+            background: #1d4ed8;
+        }
+        
+        .auth-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .auth-footer {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        .auth-switch {
+            background: none;
+            border: none;
+            color: #2563eb;
+            cursor: pointer;
+            font-weight: 500;
+            text-decoration: underline;
+        }
+        
+        .auth-switch:hover {
+            color: #1d4ed8;
+        }
+        
+        .notification {
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+        }
+        
+        .notification.success {
+            background: #dcfce7;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+        }
+        
+        .notification.error {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        
+        #loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid #2563eb;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <!-- Área de notificaciones -->
+            <div id="notifications-area"></div>
+            
+            <!-- Formulario de Login -->
+            <div id="login-form-container">
+                <div class="auth-header">
+                    <h1>Iniciar Sesión</h1>
+                    <p>Accede a tu cuenta de gestión financiera</p>
+                </div>
+                
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="login-email">Email</label>
+                        <input type="email" id="login-email" name="email" placeholder="tu@email.com" required>
+                        <div class="field-error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="login-password">Contraseña</label>
+                        <input type="password" id="login-password" name="password" placeholder="••••••••" required>
+                        <div class="field-error"></div>
+                    </div>
+                    
+                    <button type="submit" class="auth-submit">Iniciar Sesión</button>
+                </form>
+                
+                <div class="auth-footer">
+                    <p>¿No tienes cuenta? 
+                        <button type="button" class="auth-switch" id="switch-to-register">
+                            Créate una aquí
+                        </button>
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Formulario de Registro -->
+            <div id="register-form-container" style="display: none;">
+                <div class="auth-header">
+                    <h1>Crear Cuenta</h1>
+                    <p>Únete a nuestra plataforma de gestión financiera</p>
+                </div>
+                
+                <form id="register-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="register-nombre">Nombre *</label>
+                            <input type="text" id="register-nombre" name="nombre" placeholder="Juan" required>
+                            <div class="field-error"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="register-apellido">Apellido *</label>
+                            <input type="text" id="register-apellido" name="apellido" placeholder="Pérez" required>
+                            <div class="field-error"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="register-email">Email *</label>
+                        <input type="email" id="register-email" name="email" placeholder="tu@email.com" required>
+                        <div class="field-error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="register-telefono">Teléfono (opcional)</label>
+                        <input type="tel" id="register-telefono" name="telefono" placeholder="+57 300 123 4567">
+                        <div class="field-error"></div>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="register-dni">DNI (opcional)</label>
+                            <input type="text" id="register-dni" name="dni" placeholder="12345678">
+                            <div class="field-error"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="register-edad">Edad (opcional)</label>
+                            <input type="number" id="register-edad" name="edad" placeholder="25" min="18" max="120">
+                            <div class="field-error"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="register-ocupacion">Ocupación (opcional)</label>
+                            <input type="text" id="register-ocupacion" name="ocupacion" placeholder="Desarrollador">
+                            <div class="field-error"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="register-estado-civil">Estado Civil (opcional)</label>
+                            <select id="register-estado-civil" name="estado_civil">
+                                <option value="">Seleccionar...</option>
+                                <option value="soltero">Soltero(a)</option>
+                                <option value="casado">Casado(a)</option>
+                                <option value="divorciado">Divorciado(a)</option>
+                                <option value="viudo">Viudo(a)</option>
+                                <option value="union_libre">Unión Libre</option>
+                            </select>
+                            <div class="field-error"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="register-dependientes">Número de Dependientes (opcional)</label>
+                        <input type="number" id="register-dependientes" name="dependientes" placeholder="0" min="0" max="20">
+                        <div class="field-error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="register-password">Contraseña *</label>
+                        <input type="password" id="register-password" name="password" placeholder="••••••••" required>
+                        <div class="field-error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="register-confirm-password">Confirmar Contraseña *</label>
+                        <input type="password" id="register-confirm-password" name="confirmPassword" placeholder="••••••••" required>
+                        <div class="field-error"></div>
+                    </div>
+                    
+                    <button type="submit" class="auth-submit">Crear Cuenta</button>
+                </form>
+                
+                <div class="auth-footer">
+                    <p>¿Ya tienes cuenta? 
+                        <button type="button" class="auth-switch" id="switch-to-login">
+                            Inicia sesión aquí
+                        </button>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Loading overlay -->
+    <div id="loading-overlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <!-- Supabase Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <script>
+        // Configuración Supabase
+        const SUPABASE_CONFIG = {
+            url: 'https://trlbsfktusefvpheoudn.supabase.co',
+            anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRybGJzZmt0dXNlZnZwaGVvdWRuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwMzg5MDMsImV4cCI6MjA3MjYxNDkwM30.Rg045QrnG6R7kIy3k_8zl8JSiMFwWVN5e08LmZCx6Fc'
+        };
+
+        let supabaseClient;
+        
+        // Inicializar Supabase
+        function initSupabase() {
+            if (typeof window.supabase === 'undefined') {
+                console.error('❌ Supabase CDN no disponible');
+                return false;
+            }
+            
+            supabaseClient = window.supabase.createClient(
+                SUPABASE_CONFIG.url,
+                SUPABASE_CONFIG.anonKey
+            );
+            
+            console.log('✅ Supabase inicializado');
+            return true;
+        }
+        
+        // Mostrar notificación
+        function showNotification(message, type = 'info') {
+            const area = document.getElementById('notifications-area');
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            
+            area.innerHTML = '';
+            area.appendChild(notification);
+            
+            // Auto-ocultar después de 5 segundos
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 5000);
+        }
+        
+        // Mostrar/ocultar loading
+        function setLoading(show) {
+            const overlay = document.getElementById('loading-overlay');
+            const forms = document.querySelectorAll('form');
+            
+            overlay.style.display = show ? 'flex' : 'none';
+            forms.forEach(form => {
+                if (show) {
+                    form.classList.add('loading');
+                } else {
+                    form.classList.remove('loading');
+                }
+            });
+        }
+        
+        // Validar campo
+        function validateField(field, value) {
+            const formGroup = field.closest('.form-group');
+            const errorElement = formGroup.querySelector('.field-error');
+            let error = '';
+            
+            switch (field.name) {
+                case 'email':
+                    if (!value || !value.includes('@') || !value.includes('.')) {
+                        error = 'Email inválido';
+                    }
+                    break;
+                    
+                case 'password':
+                    if (!value || value.length < 6) {
+                        error = 'Contraseña debe tener al menos 6 caracteres';
+                    }
+                    break;
+                    
+                case 'confirmPassword':
+                    const passwordField = document.querySelector('#register-password');
+                    if (value !== passwordField.value) {
+                        error = 'Las contraseñas no coinciden';
+                    }
+                    break;
+                    
+                case 'nombre':
+                case 'apellido':
+                    if (!value || value.trim().length < 2) {
+                        error = 'Debe tener al menos 2 caracteres';
+                    } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(value)) {
+                        error = 'Solo se permiten letras';
+                    }
+                    break;
+                    
+                case 'telefono':
+                    if (value && !/^[\+]?[0-9\s\-\(\)]+$/.test(value)) {
+                        error = 'Formato de teléfono inválido';
+                    }
+                    break;
+                    
+                case 'dni':
+                    if (value && !/^[0-9]{7,10}$/.test(value)) {
+                        error = 'DNI debe contener entre 7 y 10 dígitos';
+                    }
+                    break;
+                    
+                case 'edad':
+                    if (value) {
+                        const age = parseInt(value);
+                        if (isNaN(age) || age < 18 || age > 120) {
+                            error = 'Edad debe estar entre 18 y 120 años';
+                        }
+                    }
+                    break;
+                    
+                case 'ocupacion':
+                    if (value && (value.trim().length < 2 || !/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(value))) {
+                        error = 'Ocupación debe contener solo letras (mínimo 2 caracteres)';
+                    }
+                    break;
+                    
+                case 'dependientes':
+                    if (value) {
+                        const deps = parseInt(value);
+                        if (isNaN(deps) || deps < 0 || deps > 20) {
+                            error = 'Dependientes debe estar entre 0 y 20';
+                        }
+                    }
+                    break;
+            }
+            
+            // Mostrar/ocultar error
+            if (error) {
+                field.classList.add('error');
+                errorElement.textContent = error;
+                errorElement.style.display = 'block';
+            } else {
+                field.classList.remove('error');
+                errorElement.style.display = 'none';
+            }
+            
+            return !error;
+        }
+        
+        // Validar formulario completo
+        function validateForm(form) {
+            const fields = form.querySelectorAll('input[required]');
+            let isValid = true;
+            
+            fields.forEach(field => {
+                const valid = validateField(field, field.value);
+                if (!valid) isValid = false;
+            });
+            
+            return isValid;
+        }
+        
+        // Manejar login
+        async function handleLogin(e) {
+            e.preventDefault();
+            
+            const form = e.target;
+            if (!validateForm(form)) {
+                showNotification('Por favor corrige los errores', 'error');
+                return;
+            }
+            
+            setLoading(true);
+            
+            try {
+                const formData = new FormData(form);
+                const email = formData.get('email');
+                const password = formData.get('password');
+                
+                console.log('🔄 Intentando login...', email);
+                
+                const { data, error } = await supabaseClient.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+                
+                if (error) {
+                    console.error('❌ Error login:', error);
+                    
+                    // Manejar errores específicos de login
+                    if (error.message.includes('Email not confirmed')) {
+                        showNotification(`
+                            📧 Email no confirmado. 
+                            Opciones:
+                            1. Revisa tu bandeja de entrada y spam
+                            2. O contacta al administrador para confirmar manualmente
+                        `, 'warning');
+                        
+                        // Mostrar botón para reenviar confirmación
+                        setTimeout(() => {
+                            showResendConfirmationOption(email);
+                        }, 2000);
+                        
+                    } else if (error.message.includes('Invalid login credentials')) {
+                        showNotification('Email o contraseña incorrectos.', 'error');
+                    } else if (error.message.includes('Too many requests')) {
+                        showNotification('Demasiados intentos. Espera unos minutos.', 'warning');
+                    } else {
+                        showNotification('Error: ' + error.message, 'error');
+                    }
+                    return;
+                }
+                
+                console.log('✅ Login exitoso:', data.user.email);
+                showNotification('¡Bienvenido! Redirigiendo...', 'success');
+                
+                // Redirigir a la aplicación principal
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 1500);
+                
+            } catch (error) {
+                console.error('❌ Error inesperado:', error);
+                showNotification('Error inesperado: ' + error.message, 'error');
+            } finally {
+                setLoading(false);
+            }
+        }
+        
+        // Manejar registro
+        async function handleRegister(e) {
+            e.preventDefault();
+            
+            const form = e.target;
+            if (!validateForm(form)) {
+                showNotification('Por favor corrige los errores', 'error');
+                return;
+            }
+            
+            setLoading(true);
+            
+            try {
+                const formData = new FormData(form);
+                const email = formData.get('email');
+                const password = formData.get('password');
+                const nombre = formData.get('nombre');
+                const apellido = formData.get('apellido');
+                const telefono = formData.get('telefono');
+                const dni = formData.get('dni');
+                const edad = formData.get('edad');
+                const ocupacion = formData.get('ocupacion');
+                const estado_civil = formData.get('estado_civil');
+                const dependientes = formData.get('dependientes');
+                
+                console.log('🔄 Intentando registro...', email);
+                
+                // Crear cuenta en Supabase Auth (sin confirmación de email)
+                const { data, error } = await supabaseClient.auth.signUp({
+                    email: email,
+                    password: password,
+                    options: {
+                        emailRedirectTo: window.location.origin,
+                        data: {
+                            // Metadatos adicionales
+                            nombre: nombre,
+                            apellido: apellido
+                        }
+                    }
+                });
+                
+                if (error) {
+                    console.error('❌ Error registro:', error);
+                    
+                    // Manejar errores específicos
+                    if (error.message.includes('already registered')) {
+                        showNotification('Este email ya está registrado. Intenta hacer login.', 'warning');
+                    } else if (error.message.includes('Invalid email')) {
+                        showNotification('El formato del email no es válido.', 'error');
+                    } else if (error.message.includes('Password should be')) {
+                        showNotification('La contraseña debe tener al menos 6 caracteres.', 'error');
+                    } else {
+                        showNotification('Error: ' + error.message, 'error');
+                    }
+                    return;
+                }
+                
+                console.log('✅ Usuario creado en Auth:', data.user?.id);
+                
+                // Verificar si el usuario necesita confirmación
+                if (data.user && !data.user.email_confirmed_at) {
+                    console.log('⚠️ Email pendiente de confirmación');
+                    showNotification('Cuenta creada. Revisa tu email para confirmar la cuenta.', 'info');
+                    
+                    // Cambiar a login después de un momento
+                    setTimeout(() => {
+                        showLogin();
+                        showNotification('Si no ves el email, puedes intentar hacer login directamente.', 'info');
+                    }, 3000);
+                    return;
+                }
+                
+                // Crear perfil de usuario con todos los campos
+                if (data.user) {
+                    try {
+                        console.log('🔐 Iniciando creación de perfil para usuario:', data.user.id);
+                        
+                        const profileData = {
+                            id: data.user.id,
+                            nombre: nombre.trim(),
+                            apellido: apellido.trim(),
+                            email: email.trim(),
+                            // Campos obligatorios con valores por defecto
+                            estado_civil: 'soltero',
+                            genero: 'otro'
+                        };
+                        
+                        // Agregar campos opcionales solo si tienen valor
+                        if (telefono && telefono.trim()) profileData.telefono = telefono.trim();
+                        if (dni && dni.trim()) profileData.dni = dni.trim();
+                        if (edad && edad.trim()) profileData.edad = parseInt(edad);
+                        if (ocupacion && ocupacion.trim()) profileData.ocupacion = ocupacion.trim();
+                        if (estado_civil && estado_civil.trim()) profileData.estado_civil = estado_civil.trim();
+                        if (dependientes && dependientes.trim()) profileData.dependientes = parseInt(dependientes);
+                        
+                        console.log('� Datos del perfil a insertar:', profileData);
+                        
+                        // Intentar múltiples métodos para crear el perfil
+                        let profileError = null;
+                        let profileSuccess = false;
+                        
+                        // Método 1: UPSERT (Insert or Update)
+                        try {
+                            console.log('🔄 Intentando método UPSERT...');
+                            const { error: upsertError } = await supabaseClient
+                                .from('perfiles_usuario')
+                                .upsert(profileData, { 
+                                    onConflict: 'id',
+                                    ignoreDuplicates: false 
+                                });
+                            
+                            if (upsertError) {
+                                console.error('❌ Error en UPSERT:', upsertError);
+                                profileError = upsertError;
+                            } else {
+                                console.log('✅ Perfil creado con UPSERT');
+                                profileSuccess = true;
+                            }
+                        } catch (upsertErr) {
+                            console.error('❌ Error inesperado en UPSERT:', upsertErr);
+                            profileError = upsertErr;
+                        }
+                        
+                        // Método 2: Si UPSERT falla, intentar INSERT normal después de autenticar
+                        if (!profileSuccess) {
+                            try {
+                                console.log('🔄 Intentando autenticación y luego INSERT...');
+                                
+                                // Autenticar primero
+                                const { error: signInError } = await supabaseClient.auth.signInWithPassword({
+                                    email: email.trim(),
+                                    password: password
+                                });
+                                
+                                if (signInError) {
+                                    console.error('❌ Error de autenticación:', signInError);
+                                } else {
+                                    console.log('✅ Usuario autenticado correctamente');
+                                    
+                                    // Ahora intentar INSERT
+                                    const { error: insertError } = await supabaseClient
+                                        .from('perfiles_usuario')
+                                        .insert([profileData]);
+                                    
+                                    if (insertError) {
+                                        console.error('❌ Error en INSERT autenticado:', insertError);
+                                        profileError = insertError;
+                                    } else {
+                                        console.log('✅ Perfil creado con INSERT autenticado');
+                                        profileSuccess = true;
+                                    }
+                                }
+                            } catch (authInsertErr) {
+                                console.error('❌ Error en autenticación + INSERT:', authInsertErr);
+                                profileError = authInsertErr;
+                            }
+                        }
+                        
+                        // Método 3: Si todo falla, usar API REST directa
+                        if (!profileSuccess) {
+                            try {
+                                console.log('� Intentando API REST directa...');
+                                
+                                const response = await fetch('https://trlbsfktusefvpheoudn.supabase.co/rest/v1/perfiles_usuario', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRybGJzZmt0dXNlZnZwaGVvdWRuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwMzg5MDMsImV4cCI6MjA3MjYxNDkwM30.Rg045QrnG6R7kIy3k_8zl8JSiMFwWVN5e08LmZCx6Fc',
+                                        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRybGJzZmt0dXNlZnZwaGVvdWRuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwMzg5MDMsImV4cCI6MjA3MjYxNDkwM30.Rg045QrnG6R7kIy3k_8zl8JSiMFwWVN5e08LmZCx6Fc',
+                                        'Prefer': 'return=minimal'
+                                    },
+                                    body: JSON.stringify(profileData)
+                                });
+                                
+                                const responseText = await response.text();
+                                console.log('📡 Respuesta API REST:', response.status, responseText);
+                                
+                                if (response.ok) {
+                                    console.log('✅ Perfil creado con API REST');
+                                    profileSuccess = true;
+                                } else {
+                                    const errorData = responseText ? JSON.parse(responseText) : {};
+                                    console.error('❌ Error API REST:', errorData);
+                                    profileError = errorData;
+                                }
+                            } catch (restErr) {
+                                console.error('❌ Error en API REST:', restErr);
+                                profileError = restErr;
+                            }
+                        }
+                        
+                        // Resultado final
+                        if (profileSuccess) {
+                            console.log('✅ Perfil creado exitosamente');
+                            showNotification('✅ Perfil creado correctamente', 'success');
+                        } else {
+                            console.error('❌ Todos los métodos fallaron. Último error:', profileError);
+                            
+                            // Permitir continuar aunque falle el perfil
+                            if (profileError && profileError.code === '23505') {
+                                console.log('⚠️ Perfil ya existe, continuando...');
+                                showNotification('El perfil ya existe. Continuando...', 'warning');
+                            } else {
+                                console.log('⚠️ Error creando perfil pero continuando al dashboard');
+                                showNotification('Usuario creado. El perfil se completará más tarde.', 'warning');
+                            }
+                        }
+                        
+                    } catch (profileErr) {
+                        console.error('⚠️ Error crítico creando perfil:', profileErr);
+                        showNotification('Error creando perfil: ' + profileErr.message, 'warning');
+                        // No hacer return, permitir continuar
+                    }
+                }
+                
+                console.log('✅ Registro exitoso:', data.user.email);
+                showNotification('¡Cuenta creada exitosamente! Redirigiendo...', 'success');
+                
+                // Redirigir a la aplicación principal
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 1500);
+                
+            } catch (error) {
+                console.error('❌ Error inesperado:', error);
+                showNotification('Error inesperado: ' + error.message, 'error');
+            } finally {
+                setLoading(false);
+            }
+        }
+        
+        // Mostrar opción para reenviar confirmación
+        function showResendConfirmationOption(email) {
+            const notificationsArea = document.getElementById('notifications-area');
+            notificationsArea.innerHTML += `
+                <div class="notification notification-info">
+                    <p>¿No recibiste el email de confirmación?</p>
+                    <button onclick="resendConfirmation('${email}')" class="btn btn-secondary" style="margin-top: 0.5rem;">
+                        📧 Reenviar Email de Confirmación
+                    </button>
+                </div>
+            `;
+        }
+        
+        // Reenviar email de confirmación
+        async function resendConfirmation(email) {
+            try {
+                showNotification('📧 Reenviando email de confirmación...', 'info');
+                
+                const { error } = await supabaseClient.auth.resend({
+                    type: 'signup',
+                    email: email,
+                    options: {
+                        emailRedirectTo: window.location.origin
+                    }
+                });
+                
+                if (error) {
+                    console.error('❌ Error reenviando confirmación:', error);
+                    showNotification('Error al reenviar: ' + error.message, 'error');
+                } else {
+                    showNotification('✅ Email de confirmación reenviado. Revisa tu bandeja.', 'success');
+                }
+                
+            } catch (err) {
+                console.error('❌ Error inesperado:', err);
+                showNotification('Error inesperado al reenviar email.', 'error');
+            }
+        }
+        
+        // Login de desarrollo (para saltarse confirmación de email)
+        async function developmentLogin(email, password) {
+            try {
+                showNotification('🔧 Intentando login de desarrollo...', 'info');
+                
+                // En desarrollo, podemos intentar sign in directamente
+                const { data, error } = await supabaseClient.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+                
+                if (!error && data.user) {
+                    console.log('✅ Login de desarrollo exitoso');
+                    showNotification('✅ Acceso concedido (modo desarrollo)', 'success');
+                    
+                    // Redirigir a la aplicación
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 1000);
+                    
+                    return true;
+                }
+                
+                return false;
+                
+            } catch (err) {
+                console.error('❌ Error en login de desarrollo:', err);
+                return false;
+            }
+        }
+        
+        // Cambiar entre login y register
+        function switchForm(showRegister) {
+            const loginContainer = document.getElementById('login-form-container');
+            const registerContainer = document.getElementById('register-form-container');
+            
+            if (showRegister) {
+                loginContainer.style.display = 'none';
+                registerContainer.style.display = 'block';
+            } else {
+                loginContainer.style.display = 'block';
+                registerContainer.style.display = 'none';
+            }
+            
+            // Limpiar notificaciones
+            document.getElementById('notifications-area').innerHTML = '';
+        }
+        
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Esperar a que Supabase se cargue
+            let attempts = 0;
+            while (!window.supabase && attempts < 50) {
+                await new Promise(resolve => setTimeout(resolve, 100));
+                attempts++;
+            }
+            
+            if (!initSupabase()) {
+                showNotification('Error cargando el sistema', 'error');
+                return;
+            }
+            
+            // Verificar si ya está autenticado
+            try {
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                if (session) {
+                    console.log('✅ Usuario ya autenticado, redirigiendo...');
+                    window.location.href = 'dashboard.html';
+                    return;
+                }
+            } catch (error) {
+                console.log('ℹ️ No hay sesión previa');
+            }
+            
+            // Configurar event listeners
+            document.getElementById('login-form').addEventListener('submit', handleLogin);
+            document.getElementById('register-form').addEventListener('submit', handleRegister);
+            
+            document.getElementById('switch-to-register').addEventListener('click', () => switchForm(true));
+            document.getElementById('switch-to-login').addEventListener('click', () => switchForm(false));
+            
+            // Validación en tiempo real
+            document.querySelectorAll('input').forEach(input => {
+                input.addEventListener('blur', (e) => {
+                    validateField(e.target, e.target.value);
+                });
+                
+                input.addEventListener('input', (e) => {
+                    // Limpiar error si el usuario está escribiendo
+                    if (e.target.classList.contains('error')) {
+                        validateField(e.target, e.target.value);
+                    }
+                });
+            });
+            
+            console.log('✅ Página de autenticación lista');
+        });
+    </script>
+</body>
+</html>

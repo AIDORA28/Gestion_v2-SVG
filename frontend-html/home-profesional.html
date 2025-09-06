@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión Financiera Profesional</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+    
+    <!-- CSS Framework - Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts - Inter para UI profesional -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Charts - Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    
+    <!-- Notificaciones - Notyf -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+    
+    <!-- Iconos - Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    
+    <!-- Date Picker - Flatpickr -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    
+    <!-- Supabase -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    
+    <!-- Configuración Tailwind personalizada -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif']
+                    },
+                    colors: {
+                        primary: { 50: '#eff6ff', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8' },
+                        success: { 50: '#f0fdf4', 500: '#22c55e', 600: '#16a34a' },
+                        warning: { 50: '#fffbeb', 500: '#f59e0b', 600: '#d97706' },
+                        danger: { 50: '#fef2f2', 500: '#ef4444', 600: '#dc2626' }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- CSS personalizado -->
+    <link rel="stylesheet" href="css/financial-professional.css">
+    
+    <style>
+        .hero-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .feature-card {
+            transition: transform 0.2s ease-in-out;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans antialiased">
+    
+    <!-- Header -->
+    <header class="bg-white shadow-sm">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-3">
+                    <i data-lucide="dollar-sign" class="h-8 w-8 text-primary-600"></i>
+                    <span class="text-xl font-bold text-gray-900">Gestión Financiera</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="auth.html" class="text-primary-600 hover:text-primary-700 font-medium">Iniciar Sesión</a>
+                    <a href="auth.html" class="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors">Registrarse</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-gradient text-white py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 class="text-5xl font-bold mb-6">
+                Gestiona tus Finanzas como un 
+                <span class="text-yellow-300">Profesional</span>
+            </h1>
+            <p class="text-xl text-blue-100 mb-8 max-w-3xl mx-auto">
+                Sistema completo para el control de ingresos, gastos, simulación de créditos y reportes financieros. 
+                Desarrollado con tecnología moderna y diseño profesional.
+            </p>
+            <div class="flex justify-center space-x-4">
+                <button onclick="startDemo()" class="bg-white text-gray-900 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors shadow-lg">
+                    <i data-lucide="play" class="inline h-5 w-5 mr-2"></i>
+                    Demo Interactivo
+                </button>
+                <a href="auth.html" class="bg-primary-800 text-white px-8 py-4 rounded-lg font-semibold hover:bg-primary-900 transition-colors shadow-lg">
+                    <i data-lucide="user-plus" class="inline h-5 w-5 mr-2"></i>
+                    Comenzar Gratis
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">
+                    Todo lo que necesitas para controlar tus finanzas
+                </h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">
+                    Herramientas profesionales diseñadas específicamente para el mercado peruano
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Ingresos -->
+                <div class="feature-card bg-white p-8 rounded-xl shadow-sm border hover:shadow-md">
+                    <div class="w-12 h-12 bg-success-100 rounded-lg flex items-center justify-center mb-6">
+                        <i data-lucide="trending-up" class="h-6 w-6 text-success-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Control de Ingresos</h3>
+                    <p class="text-gray-600 mb-4">
+                        Registra y categoriza todos tus ingresos. Salarios, freelance, inversiones y más.
+                    </p>
+                    <ul class="text-sm text-gray-500 space-y-1">
+                        <li>✓ Categorías personalizables</li>
+                        <li>✓ Ingresos recurrentes</li>
+                        <li>✓ Proyecciones mensuales</li>
+                    </ul>
+                </div>
+                
+                <!-- Gastos -->
+                <div class="feature-card bg-white p-8 rounded-xl shadow-sm border hover:shadow-md">
+                    <div class="w-12 h-12 bg-danger-100 rounded-lg flex items-center justify-center mb-6">
+                        <i data-lucide="trending-down" class="h-6 w-6 text-danger-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Gestión de Gastos</h3>
+                    <p class="text-gray-600 mb-4">
+                        Controla cada sol que gastas con categorización inteligente y alertas automáticas.
+                    </p>
+                    <ul class="text-sm text-gray-500 space-y-1">
+                        <li>✓ Límites por categoría</li>
+                        <li>✓ Alertas de presupuesto</li>
+                        <li>✓ Análisis de patrones</li>
+                    </ul>
+                </div>
+                
+                <!-- Reportes -->
+                <div class="feature-card bg-white p-8 rounded-xl shadow-sm border hover:shadow-md">
+                    <div class="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center mb-6">
+                        <i data-lucide="bar-chart-3" class="h-6 w-6 text-primary-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Reportes Visuales</h3>
+                    <p class="text-gray-600 mb-4">
+                        Gráficos profesionales y reportes detallados para análisis financiero profundo.
+                    </p>
+                    <ul class="text-sm text-gray-500 space-y-1">
+                        <li>✓ Gráficos interactivos</li>
+                        <li>✓ Exportación PDF/Excel</li>
+                        <li>✓ Comparativas mensuales</li>
+                    </ul>
+                </div>
+                
+                <!-- Simulador Crédito -->
+                <div class="feature-card bg-white p-8 rounded-xl shadow-sm border hover:shadow-md">
+                    <div class="w-12 h-12 bg-warning-100 rounded-lg flex items-center justify-center mb-6">
+                        <i data-lucide="calculator" class="h-6 w-6 text-warning-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Simulador de Crédito</h3>
+                    <p class="text-gray-600 mb-4">
+                        Simula préstamos y evalúa tu capacidad crediticia con algoritmos precisos.
+                    </p>
+                    <ul class="text-sm text-gray-500 space-y-1">
+                        <li>✓ Tabla de amortización</li>
+                        <li>✓ Múltiples escenarios</li>
+                        <li>✓ Score crediticio</li>
+                    </ul>
+                </div>
+                
+                <!-- Seguridad -->
+                <div class="feature-card bg-white p-8 rounded-xl shadow-sm border hover:shadow-md">
+                    <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mb-6">
+                        <i data-lucide="shield-check" class="h-6 w-6 text-gray-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Máxima Seguridad</h3>
+                    <p class="text-gray-600 mb-4">
+                        Tus datos financieros protegidos con encriptación y autenticación avanzada.
+                    </p>
+                    <ul class="text-sm text-gray-500 space-y-1">
+                        <li>✓ Encriptación end-to-end</li>
+                        <li>✓ Backups automáticos</li>
+                        <li>✓ Acceso multi-factor</li>
+                    </ul>
+                </div>
+                
+                <!-- Mobile -->
+                <div class="feature-card bg-white p-8 rounded-xl shadow-sm border hover:shadow-md">
+                    <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-6">
+                        <i data-lucide="smartphone" class="h-6 w-6 text-purple-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">App Móvil</h3>
+                    <p class="text-gray-600 mb-4">
+                        Accede desde cualquier dispositivo. Diseño responsive y PWA instalable.
+                    </p>
+                    <ul class="text-sm text-gray-500 space-y-1">
+                        <li>✓ Progressive Web App</li>
+                        <li>✓ Modo offline</li>
+                        <li>✓ Sincronización automática</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo Chart Section -->
+    <section class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">Vista Previa del Dashboard</h2>
+                <p class="text-gray-600">Gráficos en tiempo real con datos de ejemplo</p>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Balance Chart -->
+                <div class="bg-white p-6 rounded-xl shadow-sm">
+                    <div class="h-64">
+                        <canvas id="demo-balance-chart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Expenses Distribution -->
+                <div class="bg-white p-6 rounded-xl shadow-sm">
+                    <div class="h-64">
+                        <canvas id="demo-expenses-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-8">
+                <button onclick="refreshDemoCharts()" class="bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition-colors">
+                    <i data-lucide="refresh-cw" class="inline h-4 w-4 mr-2"></i>
+                    Actualizar Gráficos
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 bg-primary-600">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl font-bold text-white mb-4">
+                ¿Listo para tomar control de tus finanzas?
+            </h2>
+            <p class="text-primary-100 mb-8 max-w-2xl mx-auto">
+                Únete a miles de usuarios que ya están mejorando su salud financiera con nuestra plataforma.
+            </p>
+            <a href="auth.html" class="bg-white text-primary-600 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors shadow-lg">
+                <i data-lucide="rocket" class="inline h-5 w-5 mr-2"></i>
+                Comenzar Ahora - Gratis
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <div class="flex items-center justify-center space-x-3 mb-4">
+                    <i data-lucide="dollar-sign" class="h-6 w-6 text-primary-400"></i>
+                    <span class="text-lg font-semibold text-white">Gestión Financiera</span>
+                </div>
+                <p>&copy; 2025 Sistema profesional de gestión financiera. Hecho con ❤️ en Perú.</p>
+                <div class="flex justify-center space-x-6 mt-4">
+                    <a href="#" class="hover:text-white transition-colors">Términos</a>
+                    <a href="#" class="hover:text-white transition-colors">Privacidad</a>
+                    <a href="#" class="hover:text-white transition-colors">Soporte</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/notifications.js"></script>
+    <script src="js/charts.js"></script>
+    
+    <script>
+        // Initialize everything
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize icons
+            lucide.createIcons();
+            
+            // Initialize demo charts
+            initDemoCharts();
+            
+            // Welcome message
+            setTimeout(() => {
+                notify.success('¡Bienvenido al sistema de gestión financiera profesional! 🎉');
+            }, 1000);
+        });
+        
+        // Demo charts
+        let demoBalanceChart, demoExpensesChart;
+        
+        function initDemoCharts() {
+            // Balance chart
+            const balanceData = charts.generateSampleData('balance');
+            demoBalanceChart = charts.createBalanceChart('demo-balance-chart', balanceData);
+            
+            // Expenses chart
+            const expensesData = charts.generateSampleData('expenses');
+            demoExpensesChart = charts.createExpenseDistribution('demo-expenses-chart', expensesData);
+        }
+        
+        function refreshDemoCharts() {
+            // Generate new sample data
+            const balanceData = charts.generateSampleData('balance');
+            const expensesData = charts.generateSampleData('expenses');
+            
+            // Add some randomness
+            balanceData.ingresos = balanceData.ingresos.map(v => v + Math.random() * 1000 - 500);
+            balanceData.gastos = balanceData.gastos.map(v => v + Math.random() * 500 - 250);
+            expensesData.values = expensesData.values.map(v => v + Math.random() * 200 - 100);
+            
+            // Update charts
+            charts.updateChart(demoBalanceChart, { datasets: [
+                {
+                    label: 'Ingresos',
+                    data: balanceData.ingresos,
+                    borderColor: charts.colors.success,
+                    backgroundColor: charts.colors.success + '20',
+                    fill: false,
+                    tension: 0.4
+                },
+                {
+                    label: 'Gastos',
+                    data: balanceData.gastos,
+                    borderColor: charts.colors.danger,
+                    backgroundColor: charts.colors.danger + '20',
+                    fill: false,
+                    tension: 0.4
+                }
+            ]});
+            
+            charts.updateChart(demoExpensesChart, { datasets: [{
+                data: expensesData.values,
+                backgroundColor: charts.colors.palette.slice(0, 5)
+            }]});
+            
+            notify.info('📊 Gráficos actualizados con nuevos datos');
+        }
+        
+        function startDemo() {
+            notify.info('🚀 Iniciando demo interactivo...');
+            
+            // Demo sequence
+            setTimeout(() => notify.ingresoCreado(2500, 'Salario demo'), 1000);
+            setTimeout(() => notify.gastoCreado(450, 'Supermercado demo'), 2000);
+            setTimeout(() => notify.simulacionCreada(50000, 850), 3000);
+            setTimeout(() => {
+                refreshDemoCharts();
+                notify.success('✨ ¡Demo completado! Registrate para empezar');
+            }, 4000);
+        }
+    </script>
+</body>
+</html>
