@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="es-PE">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PLANIFICAPRO - Tu Aliado en Gestión Financiera</title>
+                        </svg>
+                    </div>
+                    <span class="text-2xl font-semibold text-white logo-text ml-3">PLANIFICAPRO</span>
+                </div>          <path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                    </svg>
+                    <span class="text-white font-bold text-xl logo-text">PLANIFICAPRO</span>
+                </div>=device-width, initial-scale=1.0">
+    <title>PLANIFICAPRO - Tu Aliado en Gestión Financiera</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%233b82f6' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M2.25 13.5a8.25 8.25 0 018.25-8.25.75.75 0 01.75.75v6.75H18a.75.75 0 01.75.75 8.25 8.25 0 01-16.5 0z' clip-rule='evenodd'/%3E%3Cpath fill-rule='evenodd' d='M12.75 3a.75.75 0 01.75-.75 8.25 8.25 0 018.25 8.25.75.75 0 01-.75.75h-8.25V3z' clip-rule='evenodd'/%3E%3C/svg%3E">
+    <link rel="alternate icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%233b82f6' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M2.25 13.5a8.25 8.25 0 018.25-8.25.75.75 0 01.75.75v6.75H18a.75.75 0 01.75.75 8.25 8.25 0 01-16.5 0z' clip-rule='evenodd'/%3E%3Cpath fill-rule='evenodd' d='M12.75 3a.75.75 0 01.75-.75 8.25 8.25 0 018.25 8.25.75.75 0 01-.75.75h-8.25V3z' clip-rule='evenodd'/%3E%3C/svg%3E" type="image/svg+xml">
+    
+    <!-- 🎨 TAILWIND CSS 3.4.0 con JIT -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif']
+                    },
+                    colors: {
+                        primary: { 50: '#eff6ff', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8' },
+                        success: { 50: '#f0fdf4', 500: '#22c55e', 600: '#16a34a' },
+                        warning: { 50: '#fffbeb', 500: '#f59e0b', 600: '#d97706' },
+                        danger: { 50: '#fef2f2', 500: '#ef4444', 600: '#dc2626' }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- 🎨 ANIMATE.CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+
+    <!-- 🎨 GOOGLE FONTS - INTER -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- 🔔 NOTYF 3.x -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+
+    <!-- 🎯 LUCIDE ICONS -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+    <!-- 🎨 HEROICONS CDN -->
+    <script src="https://unpkg.com/heroicons@2.0.18/24/outline/index.js" type="module"></script>
+    <script src="https://unpkg.com/heroicons@2.0.18/24/solid/index.js" type="module"></script>
+
+    <!-- 📊 Configuración -->
+    <script>
+        // Configuración básica del sistema
+        const CONFIG = {
+            API_URL: 'http://localhost:5000',
+            APP_NAME: 'Gestión Financiera Personal',
+            VERSION: '2.0'
+        };
+    </script>
+
+    <style>
+        /* Glass morphism effects */
+        .glass {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        
+        .hero-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .feature-card {
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Animaciones personalizadas */
+        .bounce-in {
+            animation: bounceIn 1s ease-out;
+        }
+        
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); opacity: 1; }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+
+<body class="font-sans bg-gray-50">
+
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="hidden fixed inset-0 bg-white z-50 flex items-center justify-center">
+        <div class="text-center">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
+            <p class="text-gray-600">Cargando sistema...</p>
+        </div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav class="fixed top-0 left-0 right-0 z-40 glass">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <!-- Logo -->
+                <div class="flex items-center space-x-3">
+                    <svg class="h-8 w-8 text-blue-400" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M2.25 13.5a8.25 8.25 0 018.25-8.25.75.75 0 01.75.75v6.75H18a.75.75 0 01.75.75 8.25 8.25 0 01-16.5 0z" clip-rule="evenodd" />
+                        <path fill-rule="evenodd" d="M12.75 3a.75.75 0 01.75-.75 8.25 8.25 0 018.25 8.25.75.75 0 01-.75.75h-8.25V3z" clip-rule="evenodd" />
+                    </svg>
+                    <span class="text-white font-bold text-xl logo-text">PlanificaPRO</span>
+                </div>
+
+                <!-- Status Badge -->
+                <div id="nav-status" class="flex items-center space-x-2">
+                    <div class="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
+                    <span class="text-white text-sm">Verificando...</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-gradient min-h-screen flex items-center relative overflow-hidden pt-20">
+        <!-- Background Elements -->
+        <div class="absolute inset-0 bg-black bg-opacity-20"></div>
+        <div class="absolute top-10 left-10 w-72 h-72 bg-white bg-opacity-10 rounded-full blur-3xl animate-pulse"></div>
+        <div class="absolute bottom-10 right-10 w-96 h-96 bg-white bg-opacity-5 rounded-full blur-3xl animate-pulse" style="animation-delay: 2s"></div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center">
+                <!-- Main Title -->
+                <div class="flex flex-col items-center mb-6 animate__animated animate__fadeInUp">
+                    <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-full p-6 mb-4 shadow-2xl animate__animated animate__zoomIn animate__delay-1s">
+                        <svg class="h-20 w-20 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M3 2.25a.75.75 0 01.75.75v16.5h16.5a.75.75 0 010 1.5H3a.75.75 0 01-.75-.75V3A.75.75 0 013 2.25z" clip-rule="evenodd" />
+                            <path fill-rule="evenodd" d="M13.5 6a.75.75 0 01.75-.75h6a.75.75 0 01.75.75v6a.75.75 0 01-1.5 0V7.81L6.03 21.28a.75.75 0 01-1.06-1.06L18.44 6.75H14.25a.75.75 0 01-.75-.75z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <h1 class="text-5xl md:text-7xl font-bold text-white text-center">
+                        <span class="bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent">
+                            Control Financiero
+                        </span>
+                    </h1>
+                </div>
+                
+                <!-- Subtitle -->
+                <p class="text-xl md:text-2xl text-gray-200 mb-8 max-w-4xl mx-auto animate__animated animate__fadeInUp animate__delay-1s">
+                    Toma el control completo de tus finanzas personales con nuestro sistema profesional potenciado por PostgreSQL. 
+                    <span class="text-yellow-300 font-semibold">Simple, Seguro y Poderoso.</span>
+                </p>
+                
+                <!-- Features List -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto mb-12 animate__animated animate__fadeInUp animate__delay-2s">
+                    <div class="glass rounded-xl p-6 text-white">
+                        <i data-lucide="wallet" class="h-10 w-10 text-green-300 mb-4 mx-auto"></i>
+                        <h3 class="font-semibold mb-2 text-lg">Ingresos Inteligentes</h3>
+                        <p class="text-sm text-gray-200">Registra, categoriza y analiza todos tus ingresos con reportes automáticos</p>
+                    </div>
+                    
+                    <div class="glass rounded-xl p-6 text-white">
+                        <i data-lucide="credit-card" class="h-10 w-10 text-red-300 mb-4 mx-auto"></i>
+                        <h3 class="font-semibold mb-2 text-lg">Control de Gastos</h3>
+                        <p class="text-sm text-gray-200">Monitorea y optimiza tus gastos con alertas y límites personalizados</p>
+                    </div>
+                    
+                    <div class="glass rounded-xl p-6 text-white">
+                        <i data-lucide="bar-chart-3" class="h-10 w-10 text-blue-300 mb-4 mx-auto"></i>
+                        <h3 class="font-semibold mb-2 text-lg">Análisis Avanzado</h3>
+                        <p class="text-sm text-gray-200">Dashboards interactivos y predicciones para decisiones inteligentes</p>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-6 justify-center items-center animate__animated animate__fadeInUp animate__delay-3s">
+                    <button onclick="mostrarModalAuth('login')" class="bg-white text-primary-600 px-10 py-4 rounded-xl font-semibold hover:bg-gray-100 transition-all duration-300 shadow-2xl text-lg hover:transform hover:scale-105">
+                        <i data-lucide="log-in" class="inline h-5 w-5 mr-2"></i>
+                        Iniciar Sesión
+                    </button>
+                    
+                    <button onclick="mostrarModalAuth('register')" class="glass text-white px-10 py-4 rounded-xl font-semibold hover:bg-white/30 transition-all duration-300 shadow-xl text-lg border border-white/20 hover:transform hover:scale-105">
+                        <i data-lucide="user-plus" class="inline h-5 w-5 mr-2"></i>
+                        Crear Cuenta Gratis
+                    </button>
+                </div>
+
+                <!-- API Status -->
+                <div id="api-status" class="mt-12 text-center animate__animated animate__fadeInUp animate__delay-4s">
+                    <div class="glass rounded-xl p-6 inline-block">
+                        <div id="connection-indicator" class="flex items-center justify-center space-x-3 text-white">
+                            <div class="w-3 h-3 bg-yellow-400 rounded-full animate-pulse"></div>
+                            <span class="text-base">Verificando conexión con PostgreSQL...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-20">
+                <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+                    ¿Por qué elegir PLANIFICAPRO?
+                </h2>
+                <p class="text-xl text-gray-600 max-w-4xl mx-auto">
+                    Diseñado específicamente para usuarios que buscan un control profesional y detallado de sus finanzas personales
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="feature-card bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
+                    <div class="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center mb-6">
+                        <i data-lucide="shield-check" class="h-7 w-7 text-green-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">100% Seguro</h3>
+                    <p class="text-gray-600">Tus datos están protegidos con encriptación de nivel bancario y almacenados en tu PostgreSQL local</p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="feature-card bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
+                    <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center mb-6">
+                        <i data-lucide="zap" class="h-7 w-7 text-blue-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Ultra Rápido</h3>
+                    <p class="text-gray-600">Interfaz optimizada que garantiza respuestas instantáneas en todas las operaciones</p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="feature-card bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
+                    <div class="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center mb-6">
+                        <i data-lucide="smartphone" class="h-7 w-7 text-purple-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Multi-Dispositivo</h3>
+                    <p class="text-gray-600">Accede desde computadora, tablet o móvil con diseño totalmente responsivo</p>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="feature-card bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
+                    <div class="w-14 h-14 bg-indigo-100 rounded-xl flex items-center justify-center mb-6">
+                        <i data-lucide="database" class="h-7 w-7 text-indigo-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">PostgreSQL Pro</h3>
+                    <p class="text-gray-600">Base de datos empresarial que garantiza integridad, velocidad y confiabilidad total</p>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="feature-card bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
+                    <div class="w-14 h-14 bg-yellow-100 rounded-xl flex items-center justify-center mb-6">
+                        <i data-lucide="target" class="h-7 w-7 text-yellow-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Metas Inteligentes</h3>
+                    <p class="text-gray-600">Sistema de objetivos financieros con seguimiento automático y alertas personalizadas</p>
+                </div>
+
+                <!-- Feature 6 -->
+                <div class="feature-card bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
+                    <div class="w-14 h-14 bg-red-100 rounded-xl flex items-center justify-center mb-6">
+                        <i data-lucide="users" class="h-7 w-7 text-red-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Multi-Usuario</h3>
+                    <p class="text-gray-600">Gestiona múltiples perfiles financieros desde una cuenta con permisos granulares</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section class="py-24 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">
+                    Números que hablan por sí solos
+                </h2>
+                <p class="text-xl text-gray-600">
+                    La confianza de nuestros usuarios respalda nuestro trabajo
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="text-center">
+                    <div class="w-20 h-20 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i data-lucide="users-2" class="h-10 w-10 text-primary-600"></i>
+                    </div>
+                    <div class="text-4xl font-bold text-gray-900 mb-2">100%</div>
+                    <div class="text-gray-600 text-lg">Satisfacción de usuarios</div>
+                </div>
+
+                <div class="text-center">
+                    <div class="w-20 h-20 bg-success-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i data-lucide="trending-up" class="h-10 w-10 text-success-600"></i>
+                    </div>
+                    <div class="text-4xl font-bold text-gray-900 mb-2">99.9%</div>
+                    <div class="text-gray-600 text-lg">Tiempo de disponibilidad</div>
+                </div>
+
+                <div class="text-center">
+                    <div class="w-20 h-20 bg-warning-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i data-lucide="clock" class="h-10 w-10 text-warning-600"></i>
+                    </div>
+                    <div class="text-4xl font-bold text-gray-900 mb-2">&lt;1s</div>
+                    <div class="text-gray-600 text-lg">Tiempo de respuesta</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Final -->
+    <section class="py-24 bg-gradient-to-r from-primary-600 to-primary-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">
+                ¿Listo para transformar tus finanzas?
+            </h2>
+            <p class="text-primary-100 mb-10 max-w-3xl mx-auto text-xl">
+                Únete a la revolución financiera personal. Empieza hoy y ve resultados inmediatos en el control de tu dinero.
+            </p>
+            
+            <div class="flex flex-col sm:flex-row gap-6 justify-center items-center">
+                <button onclick="mostrarModalAuth('register')" class="bg-white text-primary-600 px-12 py-5 rounded-xl font-semibold hover:bg-gray-100 transition-all duration-300 shadow-2xl text-xl hover:transform hover:scale-105">
+                    <i data-lucide="rocket" class="inline h-6 w-6 mr-2"></i>
+                    Comenzar Gratis Ahora
+                </button>
+                
+                <button onclick="mostrarModalAuth('login')" class="border-2 border-white text-white px-12 py-5 rounded-xl font-semibold hover:bg-white hover:text-primary-600 transition-all duration-300 text-xl hover:transform hover:scale-105">
+                    <i data-lucide="log-in" class="inline h-6 w-6 mr-2"></i>
+                    Ya tengo cuenta
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <div class="flex items-center justify-center space-x-3 mb-6">
+                    <svg class="h-8 w-8 text-blue-400" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M1.5 6a2.25 2.25 0 012.25-2.25h16.5A2.25 2.25 0 0122.5 6v12a2.25 2.25 0 01-2.25 2.25H3.75A2.25 2.25 0 011.5 18V6zM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0021 18v-1.94l-2.69-2.689a1.5 1.5 0 00-2.12 0l-.88.879.97.97a.75.75 0 11-1.06 1.061l-5.16-5.159a1.5 1.5 0 00-2.12 0L3 16.061zm10.125-7.81a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0z" clip-rule="evenodd" />
+                    </svg>
+                    <span class="text-2xl font-semibold text-white logo-text">PLANIFICAPRO</span>
+                </div>
+                <p class="mb-6 text-lg">
+                    &copy; 2025 Sistema profesional de gestión financiera personal. 
+                    <br>Desarrollado con ❤️ para el control total de tus finanzas.
+                </p>
+                <div class="flex justify-center space-x-8 text-sm">
+                    <a href="#" class="hover:text-white transition-colors">Términos de Servicio</a>
+                    <a href="#" class="hover:text-white transition-colors">Política de Privacidad</a>
+                    <a href="#" class="hover:text-white transition-colors">Soporte Técnico</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal de Autenticación -->
+    <div id="auth-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-8 animate__animated animate__zoomIn">
+            <div class="text-center mb-6">
+                <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-full p-3 mx-auto mb-4 shadow-lg w-fit">
+                    <svg class="h-12 w-12 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M12.516 2.17a.75.75 0 00-1.032 0 11.209 11.209 0 01-7.877 3.08.75.75 0 00-.722.515A12.74 12.74 0 002.25 9.75c0 5.814 3.969 10.695 9.227 12.061a.75.75 0 00.546 0C17.281 20.445 21.25 15.564 21.25 9.75a12.74 12.74 0 00-.635-4.235.75.75 0 00-.722-.515 11.209 11.209 0 01-7.877-3.08zM15.75 9.75a3 3 0 11-6 0 3 3 0 016 0z" clip-rule="evenodd" />
+                        <path d="M12 12.75a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5z" />
+                        <path d="M12 14.25a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5z" />
+                    </svg>
+                </div>
+                <h3 id="modal-title" class="text-2xl font-bold text-gray-900">Iniciar Sesión</h3>
+                <p class="text-gray-600 mt-2">Accede a tu cuenta financiera</p>
+            </div>
+
+            <form id="auth-form" class="space-y-4">
+                <div id="register-fields" class="hidden space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <input type="text" id="nombre" placeholder="Nombre" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                        <input type="text" id="apellido" placeholder="Apellido" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                    </div>
+                </div>
+                
+                <input type="email" id="email" placeholder="Correo electrónico" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                
+                <input type="password" id="password" placeholder="Contraseña" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                
+                <button type="submit" class="w-full bg-primary-600 text-white p-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors">
+                    <i data-lucide="arrow-right" class="inline h-5 w-5 mr-2"></i>
+                    <span id="submit-text">Iniciar Sesión</span>
+                </button>
+            </form>
+
+            <div class="mt-6 text-center">
+                <button id="toggle-mode" class="text-primary-600 hover:text-primary-700 font-medium">
+                    ¿No tienes cuenta? Regístrate
+                </button>
+            </div>
+
+            <button onclick="cerrarModalAuth()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <i data-lucide="x" class="h-6 w-6"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let notyf;
+        let isLoginMode = true;
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log('🚀 Iniciando PLANIFICAPRO Landing...');
+            
+            // Inicializar Notyf
+            notyf = new Notyf({
+                duration: 4000,
+                position: { x: 'right', y: 'top' },
+                types: [
+                    { type: 'warning', background: '#f59e0b' },
+                    { type: 'info', background: '#3b82f6' },
+                    { type: 'success', background: '#22c55e' },
+                    { type: 'error', background: '#ef4444' }
+                ]
+            });
+            
+            // Inicializar Lucide Icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+            
+            // Verificar conexión con API
+            await verificarConexionAPI();
+            
+            // Configurar modal de autenticación
+            configurarModalAuth();
+            
+            console.log('✅ Landing page cargado correctamente');
+        });
+        
+        // 🔍 VERIFICAR CONEXIÓN API
+        async function verificarConexionAPI() {
+            const indicator = document.getElementById('connection-indicator');
+            const navStatus = document.getElementById('nav-status');
+            
+            try {
+                const response = await fetch(`${CONFIG.API_URL}/health`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    const successHTML = `
+                        <div class="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                        <span class="text-base">✅ PostgreSQL conectado y funcionando</span>
+                    `;
+                    indicator.innerHTML = successHTML;
+                    
+                    navStatus.innerHTML = `
+                        <div class="w-2 h-2 bg-green-400 rounded-full"></div>
+                        <span class="text-white text-sm">Online</span>
+                    `;
+                    
+                    console.log('✅ API conectada correctamente');
+                    notyf.success('Sistema conectado correctamente');
+                } else {
+                    throw new Error('API no disponible');
+                }
+            } catch (error) {
+                const errorHTML = `
+                    <div class="w-3 h-3 bg-red-400 rounded-full animate-pulse"></div>
+                    <span class="text-base">❌ Sin conexión al servidor PostgreSQL</span>
+                `;
+                indicator.innerHTML = errorHTML;
+                
+                navStatus.innerHTML = `
+                    <div class="w-2 h-2 bg-red-400 rounded-full"></div>
+                    <span class="text-white text-sm">Offline</span>
+                `;
+                
+                console.error('❌ Error conectando a API:', error);
+                notyf.error('No se puede conectar al servidor');
+            }
+        }
+
+        // 🔐 CONFIGURAR MODAL DE AUTENTICACIÓN
+        function configurarModalAuth() {
+            const form = document.getElementById('auth-form');
+            const toggleBtn = document.getElementById('toggle-mode');
+            
+            form.addEventListener('submit', handleAuthSubmit);
+            toggleBtn.addEventListener('click', toggleAuthMode);
+        }
+
+        // 🔄 ALTERNAR MODO DE AUTENTICACIÓN
+        function toggleAuthMode() {
+            isLoginMode = !isLoginMode;
+            
+            const modalTitle = document.getElementById('modal-title');
+            const submitText = document.getElementById('submit-text');
+            const toggleBtn = document.getElementById('toggle-mode');
+            const registerFields = document.getElementById('register-fields');
+            
+            if (isLoginMode) {
+                modalTitle.textContent = 'Iniciar Sesión';
+                submitText.textContent = 'Iniciar Sesión';
+                toggleBtn.textContent = '¿No tienes cuenta? Regístrate';
+                registerFields.classList.add('hidden');
+            } else {
+                modalTitle.textContent = 'Crear Cuenta';
+                submitText.textContent = 'Registrarse';
+                toggleBtn.textContent = '¿Ya tienes cuenta? Inicia Sesión';
+                registerFields.classList.remove('hidden');
+            }
+        }
+
+        // 📝 MANEJAR ENVÍO DE FORMULARIO
+        async function handleAuthSubmit(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            if (isLoginMode) {
+                await loginUser(email, password);
+            } else {
+                const nombre = document.getElementById('nombre').value;
+                const apellido = document.getElementById('apellido').value;
+                await registerUser(nombre, apellido, email, password);
+            }
+        }
+
+        // 🔐 LOGIN USUARIO
+        async function loginUser(email, password) {
+            try {
+                notyf.info('Iniciando sesión...');
+                
+                // Aquí iría la lógica de login real
+                // Por ahora simulamos una respuesta exitosa
+                setTimeout(() => {
+                    notyf.success('¡Bienvenido de vuelta!');
+                    cerrarModalAuth();
+                    // Redireccionar al dashboard
+                    // window.location.href = 'dashboard.html';
+                }, 1000);
+                
+            } catch (error) {
+                console.error('Error en login:', error);
+                notyf.error('Error al iniciar sesión');
+            }
+        }
+
+        // ✍️ REGISTRAR USUARIO
+        async function registerUser(nombre, apellido, email, password) {
+            try {
+                notyf.info('Creando cuenta...');
+                
+                const userData = {
+                    nombre,
+                    apellido,
+                    email,
+                    password_hash: password // En producción esto debe hashearse
+                };
+
+                const response = await fetch(`${CONFIG.API_URL}/api/usuarios`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(userData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    notyf.success('¡Cuenta creada exitosamente!');
+                    cerrarModalAuth();
+                    // Auto-login o redireccionar
+                } else {
+                    throw new Error(data.message || 'Error creando cuenta');
+                }
+                
+            } catch (error) {
+                console.error('Error en registro:', error);
+                notyf.error('Error al crear la cuenta');
+            }
+        }
+
+        // 📱 MOSTRAR MODAL
+        function mostrarModalAuth(mode = 'login') {
+            isLoginMode = mode === 'login';
+            toggleAuthMode();
+            document.getElementById('auth-modal').classList.remove('hidden');
+        }
+
+        // ❌ CERRAR MODAL
+        function cerrarModalAuth() {
+            document.getElementById('auth-modal').classList.add('hidden');
+            document.getElementById('auth-form').reset();
+        }
+
+        // Cerrar modal al hacer clic fuera
+        document.getElementById('auth-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                cerrarModalAuth();
+            }
+        });
+    </script>
+
+</body>
+</html>
