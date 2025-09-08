@@ -3,7 +3,7 @@
   "name": "planificapro-gestion-presupuesto",
   "functions": {
     "api/backend.js": {
-      "runtime": "nodejs22.x"
+      "runtime": "nodejs20.x"
     }
   },
   "rewrites": [
