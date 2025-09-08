@@ -4,12 +4,6 @@
   "functions": {
     "api/backend.js": {
       "runtime": "@vercel/node@3.0.0"
-    },
-    "api/public-health.js": {
-      "runtime": "@vercel/node@3.0.0"
-    },
-    "api/supabase-health.js": {
-      "runtime": "@vercel/node@3.0.0"
     }
   },
   "build": {
@@ -20,15 +14,7 @@
   "rewrites": [
     {
       "source": "/",
-      "destination": "/landing.html"
-    },
-    {
-      "source": "/status",
-      "destination": "/api/public-health"
-    },
-    {
-      "source": "/supabase-test",
-      "destination": "/api/supabase-health"
+      "destination": "/index.html"
     },
     {
       "source": "/api/(.*)",

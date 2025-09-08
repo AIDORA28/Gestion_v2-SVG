@@ -1,8 +1,7 @@
 /**
  * 🚀 SERVIDOR API - SISTEMA GESTIÓN PRESUPUESTO PERSONAL
- * Stack: Node.js + Express + PostgreSQL
- * Puerto: 5000
- * Base de Datos: PostgreSQL Local (127.0.0.1:5434)
+ * Stack: Node.js + Express + Supabase
+ * Base de Datos: Supabase (PostgreSQL Cloud)
  */
 
 const express = require('express');
@@ -10,7 +9,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const bcrypt = require('bcrypt');
-const { Pool } = require('pg');
+const { createClient } = require('@supabase/supabase-js');
 require('dotenv').config();
 
 const app = express();
@@ -22,7 +21,7 @@ const PORT = process.env.PORT || 5000;
 
 app.use(helmet());
 app.use(cors({
-    origin: process.env.CORS_ORIGIN?.split(',') || ['http://localhost:3000', 'http://localhost:5500', 'http://127.0.0.1:3000'],
+    origin: '*',
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
@@ -32,154 +31,78 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 // ================================
-// 🗄️ CONFIGURACIÓN POSTGRESQL/SUPABASE
+// 🗄️ CONFIGURACIÓN SUPABASE
 // ================================
 
-// Detectar entorno y configurar conexión apropiada
-const isDevelopment = process.env.NODE_ENV === 'development';
-const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1' || process.env.VERCEL_ENV;
-const isVercel = process.env.VERCEL === '1' || process.env.VERCEL_ENV;
+// Inicializar cliente Supabase
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-// Forzar Supabase si tenemos SUPABASE_URL (indicador de producción)
-const useSupabase = process.env.SUPABASE_URL && process.env.SUPABASE_URL.includes('supabase.co');
-
-let poolConfig;
-
-if (useSupabase) {
-    // 🌐 SUPABASE: Conexión a base de datos en la nube
-    console.log('🌐 Configurando conexión a Supabase...');
-    console.log('🔗 SUPABASE_URL:', process.env.SUPABASE_URL ? 'Configurada ✅' : 'No encontrada ❌');
-    
-    // Extraer datos de la URL de Supabase
-    const supabaseUrl = new URL(process.env.SUPABASE_URL);
-    const host = supabaseUrl.hostname;
-    const port = parseInt(supabaseUrl.port) || 5432;
-    
-    poolConfig = {
-        host: host,
-        port: port,
-        database: 'postgres', // Base de datos por defecto en Supabase
-        user: 'postgres',     // Usuario por defecto en Supabase
-        password: process.env.SUPABASE_SERVICE_ROLE_KEY,
-        ssl: {
-            rejectUnauthorized: false
-        },
-        max: 20,
-        connectionTimeoutMillis: 15000,
-        idleTimeoutMillis: 30000
-    };
-    
-    console.log(`📡 Supabase Host: ${host}:${port}`);
-    console.log(`🔑 Service Role Key: ${process.env.SUPABASE_SERVICE_ROLE_KEY ? 'Configurada ✅' : 'No encontrada ❌'}`);
-    
-} else {
-    // 🏠 DESARROLLO: Usar PostgreSQL local
-    console.log('🏠 Configurando conexión a PostgreSQL local...');
-    
-    poolConfig = {
-        host: process.env.DB_HOST || '127.0.0.1',
-        port: process.env.DB_PORT || 5434,
-        database: process.env.DB_NAME || 'gestion_presupuesto',
-        user: process.env.DB_USER || 'postgres',
-        password: process.env.DB_PASSWORD || 'sa123',
-        max: 20,
-        connectionTimeoutMillis: 2000,
-        idleTimeoutMillis: 30000
-    };
-    
-    console.log(`🏠 Local DB: ${poolConfig.host}:${poolConfig.port}`);
+if (!supabaseUrl || !supabaseServiceKey) {
+    console.error('❌ Variables de Supabase no configuradas');
+    console.error('SUPABASE_URL:', supabaseUrl ? '✅' : '❌');
+    console.error('SUPABASE_SERVICE_ROLE_KEY:', supabaseServiceKey ? '✅' : '❌');
+    process.exit(1);
 }
 
-const pool = new Pool(poolConfig);
-
-// Test conexión
-pool.connect((err, client, release) => {
-    if (err) {
-        console.error('❌ Error conectando a PostgreSQL:', err);
-        return;
-    }
-    console.log('✅ PostgreSQL conectado correctamente');
-    console.log(`📊 Base de datos: ${process.env.DB_NAME}`);
-    console.log(`🏠 Host: ${process.env.DB_HOST}:${process.env.DB_PORT}`);
-    release();
-});
+const supabase = createClient(supabaseUrl, supabaseServiceKey);
+console.log('✅ Cliente Supabase inicializado');
+console.log('🌐 URL:', supabaseUrl);
 
 // ================================
-// � DEBUG ENDPOINTS
+// 📊 RUTAS PRINCIPALES
 // ================================
 
-// Endpoint para verificar configuración
-app.get('/debug', async (req, res) => {
-    try {
-        res.json({
-            success: true,
-            environment: {
-                NODE_ENV: process.env.NODE_ENV,
-                VERCEL: process.env.VERCEL,
-                VERCEL_ENV: process.env.VERCEL_ENV,
-                useSupabase: useSupabase,
-                isProduction: isProduction,
-                isVercel: isVercel
-            },
-            supabase: {
-                url: process.env.SUPABASE_URL ? 'Configurada ✅' : 'No encontrada ❌',
-                serviceKey: process.env.SUPABASE_SERVICE_ROLE_KEY ? 'Configurada ✅' : 'No encontrada ❌',
-                anonKey: process.env.SUPABASE_ANON_KEY ? 'Configurada ✅' : 'No encontrada ❌'
-            },
-            database: {
-                host: poolConfig.host,
-                port: poolConfig.port,
-                database: poolConfig.database,
-                user: poolConfig.user,
-                ssl: poolConfig.ssl ? 'Habilitado' : 'Deshabilitado'
-            }
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            error: error.message
-        });
-    }
-});
-
-// ================================
-// �📊 RUTAS PRINCIPALES
-// ================================
-
-// 🏠 Ruta de estado
+// 🏠 Ruta de inicio
 app.get('/', (req, res) => {
     res.json({
         success: true,
-        message: '🚀 API Gestión Presupuesto Personal',
-        version: '1.0.0',
+        message: '🚀 API Gestión Presupuesto Personal - Supabase',
+        version: '2.0.0',
         status: 'running',
         timestamp: new Date().toISOString(),
-        database: 'PostgreSQL Local',
+        database: 'Supabase (PostgreSQL Cloud)',
         endpoints: {
             usuarios: '/api/usuarios',
             ingresos: '/api/ingresos',
             gastos: '/api/gastos',
-            simulaciones: '/api/simulaciones',
-            reportes: '/api/reportes'
+            dashboard: '/api/dashboard',
+            health: '/health'
         }
     });
 });
 
-// 🔍 Health check
+// Health check con Supabase
 app.get('/health', async (req, res) => {
     try {
-        const result = await pool.query('SELECT NOW() as timestamp');
+        const { data, error, count } = await supabase
+            .from('usuarios')
+            .select('*', { count: 'exact', head: true });
+
+        if (error) {
+            return res.status(500).json({
+                success: false,
+                status: 'unhealthy',
+                database: 'disconnected',
+                error: error.message
+            });
+        }
+
         res.json({
             success: true,
             status: 'healthy',
             database: 'connected',
-            timestamp: result.rows[0].timestamp
+            message: 'Supabase conectado correctamente ✅',
+            tables: {
+                usuarios: count !== null ? `${count} registros` : 'accesible'
+            },
+            timestamp: new Date().toISOString()
         });
     } catch (error) {
         res.status(500).json({
             success: false,
             status: 'unhealthy',
-            database: 'disconnected',
+            database: 'error',
             error: error.message
         });
     }
@@ -192,17 +115,17 @@ app.get('/health', async (req, res) => {
 // Obtener todos los usuarios
 app.get('/api/usuarios', async (req, res) => {
     try {
-        const result = await pool.query(`
-            SELECT id, nombre, email, telefono, estado_civil, 
-                   ingresos_mensuales, gastos_fijos, created_at, updated_at 
-            FROM usuarios 
-            ORDER BY created_at DESC
-        `);
+        const { data, error } = await supabase
+            .from('usuarios')
+            .select('id, nombre, email, telefono, estado_civil, ingresos_mensuales, gastos_fijos, created_at, updated_at')
+            .order('created_at', { ascending: false });
+        
+        if (error) throw error;
         
         res.json({
             success: true,
-            data: result.rows,
-            count: result.rowCount
+            data: data,
+            count: data.length
         });
     } catch (error) {
         console.error('Error obteniendo usuarios:', error);
@@ -232,34 +155,54 @@ app.post('/api/usuarios', async (req, res) => {
         }
 
         // Verificar si el email ya existe
-        const existingUser = await pool.query('SELECT id FROM usuarios WHERE email = $1', [email]);
-        if (existingUser.rowCount > 0) {
+        const { data: existingUser, error: checkError } = await supabase
+            .from('usuarios')
+            .select('email')
+            .eq('email', email)
+            .single();
+
+        if (existingUser) {
             return res.status(400).json({
                 success: false,
                 message: 'El email ya está registrado'
             });
         }
 
-        // Guardar contraseña directamente (sin hash por simplicidad)
-        const result = await pool.query(`
-            INSERT INTO usuarios (
-                nombre, apellido, email, password_hash, dni, telefono, direccion,
-                fecha_nacimiento, profesion, estado_civil, genero, nacionalidad,
-                numero_hijos, ingresos_mensuales, gastos_fijos
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
-            RETURNING id, nombre, apellido, email, dni, telefono, direccion, fecha_nacimiento, 
-                      profesion, estado_civil, genero, nacionalidad, numero_hijos, 
-                      ingresos_mensuales, gastos_fijos, created_at
-        `, [
-            nombre, apellido, email, password, dni, telefono, direccion,
-            fecha_nacimiento, profesion, estado_civil, genero, nacionalidad,
-            numero_hijos || 0, ingresos_mensuales || 0, gastos_fijos || 0
-        ]);
+        // Hashear contraseña
+        const hashedPassword = await bcrypt.hash(password, 12);
+
+        // Crear usuario
+        const { data, error } = await supabase
+            .from('usuarios')
+            .insert([{
+                nombre,
+                apellido,
+                email,
+                password_hash: hashedPassword,
+                dni,
+                telefono,
+                direccion,
+                fecha_nacimiento,
+                profesion,
+                estado_civil,
+                genero,
+                nacionalidad,
+                numero_hijos: numero_hijos || 0,
+                ingresos_mensuales: parseFloat(ingresos_mensuales) || 0,
+                gastos_fijos: parseFloat(gastos_fijos) || 0
+            }])
+            .select()
+            .single();
+        
+        if (error) throw error;
+        
+        // Remover password_hash de la respuesta
+        const { password_hash, ...userResponse } = data;
         
         res.status(201).json({
             success: true,
             message: 'Usuario creado exitosamente',
-            data: result.rows[0]
+            data: userResponse
         });
     } catch (error) {
         console.error('Error creando usuario:', error);
@@ -271,132 +214,27 @@ app.post('/api/usuarios', async (req, res) => {
     }
 });
 
-// Login de usuario
-app.post('/api/login', async (req, res) => {
-    try {
-        const { email, password } = req.body;
-        
-        // Validar campos requeridos
-        if (!email || !password) {
-            return res.status(400).json({
-                success: false,
-                message: 'Email y contraseña son requeridos'
-            });
-        }
-
-        // Buscar usuario por email y password (sin bcrypt por simplicidad)
-        const result = await pool.query(`
-            SELECT id, nombre, apellido, email, dni, telefono, direccion, fecha_nacimiento,
-                   profesion, estado_civil, genero, nacionalidad, numero_hijos,
-                   ingresos_mensuales, gastos_fijos, created_at, active
-            FROM usuarios 
-            WHERE email = $1 AND password_hash = $2 AND active = true
-        `, [email, password]);
-
-        if (result.rowCount === 0) {
-            return res.status(401).json({
-                success: false,
-                message: 'Credenciales incorrectas - Usuario no encontrado o contraseña incorrecta'
-            });
-        }
-
-        const user = result.rows[0];
-        
-        res.json({
-            success: true,
-            message: 'Login exitoso',
-            data: {
-                user: user
-            }
-        });
-        
-        console.log(`✅ Login exitoso para usuario: ${user.email}`);
-        
-    } catch (error) {
-        console.error('Error en login:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error en el servidor',
-            error: error.message
-        });
-    }
-});
-
-// Verificar usuario autenticado (simulando JWT para compatibilidad con frontend)
-app.get('/auth/verify', async (req, res) => {
-    try {
-        const authHeader = req.headers['authorization'];
-        if (!authHeader || !authHeader.startsWith('Bearer ')) {
-            return res.status(401).json({
-                success: false,
-                message: 'Token no proporcionado'
-            });
-        }
-
-        // Extraer el "token" (en nuestro caso, será el email del usuario)
-        const token = authHeader.substring(7); // Remover "Bearer "
-        
-        if (!token) {
-            return res.status(401).json({
-                success: false,
-                message: 'Token inválido'
-            });
-        }
-
-        // Buscar usuario por email (usando el email como "token")
-        const result = await pool.query(`
-            SELECT id, nombre, apellido, email, dni, telefono, direccion, fecha_nacimiento,
-                   profesion, estado_civil, genero, nacionalidad, numero_hijos,
-                   ingresos_mensuales, gastos_fijos, created_at, active
-            FROM usuarios 
-            WHERE email = $1 AND active = true
-        `, [token]);
-
-        if (result.rowCount === 0) {
-            return res.status(401).json({
-                success: false,
-                message: 'Usuario no encontrado'
-            });
-        }
-
-        const user = result.rows[0];
-        
-        res.json({
-            success: true,
-            message: 'Token válido',
-            ...user  // Enviar los datos del usuario directamente
-        });
-        
-    } catch (error) {
-        console.error('Error en verificación:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error verificando autenticación',
-            error: error.message
-        });
-    }
-});
-
 // ================================
 // 💰 RUTAS INGRESOS
 // ================================
 
-// Obtener ingresos por usuario
+// Obtener ingresos de un usuario
 app.get('/api/ingresos/:userId', async (req, res) => {
     try {
         const { userId } = req.params;
-        const result = await pool.query(`
-            SELECT i.*, u.nombre as usuario_nombre
-            FROM ingresos i
-            LEFT JOIN usuarios u ON i.usuario_id = u.id
-            WHERE i.usuario_id = $1
-            ORDER BY i.fecha DESC
-        `, [userId]);
+        
+        const { data, error } = await supabase
+            .from('ingresos')
+            .select('*')
+            .eq('usuario_id', userId)
+            .order('fecha', { ascending: false });
+        
+        if (error) throw error;
         
         res.json({
             success: true,
-            data: result.rows,
-            count: result.rowCount
+            data: data,
+            count: data.length
         });
     } catch (error) {
         console.error('Error obteniendo ingresos:', error);
@@ -408,198 +246,39 @@ app.get('/api/ingresos/:userId', async (req, res) => {
     }
 });
 
-// ================================
-// 💰 RUTAS INGRESOS EXTENDIDAS PARA FRONTEND
-// ================================
-
-// Middleware para extraer userId del token
-const extractUserFromToken = (req, res, next) => {
+// Crear ingreso
+app.post('/api/ingresos', async (req, res) => {
     try {
-        const token = req.headers.authorization?.replace('Bearer ', '');
-        if (!token) {
-            return res.status(401).json({ success: false, message: 'Token requerido' });
-        }
-
-        // Extraer email del token (simple, sin JWT)
-        const email = token;
-        req.userEmail = email;
-        next();
-    } catch (error) {
-        res.status(401).json({ success: false, message: 'Token inválido' });
-    }
-};
-
-// Obtener usuario por email
-const getUserByEmail = async (email) => {
-    const result = await pool.query('SELECT id FROM usuarios WHERE email = $1', [email]);
-    return result.rows[0];
-};
-
-// Obtener ingresos con paginación y filtros
-app.get('/api/ingresos', extractUserFromToken, async (req, res) => {
-    try {
-        const user = await getUserByEmail(req.userEmail);
-        if (!user) {
-            return res.status(404).json({ success: false, message: 'Usuario no encontrado' });
-        }
-
-        const {
-            page = 1,
-            limit = 10,
-            search = '',
-            categoria = '',
-            fechaDesde = '',
-            fechaHasta = ''
-        } = req.query;
-
-        const offset = (page - 1) * limit;
+        const { usuario_id, monto, descripcion, categoria, fecha, es_recurrente, frecuencia_recurrencia } = req.body;
         
-        // Construir filtros dinámicos
-        let whereConditions = ['usuario_id = $1'];
-        let params = [user.id];
-        let paramCount = 1;
-
-        if (search) {
-            paramCount++;
-            whereConditions.push(`(descripcion ILIKE $${paramCount} OR notas ILIKE $${paramCount})`);
-            params.push(`%${search}%`);
-        }
-
-        if (categoria) {
-            paramCount++;
-            whereConditions.push(`categoria = $${paramCount}`);
-            params.push(categoria);
-        }
-
-        if (fechaDesde) {
-            paramCount++;
-            whereConditions.push(`fecha >= $${paramCount}`);
-            params.push(fechaDesde);
-        }
-
-        if (fechaHasta) {
-            paramCount++;
-            whereConditions.push(`fecha <= $${paramCount}`);
-            params.push(fechaHasta);
-        }
-
-        const whereClause = whereConditions.join(' AND ');
-
-        // Consulta principal con paginación
-        const ingresosQuery = `
-            SELECT id, descripcion, monto, categoria, fecha, es_recurrente, 
-                   frecuencia_dias, notas, created_at, updated_at
-            FROM ingresos 
-            WHERE ${whereClause}
-            ORDER BY fecha DESC, created_at DESC
-            LIMIT $${paramCount + 1} OFFSET $${paramCount + 2}
-        `;
-        
-        params.push(limit, offset);
-        const ingresosResult = await pool.query(ingresosQuery, params);
-
-        // Consulta para contar total
-        const countQuery = `
-            SELECT COUNT(*) as total
-            FROM ingresos 
-            WHERE ${whereClause}
-        `;
-        const countResult = await pool.query(countQuery, params.slice(0, -2));
-
-        // Consulta para resumen
-        const summaryQuery = `
-            SELECT 
-                COALESCE(SUM(CASE WHEN DATE_TRUNC('month', fecha) = DATE_TRUNC('month', CURRENT_DATE) THEN monto ELSE 0 END), 0) as ingresos_mes,
-                COALESCE(SUM(monto), 0) as ingresos_total,
-                COUNT(*) as cantidad_registros
-            FROM ingresos 
-            WHERE ${whereClause}
-        `;
-        const summaryResult = await pool.query(summaryQuery, params.slice(0, -2));
-
-        const total = parseInt(countResult.rows[0].total);
-        const totalPages = Math.ceil(total / limit);
-        const currentPage = parseInt(page);
-
-        res.json({
-            success: true,
-            ingresos: ingresosResult.rows,
-            summary: {
-                ingresosMes: summaryResult.rows[0].ingresos_mes,
-                ingresosTotal: summaryResult.rows[0].ingresos_total,
-                cantidadRegistros: summaryResult.rows[0].cantidad_registros
-            },
-            pagination: {
-                page: currentPage,
-                limit: parseInt(limit),
-                total: total,
-                totalPages: totalPages,
-                from: total > 0 ? offset + 1 : 0,
-                to: Math.min(offset + parseInt(limit), total)
-            }
-        });
-
-    } catch (error) {
-        console.error('Error obteniendo ingresos:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error obteniendo ingresos',
-            error: error.message
-        });
-    }
-});
-
-// Crear nuevo ingreso (versión extendida)
-app.post('/api/ingresos', extractUserFromToken, async (req, res) => {
-    try {
-        const user = await getUserByEmail(req.userEmail);
-        if (!user) {
-            return res.status(404).json({ success: false, message: 'Usuario no encontrado' });
-        }
-
-        const { 
-            descripcion, 
-            monto, 
-            categoria = null, 
-            fecha = null, 
-            es_recurrente = false,
-            frecuencia_dias = null,
-            notas = null 
-        } = req.body;
-
-        // Validaciones
-        if (!descripcion || !monto) {
+        if (!usuario_id || !monto || !descripcion) {
             return res.status(400).json({
                 success: false,
-                message: 'Descripción y monto son obligatorios'
+                message: 'Usuario ID, monto y descripción son requeridos'
             });
         }
-
-        if (monto <= 0) {
-            return res.status(400).json({
-                success: false,
-                message: 'El monto debe ser mayor a 0'
-            });
-        }
-
-        const result = await pool.query(`
-            INSERT INTO ingresos (
-                usuario_id, descripcion, monto, categoria, fecha, 
-                es_recurrente, frecuencia_dias, notas, created_at, updated_at
-            )
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW(), NOW())
-            RETURNING *
-        `, [
-            user.id, descripcion, monto, categoria, fecha || new Date().toISOString().split('T')[0],
-            es_recurrente, frecuencia_dias, notas
-        ]);
-
+        
+        const { data, error } = await supabase
+            .from('ingresos')
+            .insert([{
+                usuario_id,
+                monto: parseFloat(monto),
+                descripcion,
+                categoria,
+                fecha: fecha || new Date().toISOString(),
+                es_recurrente: es_recurrente || false,
+                frecuencia_recurrencia
+            }])
+            .select()
+            .single();
+        
+        if (error) throw error;
+        
         res.status(201).json({
             success: true,
             message: 'Ingreso creado exitosamente',
-            data: result.rows[0]
+            data: data
         });
-
     } catch (error) {
         console.error('Error creando ingreso:', error);
         res.status(500).json({
@@ -610,281 +289,27 @@ app.post('/api/ingresos', extractUserFromToken, async (req, res) => {
     }
 });
 
-// Obtener ingreso específico
-app.get('/api/ingresos/:id', extractUserFromToken, async (req, res) => {
-    try {
-        const user = await getUserByEmail(req.userEmail);
-        if (!user) {
-            return res.status(404).json({ success: false, message: 'Usuario no encontrado' });
-        }
-
-        const { id } = req.params;
-        const result = await pool.query(`
-            SELECT * FROM ingresos 
-            WHERE id = $1 AND usuario_id = $2
-        `, [id, user.id]);
-
-        if (result.rows.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'Ingreso no encontrado'
-            });
-        }
-
-        res.json({
-            success: true,
-            ...result.rows[0]
-        });
-
-    } catch (error) {
-        console.error('Error obteniendo ingreso:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error obteniendo ingreso',
-            error: error.message
-        });
-    }
-});
-
-// Actualizar ingreso
-app.put('/api/ingresos/:id', extractUserFromToken, async (req, res) => {
-    try {
-        const user = await getUserByEmail(req.userEmail);
-        if (!user) {
-            return res.status(404).json({ success: false, message: 'Usuario no encontrado' });
-        }
-
-        const { id } = req.params;
-        const { 
-            descripcion, 
-            monto, 
-            categoria, 
-            fecha, 
-            es_recurrente,
-            frecuencia_dias,
-            notas 
-        } = req.body;
-
-        // Validaciones
-        if (!descripcion || !monto) {
-            return res.status(400).json({
-                success: false,
-                message: 'Descripción y monto son obligatorios'
-            });
-        }
-
-        if (monto <= 0) {
-            return res.status(400).json({
-                success: false,
-                message: 'El monto debe ser mayor a 0'
-            });
-        }
-
-        const result = await pool.query(`
-            UPDATE ingresos 
-            SET descripcion = $1, monto = $2, categoria = $3, fecha = $4,
-                es_recurrente = $5, frecuencia_dias = $6, notas = $7, updated_at = NOW()
-            WHERE id = $8 AND usuario_id = $9
-            RETURNING *
-        `, [
-            descripcion, monto, categoria, fecha, 
-            es_recurrente, frecuencia_dias, notas, id, user.id
-        ]);
-
-        if (result.rows.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'Ingreso no encontrado'
-            });
-        }
-
-        res.json({
-            success: true,
-            message: 'Ingreso actualizado exitosamente',
-            data: result.rows[0]
-        });
-
-    } catch (error) {
-        console.error('Error actualizando ingreso:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error actualizando ingreso',
-            error: error.message
-        });
-    }
-});
-
-// Eliminar ingreso
-app.delete('/api/ingresos/:id', extractUserFromToken, async (req, res) => {
-    try {
-        const user = await getUserByEmail(req.userEmail);
-        if (!user) {
-            return res.status(404).json({ success: false, message: 'Usuario no encontrado' });
-        }
-
-        const { id } = req.params;
-        const result = await pool.query(`
-            DELETE FROM ingresos 
-            WHERE id = $1 AND usuario_id = $2
-            RETURNING *
-        `, [id, user.id]);
-
-        if (result.rows.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'Ingreso no encontrado'
-            });
-        }
-
-        res.json({
-            success: true,
-            message: 'Ingreso eliminado exitosamente'
-        });
-
-    } catch (error) {
-        console.error('Error eliminando ingreso:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error eliminando ingreso',
-            error: error.message
-        });
-    }
-});
-
-// Resumen de ingresos
-app.get('/api/ingresos/summary', extractUserFromToken, async (req, res) => {
-    try {
-        const user = await getUserByEmail(req.userEmail);
-        if (!user) {
-            return res.status(404).json({ success: false, message: 'Usuario no encontrado' });
-        }
-
-        const result = await pool.query(`
-            SELECT 
-                COALESCE(SUM(CASE WHEN DATE_TRUNC('month', fecha) = DATE_TRUNC('month', CURRENT_DATE) THEN monto ELSE 0 END), 0) as ingresos_mes,
-                COALESCE(SUM(monto), 0) as ingresos_total,
-                COUNT(*) as cantidad_registros
-            FROM ingresos 
-            WHERE usuario_id = $1
-        `, [user.id]);
-
-        res.json({
-            success: true,
-            summary: result.rows[0]
-        });
-
-    } catch (error) {
-        console.error('Error obteniendo resumen:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error obteniendo resumen',
-            error: error.message
-        });
-    }
-});
-
-// Exportar ingresos a CSV
-app.get('/api/ingresos/export', extractUserFromToken, async (req, res) => {
-    try {
-        const user = await getUserByEmail(req.userEmail);
-        if (!user) {
-            return res.status(404).json({ success: false, message: 'Usuario no encontrado' });
-        }
-
-        const {
-            search = '',
-            categoria = '',
-            fechaDesde = '',
-            fechaHasta = ''
-        } = req.query;
-
-        // Aplicar los mismos filtros que en la consulta principal
-        let whereConditions = ['usuario_id = $1'];
-        let params = [user.id];
-        let paramCount = 1;
-
-        if (search) {
-            paramCount++;
-            whereConditions.push(`(descripcion ILIKE $${paramCount} OR notas ILIKE $${paramCount})`);
-            params.push(`%${search}%`);
-        }
-
-        if (categoria) {
-            paramCount++;
-            whereConditions.push(`categoria = $${paramCount}`);
-            params.push(categoria);
-        }
-
-        if (fechaDesde) {
-            paramCount++;
-            whereConditions.push(`fecha >= $${paramCount}`);
-            params.push(fechaDesde);
-        }
-
-        if (fechaHasta) {
-            paramCount++;
-            whereConditions.push(`fecha <= $${paramCount}`);
-            params.push(fechaHasta);
-        }
-
-        const whereClause = whereConditions.join(' AND ');
-
-        const result = await pool.query(`
-            SELECT descripcion, monto, categoria, fecha, es_recurrente, frecuencia_dias, notas
-            FROM ingresos 
-            WHERE ${whereClause}
-            ORDER BY fecha DESC
-        `, params);
-
-        // Generar CSV
-        const headers = ['Fecha', 'Descripción', 'Monto', 'Categoría', 'Recurrente', 'Frecuencia (días)', 'Notas'];
-        const csvContent = [
-            headers.join(','),
-            ...result.rows.map(row => [
-                row.fecha,
-                `"${row.descripcion}"`,
-                row.monto,
-                row.categoria || '',
-                row.es_recurrente ? 'Sí' : 'No',
-                row.frecuencia_dias || '',
-                `"${row.notas || ''}"`
-            ].join(','))
-        ].join('\n');
-
-        res.setHeader('Content-Type', 'text/csv');
-        res.setHeader('Content-Disposition', 'attachment; filename=ingresos.csv');
-        res.send(csvContent);
-
-    } catch (error) {
-        console.error('Error exportando ingresos:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error exportando ingresos',
-            error: error.message
-        });
-    }
-});
-
 // ================================
-// 💳 RUTAS GASTOS
+// 💸 RUTAS GASTOS
 // ================================
 
-// Obtener gastos por usuario
+// Obtener gastos de un usuario
 app.get('/api/gastos/:userId', async (req, res) => {
     try {
         const { userId } = req.params;
-        const result = await pool.query(`
-            SELECT g.*, u.nombre as usuario_nombre
-            FROM gastos g
-            LEFT JOIN usuarios u ON g.usuario_id = u.id
-            WHERE g.usuario_id = $1
-            ORDER BY g.fecha DESC
-        `, [userId]);
+        
+        const { data, error } = await supabase
+            .from('gastos')
+            .select('*')
+            .eq('usuario_id', userId)
+            .order('fecha', { ascending: false });
+        
+        if (error) throw error;
         
         res.json({
             success: true,
-            data: result.rows,
-            count: result.rowCount
+            data: data,
+            count: data.length
         });
     } catch (error) {
         console.error('Error obteniendo gastos:', error);
@@ -899,281 +324,121 @@ app.get('/api/gastos/:userId', async (req, res) => {
 // Crear gasto
 app.post('/api/gastos', async (req, res) => {
     try {
-        const { usuario_id, descripcion, monto, categoria, fecha, es_fijo } = req.body;
+        const { usuario_id, monto, descripcion, categoria, fecha, es_recurrente, frecuencia_recurrencia } = req.body;
         
-        const result = await pool.query(`
-            INSERT INTO gastos (usuario_id, descripcion, monto, categoria, fecha, es_fijo)
-            VALUES ($1, $2, $3, $4, $5, $6)
-            RETURNING *
-        `, [usuario_id, descripcion, monto, categoria, fecha, es_fijo || false]);
+        if (!usuario_id || !monto || !descripcion) {
+            return res.status(400).json({
+                success: false,
+                message: 'Usuario ID, monto y descripción son requeridos'
+            });
+        }
+        
+        const { data, error } = await supabase
+            .from('gastos')
+            .insert([{
+                usuario_id,
+                monto: parseFloat(monto),
+                descripcion,
+                categoria,
+                fecha: fecha || new Date().toISOString(),
+                es_recurrente: es_recurrente || false,
+                frecuencia_recurrencia
+            }])
+            .select()
+            .single();
+        
+        if (error) throw error;
         
         res.status(201).json({
             success: true,
-            message: 'Gasto registrado exitosamente',
-            data: result.rows[0]
+            message: 'Gasto creado exitosamente',
+            data: data
         });
     } catch (error) {
-        console.error('Error registrando gasto:', error);
+        console.error('Error creando gasto:', error);
         res.status(500).json({
             success: false,
-            message: 'Error registrando gasto',
+            message: 'Error creando gasto',
             error: error.message
         });
     }
 });
 
 // ================================
-// 📈 RUTAS REPORTES
+// 📊 RUTAS DASHBOARD
 // ================================
 
-// Dashboard resumen por usuario
+// Obtener resumen del dashboard
 app.get('/api/dashboard/:userId', async (req, res) => {
     try {
         const { userId } = req.params;
         
-        // Obtener totales del mes actual
-        const result = await pool.query(`
-            SELECT 
-                (SELECT COALESCE(SUM(monto), 0) FROM ingresos WHERE usuario_id = $1 AND DATE_TRUNC('month', fecha) = DATE_TRUNC('month', CURRENT_DATE)) as ingresos_mes,
-                (SELECT COALESCE(SUM(monto), 0) FROM gastos WHERE usuario_id = $1 AND DATE_TRUNC('month', fecha) = DATE_TRUNC('month', CURRENT_DATE)) as gastos_mes,
-                (SELECT COALESCE(SUM(monto), 0) FROM ingresos WHERE usuario_id = $1) as ingresos_total,
-                (SELECT COALESCE(SUM(monto), 0) FROM gastos WHERE usuario_id = $1) as gastos_total
-        `, [userId]);
+        // Obtener ingresos totales del mes actual
+        const inicioMes = new Date();
+        inicioMes.setDate(1);
+        inicioMes.setHours(0, 0, 0, 0);
         
-        const data = result.rows[0];
-        data.balance_mes = data.ingresos_mes - data.gastos_mes;
-        data.balance_total = data.ingresos_total - data.gastos_total;
+        const { data: ingresos, error: errorIngresos } = await supabase
+            .from('ingresos')
+            .select('monto')
+            .eq('usuario_id', userId)
+            .gte('fecha', inicioMes.toISOString());
+        
+        const { data: gastos, error: errorGastos } = await supabase
+            .from('gastos')
+            .select('monto')
+            .eq('usuario_id', userId)
+            .gte('fecha', inicioMes.toISOString());
+        
+        if (errorIngresos || errorGastos) {
+            throw new Error(errorIngresos?.message || errorGastos?.message);
+        }
+        
+        const totalIngresos = ingresos.reduce((sum, item) => sum + parseFloat(item.monto), 0);
+        const totalGastos = gastos.reduce((sum, item) => sum + parseFloat(item.monto), 0);
+        const balance = totalIngresos - totalGastos;
         
         res.json({
             success: true,
-            data: data
+            data: {
+                totalIngresos,
+                totalGastos,
+                balance,
+                mes: inicioMes.getMonth() + 1,
+                año: inicioMes.getFullYear()
+            }
         });
     } catch (error) {
         console.error('Error obteniendo dashboard:', error);
         res.status(500).json({
             success: false,
-            message: 'Error obteniendo dashboard',
-            error: error.message
-        });
-    }
-});
-
-// Estadísticas financieras para el dashboard
-app.get('/api/financial/stats', async (req, res) => {
-    try {
-        const authHeader = req.headers['authorization'];
-        if (!authHeader || !authHeader.startsWith('Bearer ')) {
-            return res.status(401).json({
-                success: false,
-                message: 'Token no proporcionado'
-            });
-        }
-
-        const userEmail = authHeader.substring(7);
-        
-        // Obtener ID del usuario
-        const userResult = await pool.query('SELECT id FROM usuarios WHERE email = $1', [userEmail]);
-        if (userResult.rowCount === 0) {
-            return res.status(401).json({
-                success: false,
-                message: 'Usuario no encontrado'
-            });
-        }
-        
-        const userId = userResult.rows[0].id;
-        
-        // Obtener estadísticas del mes actual
-        const result = await pool.query(`
-            SELECT 
-                (SELECT COALESCE(SUM(monto), 0) FROM ingresos WHERE usuario_id = $1 AND DATE_TRUNC('month', fecha) = DATE_TRUNC('month', CURRENT_DATE)) as income,
-                (SELECT COALESCE(SUM(monto), 0) FROM gastos WHERE usuario_id = $1 AND DATE_TRUNC('month', fecha) = DATE_TRUNC('month', CURRENT_DATE)) as expenses,
-                (SELECT COALESCE(SUM(monto), 0) FROM ingresos WHERE usuario_id = $1) as total_income,
-                (SELECT COALESCE(SUM(monto), 0) FROM gastos WHERE usuario_id = $1) as total_expenses
-        `, [userId]);
-        
-        const data = result.rows[0];
-        data.balance = data.total_income - data.total_expenses;
-        data.savings = data.income - data.expenses;
-        
-        res.json(data);
-    } catch (error) {
-        console.error('Error obteniendo estadísticas:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error obteniendo estadísticas',
-            error: error.message
-        });
-    }
-});
-
-// Transacciones recientes
-app.get('/api/transactions/recent', async (req, res) => {
-    try {
-        const authHeader = req.headers['authorization'];
-        if (!authHeader || !authHeader.startsWith('Bearer ')) {
-            return res.status(401).json({
-                success: false,
-                message: 'Token no proporcionado'
-            });
-        }
-
-        const userEmail = authHeader.substring(7);
-        const limit = parseInt(req.query.limit) || 10;
-        
-        // Obtener ID del usuario
-        const userResult = await pool.query('SELECT id FROM usuarios WHERE email = $1', [userEmail]);
-        if (userResult.rowCount === 0) {
-            return res.status(401).json({
-                success: false,
-                message: 'Usuario no encontrado'
-            });
-        }
-        
-        const userId = userResult.rows[0].id;
-        
-        // Obtener transacciones recientes (combinando ingresos y gastos)
-        const result = await pool.query(`
-            (SELECT id, descripcion, categoria, monto, fecha, 'ingreso' as tipo 
-             FROM ingresos WHERE usuario_id = $1)
-            UNION ALL
-            (SELECT id, descripcion, categoria, monto, fecha, 'gasto' as tipo 
-             FROM gastos WHERE usuario_id = $1)
-            ORDER BY fecha DESC
-            LIMIT $2
-        `, [userId, limit]);
-        
-        res.json(result.rows);
-    } catch (error) {
-        console.error('Error obteniendo transacciones:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error obteniendo transacciones',
-            error: error.message
-        });
-    }
-});
-
-// Datos para gráficos del dashboard
-app.get('/api/analytics/charts', async (req, res) => {
-    try {
-        const authHeader = req.headers['authorization'];
-        if (!authHeader || !authHeader.startsWith('Bearer ')) {
-            return res.status(401).json({
-                success: false,
-                message: 'Token no proporcionado'
-            });
-        }
-
-        const userEmail = authHeader.substring(7);
-        
-        // Obtener ID del usuario
-        const userResult = await pool.query('SELECT id FROM usuarios WHERE email = $1', [userEmail]);
-        if (userResult.rowCount === 0) {
-            return res.status(401).json({
-                success: false,
-                message: 'Usuario no encontrado'
-            });
-        }
-        
-        const userId = userResult.rows[0].id;
-        
-        // Datos para gráfico mensual (últimos 6 meses)
-        const monthlyResult = await pool.query(`
-            SELECT 
-                TO_CHAR(DATE_TRUNC('month', CURRENT_DATE - INTERVAL '5 months' + INTERVAL '1 month' * generate_series(0, 5)), 'Mon') as month,
-                COALESCE(SUM(CASE WHEN tipo = 'ingreso' THEN monto ELSE 0 END), 0) as income,
-                COALESCE(SUM(CASE WHEN tipo = 'gasto' THEN monto ELSE 0 END), 0) as expenses
-            FROM (
-                SELECT monto, fecha, 'ingreso' as tipo FROM ingresos WHERE usuario_id = $1
-                UNION ALL
-                SELECT monto, fecha, 'gasto' as tipo FROM gastos WHERE usuario_id = $1
-            ) t
-            WHERE fecha >= DATE_TRUNC('month', CURRENT_DATE - INTERVAL '5 months')
-            GROUP BY DATE_TRUNC('month', fecha)
-            ORDER BY DATE_TRUNC('month', fecha)
-        `, [userId]);
-        
-        // Datos para gráfico de categorías (gastos)
-        const categoryResult = await pool.query(`
-            SELECT categoria, SUM(monto) as amount
-            FROM gastos 
-            WHERE usuario_id = $1 
-            AND DATE_TRUNC('month', fecha) = DATE_TRUNC('month', CURRENT_DATE)
-            GROUP BY categoria
-            ORDER BY amount DESC
-            LIMIT 5
-        `, [userId]);
-        
-        // Datos para gráfico de tendencia (balance mensual)
-        const trendResult = await pool.query(`
-            SELECT 
-                TO_CHAR(DATE_TRUNC('month', fecha), 'Mon') as month,
-                SUM(CASE WHEN tipo = 'ingreso' THEN monto ELSE -monto END) as balance
-            FROM (
-                SELECT monto, fecha, 'ingreso' as tipo FROM ingresos WHERE usuario_id = $1
-                UNION ALL
-                SELECT monto, fecha, 'gasto' as tipo FROM gastos WHERE usuario_id = $1
-            ) t
-            WHERE fecha >= DATE_TRUNC('month', CURRENT_DATE - INTERVAL '5 months')
-            GROUP BY DATE_TRUNC('month', fecha)
-            ORDER BY DATE_TRUNC('month', fecha)
-        `, [userId]);
-        
-        res.json({
-            monthlyFlow: {
-                labels: monthlyResult.rows.map(row => row.month),
-                income: monthlyResult.rows.map(row => parseFloat(row.income)),
-                expenses: monthlyResult.rows.map(row => parseFloat(row.expenses))
-            },
-            categoryBreakdown: {
-                labels: categoryResult.rows.map(row => row.categoria),
-                amounts: categoryResult.rows.map(row => parseFloat(row.amount))
-            },
-            yearlyTrend: {
-                labels: trendResult.rows.map(row => row.month),
-                balance: trendResult.rows.map(row => parseFloat(row.balance))
-            }
-        });
-    } catch (error) {
-        console.error('Error obteniendo datos de gráficos:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error obteniendo datos de gráficos',
+            message: 'Error obteniendo datos del dashboard',
             error: error.message
         });
     }
 });
 
 // ================================
-// 🚨 MANEJO DE ERRORES
+// 🚫 MANEJO DE RUTAS NO ENCONTRADAS
 // ================================
 
-// Ruta no encontrada
 app.use('*', (req, res) => {
+    const availableEndpoints = [
+        'GET /',
+        'GET /health',
+        'GET /api/usuarios',
+        'POST /api/usuarios',
+        'GET /api/ingresos/:userId',
+        'POST /api/ingresos',
+        'GET /api/gastos/:userId',
+        'POST /api/gastos',
+        'GET /api/dashboard/:userId'
+    ];
+    
     res.status(404).json({
         success: false,
         message: `Ruta ${req.originalUrl} no encontrada`,
-        availableEndpoints: [
-            'GET /',
-            'GET /health',
-            'GET /api/usuarios',
-            'POST /api/usuarios',
-            'GET /api/ingresos/:userId',
-            'POST /api/ingresos',
-            'GET /api/gastos/:userId',
-            'POST /api/gastos',
-            'GET /api/dashboard/:userId'
-        ]
-    });
-});
-
-// Error handler global
-app.use((error, req, res, next) => {
-    console.error('❌ Error global:', error);
-    res.status(500).json({
-        success: false,
-        message: 'Error interno del servidor',
-        error: process.env.NODE_ENV === 'development' ? error.message : 'Error interno'
+        availableEndpoints
     });
 });
 
@@ -1182,13 +447,10 @@ app.use((error, req, res, next) => {
 // ================================
 
 app.listen(PORT, () => {
-    console.log('\n🚀 ====================================');
-    console.log(`   API GESTIÓN PRESUPUESTO PERSONAL`);
-    console.log('🚀 ====================================');
-    console.log(`📡 Servidor: http://localhost:${PORT}`);
-    console.log(`🗄️ Base de datos: PostgreSQL (${process.env.DB_HOST}:${process.env.DB_PORT})`);
-    console.log(`🌍 Entorno: ${process.env.NODE_ENV}`);
-    console.log('🚀 ====================================\n');
+    console.log(`✅ Servidor ejecutándose en puerto ${PORT}`);
+    console.log(`🌐 Supabase URL: ${supabaseUrl}`);
+    console.log(`📡 API disponible en: http://localhost:${PORT}`);
 });
 
+// Exportar para Vercel
 module.exports = app;
