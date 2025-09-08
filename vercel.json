@@ -9,14 +9,10 @@
   "rewrites": [
     {
       "source": "/",
-      "destination": "/index.html"
+      "destination": "/public/index.html"
     },
     {
       "source": "/api/(.*)",
-      "destination": "/api/backend"
-    },
-    {
-      "source": "/auth/(.*)",
       "destination": "/api/backend"
     },
     {
@@ -25,7 +21,7 @@
     },
     {
       "source": "/(.*)",
-      "destination": "/$1"
+      "destination": "/public/$1"
     }
   ],
   "headers": [
