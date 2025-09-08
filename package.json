@@ -1,15 +1,17 @@
 {
-  "name": "gestion-presupuesto-full",
-  "version": "1.0.0",
-  "description": "Sistema completo de gestión de presupuesto personal - Backend + Frontend",
+  "name": "planificapro-gestion-presupuesto",
+  "version": "2.0.0",
+  "description": "PLANIFICAPRO - Sistema profesional de gestión financiera personal",
   "scripts": {
     "dev": "concurrently --kill-others-on-fail \"pnpm run dev:backend\" \"pnpm run dev:frontend\"",
     "dev:backend": "cd backend && pnpm run dev",
     "dev:frontend": "cd frontend && pnpm run dev",
     "dev:windows": "cmd /c iniciar-desarrollo.bat",
     "install:all": "pnpm install && cd backend && pnpm install && cd ../frontend && pnpm install",
-    "start": "pnpm run dev",
-    "build": "cd backend && pnpm run build && cd ../frontend && pnpm run build"
+    "start": "node backend/server.js",
+    "build": "echo 'Static files ready for deployment'",
+    "vercel-build": "echo 'No build step needed - using static files'",
+    "deploy": "vercel --prod"
   },
   "keywords": [
     "presupuesto",

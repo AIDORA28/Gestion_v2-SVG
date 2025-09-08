@@ -13,6 +13,7 @@ logs/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+lerna-debug.log*
 
 ## Archivos temporales
 *.tmp
@@ -66,3 +67,14 @@ config/local.json
 ## Archivos de prueba con credenciales reales
 *-real.html
 *-production.js
+
+## Vercel
+.vercel
+
+## Archivos de desarrollo local
+debug_*.js
+test_*.js
+check_*.js
+verify_*.js
+*-test.js
+*-debug.js
