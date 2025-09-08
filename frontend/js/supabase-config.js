@@ -2,13 +2,14 @@
 // Este archivo debe estar en /js/supabase-config.js
 
 // ⚠️ IMPORTANTE: Para el frontend necesitas estas variables en Vercel:
-// SUPABASE_URL - La URL pública de tu proyecto Supabase
-// SUPABASE_ANON_KEY - La clave pública (anon key) de Supabase
+// SUPABASE_URL - https://lobyofpwqwqsszugdwnw.supabase.co
+// SUPABASE_ANON_KEY - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxvYnlvZnB3cXdxc3N6dWdkd253Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczMTU4NDIsImV4cCI6MjA3Mjg5MTg0Mn0.QsZ2dIU1iPffRGtHUREQIhQ5--7_w4ANowG0rJ0AtcI
+// SUPABASE_service_role - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxvYnlvZnB3cXdxc3N6dWdkd253Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NzMxNTg0MiwiZXhwIjoyMDcyODkxODQyfQ.J87Bps9KzRg94X1Hax8XjMuTt7krJ_ySfWTbkU0p5_k
 
 // Configuración del cliente Supabase para el frontend
 const supabaseConfig = {
-    url: 'https://tu-proyecto.supabase.co', // ← Cambiar por tu URL real
-    anonKey: 'tu-anon-key-aqui' // ← Cambiar por tu ANON KEY real
+    url: 'https://lobyofpwqwqsszugdwnw.supabase.co', // ← Cambiar por tu URL real
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxvYnlvZnB3cXdxc3N6dWdkd253Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczMTU4NDIsImV4cCI6MjA3Mjg5MTg0Mn0.QsZ2dIU1iPffRGtHUREQIhQ5--7_w4ANowG0rJ0AtcI' // ← Cambiar por tu ANON KEY real
 };
 
 // Inicializar cliente de Supabase (requiere cargar la librería primero)
