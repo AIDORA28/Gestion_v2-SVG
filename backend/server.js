@@ -74,20 +74,31 @@ app.get('/', (req, res) => {
 
 // Health check con Supabase
 app.get('/health', async (req, res) => {
+    console.log('🔍 DEBUG Health Check - Iniciando...');
+    console.log('🔍 Environment Variables Check:');
+    console.log('- SUPABASE_URL:', process.env.SUPABASE_URL ? '✅ Set' : '❌ Missing');
+    console.log('- SUPABASE_SERVICE_ROLE_KEY:', process.env.SUPABASE_SERVICE_ROLE_KEY ? '✅ Set' : '❌ Missing');
+    console.log('- NODE_ENV:', process.env.NODE_ENV);
+    console.log('🔍 Supabase client initialized:', supabase ? '✅ Yes' : '❌ No');
+    
     try {
+        console.log('🔍 Attempting Supabase query...');
         const { data, error, count } = await supabase
             .from('usuarios')
             .select('*', { count: 'exact', head: true });
 
         if (error) {
+            console.log('❌ Supabase error:', error);
             return res.status(500).json({
                 success: false,
                 status: 'unhealthy',
                 database: 'disconnected',
-                error: error.message
+                error: error.message,
+                debug: 'Supabase query failed'
             });
         }
 
+        console.log('✅ Supabase query successful');
         res.json({
             success: true,
             status: 'healthy',
@@ -96,9 +107,11 @@ app.get('/health', async (req, res) => {
             tables: {
                 usuarios: count !== null ? `${count} registros` : 'accesible'
             },
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
+            debug: 'Supabase working correctly'
         });
     } catch (error) {
+        console.log('💥 Unexpected error:', error);
         res.status(500).json({
             success: false,
             status: 'unhealthy',
