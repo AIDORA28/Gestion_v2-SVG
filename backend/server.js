@@ -32,19 +32,59 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 // ================================
-// 🗄️ CONFIGURACIÓN POSTGRESQL
+// 🗄️ CONFIGURACIÓN POSTGRESQL/SUPABASE
 // ================================
 
-const pool = new Pool({
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    database: process.env.DB_NAME,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    max: 20,
-    connectionTimeoutMillis: 2000,
-    idleTimeoutMillis: 30000
-});
+// Detectar entorno y configurar conexión apropiada
+const isDevelopment = process.env.NODE_ENV === 'development';
+const isProduction = process.env.NODE_ENV === 'production';
+
+let poolConfig;
+
+if (isProduction && process.env.SUPABASE_URL) {
+    // 🌐 PRODUCCIÓN: Usar Supabase
+    console.log('🌐 Configurando conexión a Supabase...');
+    
+    // Extraer datos de la URL de Supabase
+    const supabaseUrl = new URL(process.env.SUPABASE_URL);
+    const host = supabaseUrl.hostname;
+    const port = parseInt(supabaseUrl.port) || 5432;
+    
+    poolConfig = {
+        host: host,
+        port: port,
+        database: 'postgres', // Base de datos por defecto en Supabase
+        user: 'postgres',     // Usuario por defecto en Supabase
+        password: process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY,
+        ssl: {
+            rejectUnauthorized: false
+        },
+        max: 20,
+        connectionTimeoutMillis: 10000,
+        idleTimeoutMillis: 30000
+    };
+    
+    console.log(`📡 Supabase Host: ${host}:${port}`);
+    
+} else {
+    // 🏠 DESARROLLO: Usar PostgreSQL local
+    console.log('🏠 Configurando conexión a PostgreSQL local...');
+    
+    poolConfig = {
+        host: process.env.DB_HOST || '127.0.0.1',
+        port: process.env.DB_PORT || 5434,
+        database: process.env.DB_NAME || 'gestion_presupuesto',
+        user: process.env.DB_USER || 'postgres',
+        password: process.env.DB_PASSWORD || 'sa123',
+        max: 20,
+        connectionTimeoutMillis: 2000,
+        idleTimeoutMillis: 30000
+    };
+    
+    console.log(`🏠 Local DB: ${poolConfig.host}:${poolConfig.port}`);
+}
+
+const pool = new Pool(poolConfig);
 
 // Test conexión
 pool.connect((err, client, release) => {
