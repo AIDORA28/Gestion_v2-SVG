@@ -18,7 +18,7 @@
     "finanzas",
     "nodejs",
     "express",
-    "postgresql"
+    "supabase"
   ],
   "author": "AIDORA28",
   "license": "MIT",
@@ -34,8 +34,7 @@
     "express": "^4.18.2",
     "helmet": "^7.0.0",
     "jsonwebtoken": "^9.0.2",
-    "morgan": "^1.10.0",
-    "pg": "^8.16.3"
+    "morgan": "^1.10.0"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
