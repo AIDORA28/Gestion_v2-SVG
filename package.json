@@ -22,6 +22,9 @@
   ],
   "author": "AIDORA28",
   "license": "MIT",
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.2",
     "bcrypt": "^6.0.0",
