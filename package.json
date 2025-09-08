@@ -9,7 +9,7 @@
     "dev:windows": "cmd /c iniciar-desarrollo.bat",
     "install:all": "pnpm install && cd backend && pnpm install && cd ../frontend && pnpm install",
     "start": "node backend/server.js",
-    "build": "echo 'Static files ready for deployment'",
+    "build": "echo 'Production build ready - v2.0.1'",
     "vercel-build": "echo 'No build step needed - using static files'",
     "deploy": "vercel --prod"
   },
