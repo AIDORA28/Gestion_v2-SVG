@@ -37,14 +37,18 @@ app.use(express.urlencoded({ extended: true }));
 
 // Detectar entorno y configurar conexión apropiada
 const isDevelopment = process.env.NODE_ENV === 'development';
-const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1';
-const isVercel = process.env.VERCEL === '1';
+const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1' || process.env.VERCEL_ENV;
+const isVercel = process.env.VERCEL === '1' || process.env.VERCEL_ENV;
+
+// Forzar Supabase si tenemos SUPABASE_URL (indicador de producción)
+const useSupabase = process.env.SUPABASE_URL && process.env.SUPABASE_URL.includes('supabase.co');
 
 let poolConfig;
 
-if ((isProduction || isVercel) && process.env.SUPABASE_URL) {
-    // 🌐 PRODUCCIÓN/VERCEL: Usar Supabase
-    console.log('🌐 Configurando conexión a Supabase (Vercel)...');
+if (useSupabase) {
+    // 🌐 SUPABASE: Conexión a base de datos en la nube
+    console.log('🌐 Configurando conexión a Supabase...');
+    console.log('🔗 SUPABASE_URL:', process.env.SUPABASE_URL ? 'Configurada ✅' : 'No encontrada ❌');
     
     // Extraer datos de la URL de Supabase
     const supabaseUrl = new URL(process.env.SUPABASE_URL);
@@ -56,16 +60,17 @@ if ((isProduction || isVercel) && process.env.SUPABASE_URL) {
         port: port,
         database: 'postgres', // Base de datos por defecto en Supabase
         user: 'postgres',     // Usuario por defecto en Supabase
-        password: process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY,
+        password: process.env.SUPABASE_SERVICE_ROLE_KEY,
         ssl: {
             rejectUnauthorized: false
         },
         max: 20,
-        connectionTimeoutMillis: 10000,
+        connectionTimeoutMillis: 15000,
         idleTimeoutMillis: 30000
     };
     
     console.log(`📡 Supabase Host: ${host}:${port}`);
+    console.log(`🔑 Service Role Key: ${process.env.SUPABASE_SERVICE_ROLE_KEY ? 'Configurada ✅' : 'No encontrada ❌'}`);
     
 } else {
     // 🏠 DESARROLLO: Usar PostgreSQL local
@@ -100,7 +105,45 @@ pool.connect((err, client, release) => {
 });
 
 // ================================
-// 📊 RUTAS PRINCIPALES
+// � DEBUG ENDPOINTS
+// ================================
+
+// Endpoint para verificar configuración
+app.get('/debug', async (req, res) => {
+    try {
+        res.json({
+            success: true,
+            environment: {
+                NODE_ENV: process.env.NODE_ENV,
+                VERCEL: process.env.VERCEL,
+                VERCEL_ENV: process.env.VERCEL_ENV,
+                useSupabase: useSupabase,
+                isProduction: isProduction,
+                isVercel: isVercel
+            },
+            supabase: {
+                url: process.env.SUPABASE_URL ? 'Configurada ✅' : 'No encontrada ❌',
+                serviceKey: process.env.SUPABASE_SERVICE_ROLE_KEY ? 'Configurada ✅' : 'No encontrada ❌',
+                anonKey: process.env.SUPABASE_ANON_KEY ? 'Configurada ✅' : 'No encontrada ❌'
+            },
+            database: {
+                host: poolConfig.host,
+                port: poolConfig.port,
+                database: poolConfig.database,
+                user: poolConfig.user,
+                ssl: poolConfig.ssl ? 'Habilitado' : 'Deshabilitado'
+            }
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+// ================================
+// �📊 RUTAS PRINCIPALES
 // ================================
 
 // 🏠 Ruta de estado
