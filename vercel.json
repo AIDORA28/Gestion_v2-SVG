@@ -1,0 +1,50 @@
+{
+  "version": 2,
+  "name": "planificapro-gestion-presupuesto",
+  "functions": {
+    "api/backend.js": {
+      "runtime": "@vercel/node@3.2.0"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/public/landing.html"
+    },
+    {
+      "source": "/admin",
+      "destination": "/public/index.html"
+    },
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/backend.js"
+    },
+    {
+      "source": "/health",
+      "destination": "/api/backend.js"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/public/$1"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        }
+      ]
+    }
+  ]
+}

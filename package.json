@@ -1,0 +1,34 @@
+{
+  "name": "planificapro-gestion-presupuesto",
+  "version": "2.0.1",
+  "description": "PLANIFICAPRO - Sistema profesional de gestión financiera personal",
+  "scripts": {
+    "start": "node backend/server.js",
+    "build": "echo 'Production build ready - v2.0.1'",
+    "vercel-build": "echo 'No build step needed - using static files'",
+    "deploy": "vercel --prod"
+  },
+  "keywords": [
+    "presupuesto",
+    "finanzas",
+    "nodejs",
+    "express",
+    "supabase"
+  ],
+  "author": "AIDORA28",
+  "license": "MIT",
+  "engines": {
+    "node": "20.x"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.57.2",
+    "bcrypt": "^6.0.0",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.2",
+    "express": "^4.18.2",
+    "helmet": "^7.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.0"
+  }
+}

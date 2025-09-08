@@ -1,0 +1,5 @@
+# Lockfile regeneration trigger
+# This file forces Vercel to regenerate dependencies from package.json
+# Date: $(Get-Date)
+
+pg dependency REMOVED completely from package.json

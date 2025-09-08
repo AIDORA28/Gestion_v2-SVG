@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💰 Gestión de Ingresos - Sistema Financiero</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <style>
+        /* Módulo de Ingresos con Animaciones Profesionales (Grok-Style) */
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: 
+                linear-gradient(135deg, 
+                    #f0f9ff 0%, 
+                    #e0f7fa 25%, 
+                    #b2ebf2 50%, 
+                    #80deea 75%, 
+                    #4dd0e1 100%
+                );
+            background-size: 400% 400%;
+            animation: incomeGradient 20s ease infinite;
+            background-attachment: fixed;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            color: #1e293b;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        @keyframes incomeGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Ondas de prosperidad financiera */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(ellipse at 30% 20%, rgba(16, 185, 129, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 80%, rgba(34, 197, 94, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 20% 70%, rgba(59, 130, 246, 0.05) 0%, transparent 50%);
+            animation: prosperityWaves 22s ease-in-out infinite;
+            pointer-events: none;
+            z-index: -3;
+        }
+
+        @keyframes prosperityWaves {
+            0%, 100% {
+                transform: translateX(0) translateY(0) scale(1);
+                opacity: 0.5;
+            }
+            33% {
+                transform: translateX(-15px) translateY(-25px) scale(1.1);
+                opacity: 0.7;
+            }
+            66% {
+                transform: translateX(25px) translateY(20px) scale(0.9);
+                opacity: 0.4;
+            }
+        }
+
+        /* Partículas de dinero flotantes */
+        .money-particles {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .money-particle {
+            position: absolute;
+            font-size: 12px;
+            color: rgba(16, 185, 129, 0.6);
+            animation: floatMoney 18s ease-in-out infinite;
+        }
+
+        .money-particle:nth-child(1) {
+            top: 15%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .money-particle:nth-child(2) {
+            top: 60%;
+            left: 85%;
+            animation-delay: -6s;
+        }
+
+        .money-particle:nth-child(3) {
+            top: 40%;
+            left: 75%;
+            animation-delay: -12s;
+        }
+
+        @keyframes floatMoney {
+            0%, 100% {
+                transform: translateX(0) translateY(0) rotate(0deg) scale(0.8);
+                opacity: 0.3;
+            }
+            50% {
+                transform: translateX(20px) translateY(-30px) rotate(180deg) scale(1.2);
+                opacity: 0.8;
+            }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 
+                0 4px 20px rgba(15, 23, 42, 0.08),
+                0 1px 3px rgba(15, 23, 42, 0.1);
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: slideInDown 0.8s ease-out;
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header h1 {
+            color: #1e293b;
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .back-btn {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: rgba(59, 130, 246, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 
+                0 4px 20px rgba(15, 23, 42, 0.06),
+                0 1px 3px rgba(15, 23, 42, 0.1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: slideInUp 0.6s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 
+                0 12px 40px rgba(15, 23, 42, 0.12),
+                0 4px 12px rgba(15, 23, 42, 0.1);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #10b981, #34d399, #6ee7b7);
+            border-radius: 16px 16px 0 0;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #059669;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #6b7280;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 2rem;
+        }
+
+        .income-form {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 
+                0 4px 20px rgba(15, 23, 42, 0.08),
+                0 1px 3px rgba(15, 23, 42, 0.1);
+            animation: slideInLeft 0.8s ease-out 0.3s both;
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .income-list {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 
+                0 4px 20px rgba(15, 23, 42, 0.08),
+                0 1px 3px rgba(15, 23, 42, 0.1);
+            animation: slideInRight 0.8s ease-out 0.4s both;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #374151;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid rgba(209, 213, 219, 0.8);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #1f2937;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+            background: rgba(255, 255, 255, 1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+        }
+
+        .income-item {
+            background: rgba(248, 250, 252, 0.8);
+            border: 1px solid rgba(226, 232, 240, 0.6);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            animation: fadeInScale 0.5s ease-out;
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .income-item:hover {
+            background: rgba(240, 253, 244, 0.9);
+            border-color: rgba(16, 185, 129, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .income-amount {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #059669;
+        }
+
+        .income-category {
+            background: rgba(16, 185, 129, 0.1);
+            color: #065f46;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 0.5rem;
+        }
+
+        .income-date {
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        .delete-btn {
+            background: rgba(239, 68, 68, 0.1);
+            color: #dc2626;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            float: right;
+        }
+
+        .delete-btn:hover {
+            background: rgba(239, 68, 68, 0.2);
+            transform: scale(1.05);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+
+        /* Accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Partículas de dinero flotantes -->
+    <div class="money-particles">
+        <div class="money-particle">💰</div>
+        <div class="money-particle">💵</div>
+        <div class="money-particle">💸</div>
+    </div>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>💰 Gestión de Ingresos</h1>
+            <a href="dashboard.html" class="back-btn">← Volver al Dashboard</a>
+        </div>
+
+        <!-- Estadísticas de Ingresos -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="totalIncomes">$0</div>
+                <div class="stat-label">Total de Ingresos</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="monthlyIncomes">$0</div>
+                <div class="stat-label">Ingresos del Mes</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="averageIncome">$0</div>
+                <div class="stat-label">Promedio por Ingreso</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="incomeCount">0</div>
+                <div class="stat-label">Cantidad de Registros</div>
+            </div>
+        </div>
+
+        <!-- Contenido Principal -->
+        <div class="main-content">
+            <!-- Formulario de Ingresos -->
+            <div class="income-form">
+                <h2 style="color: #1e293b; margin-bottom: 1.5rem; font-size: 1.5rem;">📝 Registrar Nuevo Ingreso</h2>
+                
+                <form id="incomeForm">
+                    <div class="form-group">
+                        <label for="amount">💵 Monto</label>
+                        <input type="number" id="amount" name="amount" step="0.01" placeholder="0.00" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="category">🏷️ Categoría</label>
+                        <select id="category" name="category" required>
+                            <option value="">Seleccionar categoría...</option>
+                            <option value="salario">💼 Salario</option>
+                            <option value="freelance">💻 Freelance</option>
+                            <option value="negocio">🏪 Negocio Propio</option>
+                            <option value="inversion">📈 Inversiones</option>
+                            <option value="alquiler">🏠 Alquiler</option>
+                            <option value="venta">🛒 Venta</option>
+                            <option value="bono">🎁 Bonos/Premios</option>
+                            <option value="otro">🔄 Otros</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">📋 Descripción</label>
+                        <textarea id="description" name="description" rows="3" placeholder="Descripción del ingreso (opcional)"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="date">📅 Fecha</label>
+                        <input type="date" id="date" name="date" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="isRecurring">🔄 ¿Es recurrente?</label>
+                        <select id="isRecurring" name="isRecurring">
+                            <option value="no">No</option>
+                            <option value="semanal">Semanal</option>
+                            <option value="quincenal">Quincenal</option>
+                            <option value="mensual">Mensual</option>
+                            <option value="anual">Anual</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn-primary">
+                        ➕ Registrar Ingreso
+                    </button>
+                </form>
+            </div>
+
+            <!-- Lista de Ingresos -->
+            <div class="income-list">
+                <h2 style="color: #1e293b; margin-bottom: 1.5rem; font-size: 1.5rem;">📊 Historial de Ingresos</h2>
+                
+                <div id="incomesList">
+                    <div class="income-item">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <div class="income-amount">$2,500.00</div>
+                                <div>Salario mensual - Empresa ABC</div>
+                                <div class="income-category">💼 Salario</div>
+                                <div class="income-date">📅 01/09/2025</div>
+                            </div>
+                            <button class="delete-btn" onclick="deleteIncome(0)">🗑️ Eliminar</button>
+                        </div>
+                    </div>
+
+                    <div class="income-item">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <div class="income-amount">$800.00</div>
+                                <div>Proyecto de desarrollo web</div>
+                                <div class="income-category">💻 Freelance</div>
+                                <div class="income-date">📅 28/08/2025</div>
+                            </div>
+                            <button class="delete-btn" onclick="deleteIncome(1)">🗑️ Eliminar</button>
+                        </div>
+                    </div>
+
+                    <div class="income-item">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <div class="income-amount">$150.00</div>
+                                <div>Dividendos de acciones</div>
+                                <div class="income-category">📈 Inversiones</div>
+                                <div class="income-date">📅 25/08/2025</div>
+                            </div>
+                            <button class="delete-btn" onclick="deleteIncome(2)">🗑️ Eliminar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Supabase CDN -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+    <script>
+        // Sistema de Gestión de Ingresos con Supabase
+        class IncomeManager {
+            constructor() {
+                this.incomes = [];
+                this.filteredIncomes = [];
+                this.sortBy = 'newest';
+                this.filterCategory = '';
+                this.monthlyGoal = 5000;
+                this.supabaseClient = null;
+                
+                this.init();
+            }
+
+            async init() {
+                await this.initSupabase();
+                await this.loadIncomes();
+                this.filteredIncomes = [...this.incomes];
+                this.initializeEventListeners();
+                this.updateStats();
+                this.setCurrentDate();
+            }
+
+            async initSupabase() {
+                try {
+                    const SUPABASE_URL = 'https://trlbsfktusefvpheoudn.supabase.co';
+                    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRybGJzZmt0dXNlZnZwaGVvdWRuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzU4NDA4OTEsImV4cCI6MjA1MTQxNjg5MX0.AQNJmhLOXtNEZCAZEWDrNGpUd9i8dGcXcE_HKsb8rNc';
+                    
+                    this.supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                    console.log('✅ Supabase inicializado correctamente');
+                } catch (error) {
+                    console.error('❌ Error al inicializar Supabase:', error);
+                    this.showErrorMessage('Error de conexión con la base de datos');
+                }
+            }
+
+            async loadIncomes() {
+                try {
+                    if (!this.supabaseClient) {
+                        throw new Error('Supabase no está inicializado');
+                    }
+
+                    const { data, error } = await this.supabaseClient
+                        .from('ingresos')
+                        .select('*')
+                        .order('created_at', { ascending: false });
+
+                    if (error) {
+                        if (error.code === 'PGRST116') {
+                            console.warn('⚠️ Tabla "ingresos" no existe. Usando datos locales temporalmente.');
+                            this.showWarningMessage('La tabla de ingresos no existe en la base de datos. Se requiere configuración.');
+                            this.loadFromLocalStorage();
+                            return;
+                        }
+                        throw error;
+                    }
+
+                    // Convertir formato de Supabase al formato interno
+                    this.incomes = data.map(income => ({
+                        id: income.id,
+                        amount: parseFloat(income.monto),
+                        category: this.mapCategory(income.categoria),
+                        description: income.descripcion,
+                        date: income.fecha,
+                        isRecurring: income.es_recurrente || 'no',
+                        createdAt: new Date(income.created_at)
+                    }));
+
+                    console.log(`✅ Cargados ${this.incomes.length} ingresos desde Supabase`);
+
+                } catch (error) {
+                    console.error('❌ Error al cargar ingresos:', error);
+                    this.showErrorMessage('Error al cargar los ingresos desde la base de datos');
+                    this.loadFromLocalStorage();
+                }
+            }
+
+            loadFromLocalStorage() {
+                const saved = localStorage.getItem('financial_incomes');
+                this.incomes = saved ? JSON.parse(saved) : [];
+                console.log(`⚡ Cargados ${this.incomes.length} ingresos desde localStorage (respaldo)`);
+            }
+
+            mapCategory(supabaseCategory) {
+                const categoryMap = {
+                    'Salario': 'salario',
+                    'Freelance': 'freelance', 
+                    'Inversiones': 'inversion',
+                    'Otros': 'otros'
+                };
+                return categoryMap[supabaseCategory] || 'otros';
+            }
+
+            showErrorMessage(message) {
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert alert-error';
+                alertDiv.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: #fee2e2;
+                    border: 1px solid #fecaca;
+                    color: #dc2626;
+                    padding: 12px 16px;
+                    border-radius: 8px;
+                    z-index: 1000;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                `;
+                alertDiv.innerHTML = `❌ ${message}`;
+                document.body.appendChild(alertDiv);
+                
+                setTimeout(() => {
+                    if (document.body.contains(alertDiv)) {
+                        document.body.removeChild(alertDiv);
+                    }
+                }, 5000);
+            }
+
+            showWarningMessage(message) {
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert alert-warning';
+                alertDiv.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: #fef3c7;
+                    border: 1px solid #fde68a;
+                    color: #d97706;
+                    padding: 12px 16px;
+                    border-radius: 8px;
+                    z-index: 1000;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                `;
+                alertDiv.innerHTML = `⚠️ ${message}`;
+                document.body.appendChild(alertDiv);
+                
+                setTimeout(() => {
+                    if (document.body.contains(alertDiv)) {
+                        document.body.removeChild(alertDiv);
+                    }
+                }, 7000);
+            }
+
+            async saveIncomes() {
+                // Mantener respaldo local
+                localStorage.setItem('financial_incomes', JSON.stringify(this.incomes));
+                
+                // No intentar guardar en Supabase si no hay conexión o la tabla no existe
+                if (!this.supabaseClient) {
+                    console.warn('⚠️ Guardado solo en localStorage - Supabase no disponible');
+                    return;
+                }
+            }
+
+            setCurrentDate() {
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('date').value = today;
+            }
+
+            initializeEventListeners() {
+                document.getElementById('incomeForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.addIncome();
+                });
+            }
+
+            async addIncome() {
+                const form = document.getElementById('incomeForm');
+                const formData = new FormData(form);
+                
+                const newIncome = {
+                    id: Date.now(),
+                    amount: parseFloat(formData.get('amount')),
+                    category: formData.get('category'),
+                    description: formData.get('description'),
+                    date: formData.get('date'),
+                    isRecurring: formData.get('isRecurring'),
+                    createdAt: new Date()
+                };
+
+                // Agregar a la lista local inmediatamente
+                this.incomes.unshift(newIncome);
+                this.renderIncomes();
+                this.updateStats();
+
+                // Intentar guardar en Supabase
+                await this.saveToSupabase(newIncome);
+                
+                // Guardar respaldo local
+                this.saveIncomes();
+                
+                form.reset();
+                this.setCurrentDate();
+
+                // Animación de éxito
+                this.showSuccessMessage();
+            }
+
+            async saveToSupabase(newIncome) {
+                try {
+                    if (!this.supabaseClient) {
+                        console.warn('⚠️ Supabase no disponible - guardado solo local');
+                        return;
+                    }
+
+                    // Mapear categorías al formato de Supabase
+                    const categoryMap = {
+                        'salario': 'Salario',
+                        'freelance': 'Freelance',
+                        'inversion': 'Inversiones',
+                        'otros': 'Otros'
+                    };
+
+                    const supabaseIncome = {
+                        descripcion: newIncome.description,
+                        monto: newIncome.amount,
+                        fecha: newIncome.date,
+                        categoria: categoryMap[newIncome.category] || 'Otros',
+                        es_recurrente: newIncome.isRecurring
+                    };
+
+                    const { data, error } = await this.supabaseClient
+                        .from('ingresos')
+                        .insert([supabaseIncome]);
+
+                    if (error) {
+                        if (error.code === 'PGRST116') {
+                            console.warn('⚠️ Tabla "ingresos" no existe - guardado solo local');
+                            return;
+                        }
+                        throw error;
+                    }
+
+                    console.log('✅ Ingreso guardado en Supabase:', data);
+                } catch (error) {
+                    console.error('❌ Error al guardar en Supabase:', error);
+                    this.showErrorMessage('Error al sincronizar con la base de datos');
+                }
+            }
+
+            async deleteIncome(id) {
+                if (confirm('¿Estás seguro de que quieres eliminar este ingreso?')) {
+                    // Eliminar de la lista local
+                    this.incomes = this.incomes.filter(income => income.id !== id);
+                    this.renderIncomes();
+                    this.updateStats();
+                    
+                    // Intentar eliminar de Supabase
+                    await this.deleteFromSupabase(id);
+                    
+                    // Guardar cambios localmente
+                    this.saveIncomes();
+                }
+            }
+
+            async deleteFromSupabase(id) {
+                try {
+                    if (!this.supabaseClient) {
+                        console.warn('⚠️ Supabase no disponible - eliminación solo local');
+                        return;
+                    }
+
+                    const { error } = await this.supabaseClient
+                        .from('ingresos')
+                        .delete()
+                        .eq('id', id);
+
+                    if (error) {
+                        if (error.code === 'PGRST116') {
+                            console.warn('⚠️ Tabla "ingresos" no existe - eliminación solo local');
+                            return;
+                        }
+                        throw error;
+                    }
+
+                    console.log('✅ Ingreso eliminado de Supabase');
+                } catch (error) {
+                    console.error('❌ Error al eliminar de Supabase:', error);
+                    this.showErrorMessage('Error al sincronizar eliminación con la base de datos');
+                }
+            }
+
+            renderIncomes() {
+                const container = document.getElementById('incomesList');
+                
+                if (this.incomes.length === 0) {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: 2rem; color: #6b7280;">
+                            <div style="font-size: 3rem; margin-bottom: 1rem;">💰</div>
+                            <div>No tienes ingresos registrados aún.</div>
+                            <div style="margin-top: 0.5rem; font-size: 0.9rem;">¡Registra tu primer ingreso!</div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const categoryIcons = {
+                    'salario': '💼',
+                    'freelance': '💻',
+                    'negocio': '🏪',
+                    'inversion': '📈',
+                    'alquiler': '🏠',
+                    'venta': '🛒',
+                    'bono': '🎁',
+                    'otro': '🔄'
+                };
+
+                const categoryNames = {
+                    'salario': 'Salario',
+                    'freelance': 'Freelance',
+                    'negocio': 'Negocio Propio',
+                    'inversion': 'Inversiones',
+                    'alquiler': 'Alquiler',
+                    'venta': 'Venta',
+                    'bono': 'Bonos/Premios',
+                    'otro': 'Otros'
+                };
+
+                container.innerHTML = this.incomes.map(income => `
+                    <div class="income-item">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <div class="income-amount">$${income.amount.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                                <div>${income.description || 'Sin descripción'}</div>
+                                <div class="income-category">${categoryIcons[income.category]} ${categoryNames[income.category]}</div>
+                                <div class="income-date">📅 ${new Date(income.date).toLocaleDateString('es-ES')}</div>
+                                ${income.isRecurring !== 'no' ? `<div style="color: #059669; font-size: 0.8rem; margin-top: 0.25rem;">🔄 Recurrente: ${income.isRecurring}</div>` : ''}
+                            </div>
+                            <button class="delete-btn" onclick="incomeManager.deleteIncome(${income.id})">🗑️ Eliminar</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            updateStats() {
+                const currentMonth = new Date().getMonth();
+                const currentYear = new Date().getFullYear();
+                
+                const totalAmount = this.incomes.reduce((sum, income) => sum + income.amount, 0);
+                const monthlyIncomes = this.incomes.filter(income => {
+                    const incomeDate = new Date(income.date);
+                    return incomeDate.getMonth() === currentMonth && incomeDate.getFullYear() === currentYear;
+                });
+                const monthlyAmount = monthlyIncomes.reduce((sum, income) => sum + income.amount, 0);
+                const averageAmount = this.incomes.length > 0 ? totalAmount / this.incomes.length : 0;
+
+                document.getElementById('totalIncomes').textContent = `$${totalAmount.toLocaleString('es-ES', { minimumFractionDigits: 2 })}`;
+                document.getElementById('monthlyIncomes').textContent = `$${monthlyAmount.toLocaleString('es-ES', { minimumFractionDigits: 2 })}`;
+                document.getElementById('averageIncome').textContent = `$${averageAmount.toLocaleString('es-ES', { minimumFractionDigits: 2 })}`;
+                document.getElementById('incomeCount').textContent = this.incomes.length;
+            }
+
+            showSuccessMessage() {
+                const message = document.createElement('div');
+                message.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: linear-gradient(135deg, #10b981, #059669);
+                    color: white;
+                    padding: 1rem 2rem;
+                    border-radius: 12px;
+                    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+                    z-index: 1000;
+                    animation: slideInRight 0.3s ease-out;
+                `;
+                message.innerHTML = '✅ Ingreso registrado correctamente';
+                document.body.appendChild(message);
+
+                setTimeout(() => {
+                    message.style.animation = 'slideOutRight 0.3s ease-in forwards';
+                    setTimeout(() => message.remove(), 300);
+                }, 3000);
+            }
+        }
+
+        // Inicializar el gestor de ingresos
+        const incomeManager = new IncomeManager();
+        incomeManager.renderIncomes();
+
+        // Función global para compatibilidad
+        function deleteIncome(id) {
+            incomeManager.deleteIncome(id);
+        }
+
+        // Animaciones adicionales para elementos dinámicos
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInRight {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+
+            @keyframes slideOutRight {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
