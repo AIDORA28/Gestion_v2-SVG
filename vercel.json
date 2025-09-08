@@ -7,6 +7,9 @@
     },
     "api/public-health.js": {
       "runtime": "@vercel/node@3.0.0"
+    },
+    "api/supabase-health.js": {
+      "runtime": "@vercel/node@3.0.0"
     }
   },
   "build": {
@@ -22,6 +25,10 @@
     {
       "source": "/status",
       "destination": "/api/public-health"
+    },
+    {
+      "source": "/supabase-test",
+      "destination": "/api/supabase-health"
     },
     {
       "source": "/api/(.*)",
