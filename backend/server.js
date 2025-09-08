@@ -37,13 +37,14 @@ app.use(express.urlencoded({ extended: true }));
 
 // Detectar entorno y configurar conexión apropiada
 const isDevelopment = process.env.NODE_ENV === 'development';
-const isProduction = process.env.NODE_ENV === 'production';
+const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1';
+const isVercel = process.env.VERCEL === '1';
 
 let poolConfig;
 
-if (isProduction && process.env.SUPABASE_URL) {
-    // 🌐 PRODUCCIÓN: Usar Supabase
-    console.log('🌐 Configurando conexión a Supabase...');
+if ((isProduction || isVercel) && process.env.SUPABASE_URL) {
+    // 🌐 PRODUCCIÓN/VERCEL: Usar Supabase
+    console.log('🌐 Configurando conexión a Supabase (Vercel)...');
     
     // Extraer datos de la URL de Supabase
     const supabaseUrl = new URL(process.env.SUPABASE_URL);
