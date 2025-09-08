@@ -1,11 +1,12 @@
 # 📝 Archivos y directorios a ignorar
 
-## Variables de entorno (IMPORTANTE)
+## Variables de entorno (IMPORTANTE - NUNCA COMMITEAR)
 .env
 .env.local
 .env.production
 .env.test
 *.env
+!.env.production.example
 
 ## Logs del sistema
 logs/
@@ -55,18 +56,10 @@ test-results/
 coverage/
 .nyc_output/
 
-## Archivos de configuración local
-config/local.js
-config/local.json
-
 ## Backups
 *.backup
 *.bak
 *.orig
-
-## Archivos de prueba con credenciales reales
-*-real.html
-*-production.js
 
 ## Vercel
 .vercel
@@ -78,3 +71,11 @@ check_*.js
 verify_*.js
 *-test.js
 *-debug.js
+
+## Archivos con credenciales reales
+*-real.*
+*-production.js
+*-production.json
+
+## Configuración local específica
+config/local-override.*
