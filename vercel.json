@@ -3,12 +3,12 @@
   "name": "planificapro-gestion-presupuesto",
   "functions": {
     "api/backend.js": {
-      "runtime": "@vercel/node@3.1.5"
+      "runtime": "@vercel/node@3.2.0"
     }
   },
   "build": {
     "env": {
-      "NODE_VERSION": "20"
+      "NODE_VERSION": "22"
     }
   },
   "rewrites": [
