@@ -13,16 +13,23 @@ const { createClient } = require('@supabase/supabase-js');
 const app = express();
 
 // ================================
-// 🔧 CONFIGURACIÓN MIDDLEWARE
+// 🛡️ CONFIGURACIÓN SEGURIDAD
 // ================================
 
-app.use(helmet());
-app.use(cors({
-    origin: '*',
+// Configuración de CORS para permitir requests del frontend
+const corsOptions = {
+    origin: [
+        'https://planificapro.vercel.app',
+        'http://localhost:3000',
+        'http://localhost:8080',
+        'http://127.0.0.1:8080'
+    ],
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-}));
+    optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions));
+app.use(helmet());
 app.use(morgan('combined'));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
@@ -31,45 +38,641 @@ app.use(express.urlencoded({ extended: true }));
 // 🗄️ CONFIGURACIÓN SUPABASE
 // ================================
 
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const supabaseUrl = 'https://qicrqokabgfkrwlxkxcm.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFpY3Jxb2thYmdma3J3bHhreGNtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY5Nzc3MzEsImV4cCI6MjA1MjU1MzczMX0.O52LLT9u5L2nqpxlhGaMAv4DdYN9O3yxl_qRhqb_Yw4';
 
-console.log('🔍 Environment check:');
-console.log('- SUPABASE_URL:', !!supabaseUrl);
-console.log('- SUPABASE_SERVICE_ROLE_KEY:', !!supabaseServiceKey);
+const supabase = createClient(supabaseUrl, supabaseKey);
 
-if (!supabaseUrl || !supabaseServiceKey) {
-    console.error('❌ Variables de Supabase no configuradas');
-    console.error('SUPABASE_URL:', supabaseUrl ? '✅' : '❌');
-    console.error('SUPABASE_SERVICE_ROLE_KEY:', supabaseServiceKey ? '✅' : '❌');
-}
-
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
-console.log('✅ Cliente Supabase inicializado para Vercel Function');
+// Test de conexión
+supabase
+    .from('usuarios')
+    .select('count', { count: 'exact', head: true })
+    .then(({ count, error }) => {
+        if (error) {
+            console.error('❌ Error conectando a Supabase:', error.message);
+        } else {
+            console.log(`✅ Conexión exitosa a Supabase. Usuarios registrados: ${count}`);
+        }
+    });
 
 // ================================
-// 📊 RUTAS PRINCIPALES
+// 🏠 RUTA PRINCIPAL
 // ================================
 
-// 🏠 Ruta de inicio
 app.get('/', (req, res) => {
     res.json({
         success: true,
-        message: '🚀 PLANIFICAPRO - API Gestión Presupuesto Personal',
-        version: '2.0.1',
-        status: 'running',
-        timestamp: new Date().toISOString(),
-        database: 'Supabase (Cloud)',
-        environment: 'Vercel Function',
+        message: '🚀 API PLANIFICAPRO v2 - Funcionando correctamente',
         endpoints: {
-            usuarios: '/api/usuarios',
-            ingresos: '/api/ingresos',
-            gastos: '/api/gastos',
-            dashboard: '/api/dashboard',
-            health: '/health'
-        }
+            auth: ['/api/login', '/api/register'],
+            usuarios: ['/api/usuarios'],
+            ingresos: ['/api/ingresos', '/api/ingresos/:id'],
+            gastos: ['/api/gastos', '/api/gastos/:id'],
+            dashboard: ['/api/dashboard/:userId'],
+            sunat: ['/api/sunat/tipo-cambio', '/api/sunat/comprobante/:serie/:numero']
+        },
+        timestamp: new Date().toISOString()
     });
 });
+
+// Health check para Vercel
+app.get('/api/health', (req, res) => {
+    res.json({ status: 'OK', timestamp: new Date().toISOString() });
+});
+
+// ================================
+// 🔐 RUTAS DE AUTENTICACIÓN
+// ================================
+
+// Login
+app.post('/api/login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        
+        if (!email || !password) {
+            return res.status(400).json({
+                success: false,
+                message: 'Email y contraseña son requeridos'
+            });
+        }
+        
+        // Buscar usuario por email
+        const { data: usuarios, error: searchError } = await supabase
+            .from('usuarios')
+            .select('*')
+            .eq('email', email.toLowerCase().trim())
+            .limit(1);
+        
+        if (searchError) throw searchError;
+        
+        if (!usuarios || usuarios.length === 0) {
+            return res.status(401).json({
+                success: false,
+                message: 'Credenciales inválidas'
+            });
+        }
+        
+        const usuario = usuarios[0];
+        
+        // Verificar contraseña
+        const passwordMatch = await bcrypt.compare(password, usuario.password);
+        
+        if (!passwordMatch) {
+            return res.status(401).json({
+                success: false,
+                message: 'Credenciales inválidas'
+            });
+        }
+        
+        // Login exitoso - remover password del response
+        const { password: _, ...userSafe } = usuario;
+        
+        res.json({
+            success: true,
+            message: `¡Bienvenido ${usuario.nombre}!`,
+            data: {
+                user: userSafe
+            }
+        });
+        
+    } catch (error) {
+        console.error('Error en login:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error interno del servidor',
+            error: error.message
+        });
+    }
+});
+
+// Register
+app.post('/api/register', async (req, res) => {
+    try {
+        const { nombre, email, password, telefono, estado_civil } = req.body;
+        
+        // Validaciones básicas
+        if (!nombre || !email || !password) {
+            return res.status(400).json({
+                success: false,
+                message: 'Nombre, email y contraseña son requeridos'
+            });
+        }
+        
+        if (password.length < 6) {
+            return res.status(400).json({
+                success: false,
+                message: 'La contraseña debe tener al menos 6 caracteres'
+            });
+        }
+        
+        // Verificar si el usuario ya existe
+        const { data: existingUser, error: checkError } = await supabase
+            .from('usuarios')
+            .select('id')
+            .eq('email', email.toLowerCase().trim())
+            .limit(1);
+        
+        if (checkError) throw checkError;
+        
+        if (existingUser && existingUser.length > 0) {
+            return res.status(409).json({
+                success: false,
+                message: 'Este email ya está registrado'
+            });
+        }
+        
+        // Encriptar contraseña
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+        
+        // Crear usuario
+        const { data: newUser, error: insertError } = await supabase
+            .from('usuarios')
+            .insert([{
+                nombre: nombre.trim(),
+                email: email.toLowerCase().trim(),
+                password: hashedPassword,
+                telefono: telefono?.trim() || null,
+                estado_civil: estado_civil || null,
+                token: email.toLowerCase().trim() // Para compatibilidad
+            }])
+            .select('id, nombre, email, telefono, estado_civil, created_at')
+            .single();
+        
+        if (insertError) throw insertError;
+        
+        res.status(201).json({
+            success: true,
+            message: 'Usuario registrado exitosamente',
+            data: {
+                user: newUser
+            }
+        });
+        
+    } catch (error) {
+        console.error('Error en registro:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error interno del servidor',
+            error: error.message
+        });
+    }
+});
+
+// ================================
+// 👤 RUTAS USUARIOS
+// ================================
+
+app.get('/api/usuarios', async (req, res) => {
+    try {
+        const { data: usuarios, error } = await supabase
+            .from('usuarios')
+            .select('id, nombre, email, telefono, estado_civil, created_at')
+            .order('created_at', { ascending: false });
+        
+        if (error) throw error;
+        
+        res.json({
+            success: true,
+            data: usuarios
+        });
+    } catch (error) {
+        console.error('Error obteniendo usuarios:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error obteniendo usuarios',
+            error: error.message
+        });
+    }
+});
+
+// ================================
+// 💰 RUTAS INGRESOS
+// ================================
+
+// Obtener ingresos por usuario
+app.get('/api/ingresos', async (req, res) => {
+    try {
+        const { userId } = req.query;
+        
+        if (!userId) {
+            return res.status(400).json({
+                success: false,
+                message: 'userId es requerido'
+            });
+        }
+
+        const { data: ingresos, error } = await supabase
+            .from('ingresos')
+            .select('*')
+            .eq('usuario_id', userId)
+            .order('fecha', { ascending: false });
+        
+        if (error) throw error;
+        
+        res.json({
+            success: true,
+            data: ingresos || []
+        });
+    } catch (error) {
+        console.error('Error obteniendo ingresos:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error obteniendo ingresos',
+            error: error.message
+        });
+    }
+});
+
+// Crear nuevo ingreso
+app.post('/api/ingresos', async (req, res) => {
+    try {
+        const { usuario_id, descripcion, monto, fecha, categoria, tipo } = req.body;
+        
+        // Validaciones
+        if (!usuario_id || !descripcion || !monto || !fecha) {
+            return res.status(400).json({
+                success: false,
+                message: 'Todos los campos son requeridos'
+            });
+        }
+
+        const { data: nuevoIngreso, error } = await supabase
+            .from('ingresos')
+            .insert([{
+                usuario_id,
+                descripcion,
+                monto: parseFloat(monto),
+                fecha,
+                categoria: categoria || 'general',
+                tipo: tipo || 'único'
+            }])
+            .select()
+            .single();
+        
+        if (error) throw error;
+        
+        res.status(201).json({
+            success: true,
+            message: 'Ingreso creado exitosamente',
+            data: nuevoIngreso
+        });
+    } catch (error) {
+        console.error('Error creando ingreso:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error creando ingreso',
+            error: error.message
+        });
+    }
+});
+
+// Actualizar ingreso
+app.put('/api/ingresos/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { descripcion, monto, fecha, categoria, tipo } = req.body;
+        
+        const { data: ingresoActualizado, error } = await supabase
+            .from('ingresos')
+            .update({
+                descripcion,
+                monto: parseFloat(monto),
+                fecha,
+                categoria,
+                tipo
+            })
+            .eq('id', id)
+            .select()
+            .single();
+        
+        if (error) throw error;
+        
+        res.json({
+            success: true,
+            message: 'Ingreso actualizado exitosamente',
+            data: ingresoActualizado
+        });
+    } catch (error) {
+        console.error('Error actualizando ingreso:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error actualizando ingreso',
+            error: error.message
+        });
+    }
+});
+
+// Eliminar ingreso
+app.delete('/api/ingresos/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        const { error } = await supabase
+            .from('ingresos')
+            .delete()
+            .eq('id', id);
+        
+        if (error) throw error;
+        
+        res.json({
+            success: true,
+            message: 'Ingreso eliminado exitosamente'
+        });
+    } catch (error) {
+        console.error('Error eliminando ingreso:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error eliminando ingreso',
+            error: error.message
+        });
+    }
+});
+
+// ================================
+// 💳 RUTAS GASTOS
+// ================================
+
+// Obtener gastos por usuario
+app.get('/api/gastos', async (req, res) => {
+    try {
+        const { userId } = req.query;
+        
+        if (!userId) {
+            return res.status(400).json({
+                success: false,
+                message: 'userId es requerido'
+            });
+        }
+
+        const { data: gastos, error } = await supabase
+            .from('gastos')
+            .select('*')
+            .eq('usuario_id', userId)
+            .order('fecha', { ascending: false });
+        
+        if (error) throw error;
+        
+        res.json({
+            success: true,
+            data: gastos || []
+        });
+    } catch (error) {
+        console.error('Error obteniendo gastos:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error obteniendo gastos',
+            error: error.message
+        });
+    }
+});
+
+// Crear nuevo gasto
+app.post('/api/gastos', async (req, res) => {
+    try {
+        const { usuario_id, descripcion, monto, fecha, categoria, tipo } = req.body;
+        
+        // Validaciones
+        if (!usuario_id || !descripcion || !monto || !fecha) {
+            return res.status(400).json({
+                success: false,
+                message: 'Todos los campos son requeridos'
+            });
+        }
+
+        const { data: nuevoGasto, error } = await supabase
+            .from('gastos')
+            .insert([{
+                usuario_id,
+                descripcion,
+                monto: parseFloat(monto),
+                fecha,
+                categoria: categoria || 'general',
+                tipo: tipo || 'único'
+            }])
+            .select()
+            .single();
+        
+        if (error) throw error;
+        
+        res.status(201).json({
+            success: true,
+            message: 'Gasto creado exitosamente',
+            data: nuevoGasto
+        });
+    } catch (error) {
+        console.error('Error creando gasto:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error creando gasto',
+            error: error.message
+        });
+    }
+});
+
+// Actualizar gasto
+app.put('/api/gastos/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { descripcion, monto, fecha, categoria, tipo } = req.body;
+        
+        const { data: gastoActualizado, error } = await supabase
+            .from('gastos')
+            .update({
+                descripcion,
+                monto: parseFloat(monto),
+                fecha,
+                categoria,
+                tipo
+            })
+            .eq('id', id)
+            .select()
+            .single();
+        
+        if (error) throw error;
+        
+        res.json({
+            success: true,
+            message: 'Gasto actualizado exitosamente',
+            data: gastoActualizado
+        });
+    } catch (error) {
+        console.error('Error actualizando gasto:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error actualizando gasto',
+            error: error.message
+        });
+    }
+});
+
+// Eliminar gasto
+app.delete('/api/gastos/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        const { error } = await supabase
+            .from('gastos')
+            .delete()
+            .eq('id', id);
+        
+        if (error) throw error;
+        
+        res.json({
+            success: true,
+            message: 'Gasto eliminado exitosamente'
+        });
+    } catch (error) {
+        console.error('Error eliminando gasto:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error eliminando gasto',
+            error: error.message
+        });
+    }
+});
+
+// ================================
+// 📊 RUTAS DASHBOARD
+// ================================
+
+app.get('/api/dashboard/:userId', async (req, res) => {
+    try {
+        const { userId } = req.params;
+        
+        // Obtener usuario
+        const { data: usuario, error: userError } = await supabase
+            .from('usuarios')
+            .select('id, nombre, email')
+            .eq('id', userId)
+            .single();
+        
+        if (userError) throw userError;
+        if (!usuario) {
+            return res.status(404).json({
+                success: false,
+                message: 'Usuario no encontrado'
+            });
+        }
+
+        // Obtener ingresos
+        const { data: ingresos, error: ingresosError } = await supabase
+            .from('ingresos')
+            .select('*')
+            .eq('usuario_id', userId);
+        
+        if (ingresosError) throw ingresosError;
+
+        // Obtener gastos
+        const { data: gastos, error: gastosError } = await supabase
+            .from('gastos')
+            .select('*')
+            .eq('usuario_id', userId);
+        
+        if (gastosError) throw gastosError;
+
+        // Calcular totales
+        const totalIngresos = (ingresos || []).reduce((sum, item) => sum + parseFloat(item.monto || 0), 0);
+        const totalGastos = (gastos || []).reduce((sum, item) => sum + parseFloat(item.monto || 0), 0);
+        const balance = totalIngresos - totalGastos;
+
+        // Obtener fecha actual para filtros del mes
+        const now = new Date();
+        const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+        const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
+        // Filtrar por mes actual
+        const ingresosDelMes = (ingresos || []).filter(item => {
+            const fecha = new Date(item.fecha);
+            return fecha >= firstDayOfMonth && fecha <= lastDayOfMonth;
+        });
+
+        const gastosDelMes = (gastos || []).filter(item => {
+            const fecha = new Date(item.fecha);
+            return fecha >= firstDayOfMonth && fecha <= lastDayOfMonth;
+        });
+
+        const totalIngresosDelMes = ingresosDelMes.reduce((sum, item) => sum + parseFloat(item.monto || 0), 0);
+        const totalGastosDelMes = gastosDelMes.reduce((sum, item) => sum + parseFloat(item.monto || 0), 0);
+        const balanceDelMes = totalIngresosDelMes - totalGastosDelMes;
+
+        // Agrupar gastos por categoría para el gráfico
+        const gastosPorCategoria = {};
+        (gastos || []).forEach(gasto => {
+            const categoria = gasto.categoria || 'Sin categoría';
+            gastosPorCategoria[categoria] = (gastosPorCategoria[categoria] || 0) + parseFloat(gasto.monto || 0);
+        });
+
+        // Obtener transacciones recientes (últimas 10)
+        const transaccionesRecientes = [
+            ...(ingresos || []).map(item => ({ ...item, tipo: 'ingreso' })),
+            ...(gastos || []).map(item => ({ ...item, tipo: 'gasto' }))
+        ]
+        .sort((a, b) => new Date(b.fecha) - new Date(a.fecha))
+        .slice(0, 10);
+
+        res.json({
+            success: true,
+            data: {
+                usuario,
+                resumen: {
+                    totalIngresos,
+                    totalGastos,
+                    balance,
+                    totalIngresosDelMes,
+                    totalGastosDelMes,
+                    balanceDelMes
+                },
+                estadisticas: {
+                    totalTransacciones: (ingresos || []).length + (gastos || []).length,
+                    transaccionesDelMes: ingresosDelMes.length + gastosDelMes.length,
+                    gastosPorCategoria
+                },
+                transaccionesRecientes,
+                ingresos: ingresos || [],
+                gastos: gastos || []
+            }
+        });
+
+    } catch (error) {
+        console.error('Error obteniendo dashboard:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error obteniendo datos del dashboard',
+            error: error.message
+        });
+    }
+});
+
+// ================================
+// 🚨 MIDDLEWARE MANEJO DE ERRORES
+// ================================
+
+// Middleware para rutas no encontradas
+app.use('*', (req, res) => {
+    res.status(404).json({
+        success: false,
+        message: 'Endpoint no encontrado',
+        path: req.originalUrl,
+        method: req.method
+    });
+});
+
+// Middleware global de manejo de errores
+app.use((error, req, res, next) => {
+    console.error('Error no manejado:', error);
+    res.status(500).json({
+        success: false,
+        message: 'Error interno del servidor',
+        error: process.env.NODE_ENV === 'development' ? error.message : 'Error interno'
+    });
+});
+
+// ================================
+// � EXPORT PARA VERCEL
+// ================================
+
+module.exports = app;
 
 // ================================
 // 🔍 HEALTH CHECK AVANZADO
