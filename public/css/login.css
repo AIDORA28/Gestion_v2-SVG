@@ -1,0 +1,140 @@
+/* 
+🎨 ESTILOS PARA LOGIN
+Personalización adicional a Tailwind
+*/
+
+/* ================================
+   🌈 ANIMACIONES Y EFECTOS
+   ================================ */
+
+.login-container {
+    animation: slideInUp 0.8s ease-out;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ================================
+   🔘 BOTONES PERSONALIZADOS
+   ================================ */
+
+.btn-primary {
+    background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+}
+
+/* ================================
+   📱 FORMULARIOS
+   ================================ */
+
+.form-input {
+    transition: all 0.3s ease;
+}
+
+.form-input:focus {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.15);
+}
+
+/* ================================
+   🎯 INDICADORES DE ESTADO
+   ================================ */
+
+.status-online {
+    animation: pulseGreen 2s infinite;
+}
+
+.status-offline {
+    animation: pulseRed 2s infinite;
+}
+
+@keyframes pulseGreen {
+    0%, 100% { background-color: #10b981; }
+    50% { background-color: #34d399; }
+}
+
+@keyframes pulseRed {
+    0%, 100% { background-color: #ef4444; }
+    50% { background-color: #f87171; }
+}
+
+/* ================================
+   🔄 LOADER PERSONALIZADO
+   ================================ */
+
+.custom-loader {
+    border: 3px solid #f3f4f6;
+    border-top: 3px solid #3b82f6;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ================================
+   🎨 GRADIENTES PERSONALIZADOS
+   ================================ */
+
+.gradient-bg {
+    background: linear-gradient(135deg, #1e3a8a 0%, #7c3aed 50%, #312e81 100%);
+}
+
+.card-glass {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* ================================
+   📱 RESPONSIVE PERSONALIZADO
+   ================================ */
+
+@media (max-width: 640px) {
+    .login-container {
+        padding: 1rem;
+    }
+    
+    .form-card {
+        padding: 1.5rem;
+    }
+}
+
+/* ================================
+   🎯 UTILIDADES
+   ================================ */
+
+.text-shadow {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.hover-lift {
+    transition: transform 0.3s ease;
+}
+
+.hover-lift:hover {
+    transform: translateY(-2px);
+}

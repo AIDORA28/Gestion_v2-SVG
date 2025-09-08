@@ -1,0 +1,12 @@
+{
+  "port": 3000,
+  "host": "localhost",
+  "root": "./",
+  "open": "/home-profesional.html",
+  "ignore": "scss,my/templates",
+  "file": "home-profesional.html",
+  "wait": 1000,
+  "mount": [],
+  "logLevel": 2,
+  "middleware": []
+}

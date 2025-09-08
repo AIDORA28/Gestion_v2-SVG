@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PLANIFICAPRO - Tu Gestión Financiera Personal</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Notyf -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    
+    <!-- CSS Personalizado -->
+    <link rel="stylesheet" href="css/landing.css">
+</head>
+
+<body class="bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900 min-h-screen">
+    
+    <!-- Navegación -->
+    <nav class="fixed w-full bg-black/20 backdrop-blur-lg z-50 border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                
+                <!-- Logo -->
+                <div class="flex items-center space-x-3">
+                    <div class="bg-white rounded-lg p-2">
+                        <i data-lucide="trending-up" class="h-6 w-6 text-blue-600"></i>
+                    </div>
+                    <span class="text-white text-xl font-bold">PLANIFICAPRO</span>
+                </div>
+                
+                <!-- Enlaces de navegación -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#inicio" class="text-white hover:text-blue-200 transition-colors">Inicio</a>
+                    <a href="#caracteristicas" class="text-white hover:text-blue-200 transition-colors">Características</a>
+                    <a href="#funcionalidades" class="text-white hover:text-blue-200 transition-colors">Funcionalidades</a>
+                    <a href="#contacto" class="text-white hover:text-blue-200 transition-colors">Contacto</a>
+                </div>
+                
+                <!-- Status y Botones de Auth -->
+                <div class="flex items-center space-x-4">
+                    <!-- Indicador de Estado API -->
+                    <div id="api-status" class="flex items-center space-x-2 bg-black/30 rounded-lg px-3 py-1">
+                        <div class="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
+                        <span class="text-white text-sm">Verificando...</span>
+                    </div>
+                    <a href="login.html" class="text-white hover:text-blue-200 px-4 py-2 rounded-lg border border-white/20 hover:bg-white/10 transition-all duration-300 text-sm font-medium">
+                        <i data-lucide="log-in" class="inline h-4 w-4 mr-2"></i>
+                        Iniciar Sesión
+                    </a>
+                    <a href="register.html" class="bg-white text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-50 transition-all duration-300 text-sm font-medium">
+                        <i data-lucide="user-plus" class="inline h-4 w-4 mr-2"></i>
+                        Registrarse
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="inicio" class="pt-24 pb-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center">
+                <h1 class="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
+                    Controla tu
+                    <span class="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                        Futuro Financiero
+                    </span>
+                </h1>
+                <p class="text-xl md:text-2xl text-blue-200 mb-8 max-w-3xl mx-auto">
+                    La plataforma todo-en-uno para gestionar tus finanzas personales, 
+                    planificar tu presupuesto y alcanzar tus metas económicas.
+                </p>
+                
+                <!-- CTA Buttons -->
+                <div class="space-y-4 sm:space-y-0 sm:space-x-4 sm:flex justify-center">
+                    <a 
+                        href="register.html"
+                        class="inline-block w-full sm:w-auto bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-lg"
+                    >
+                        <i data-lucide="rocket" class="inline h-5 w-5 mr-2"></i>
+                        Comenzar Gratis
+                    </a>
+                    <a 
+                        href="#funcionalidades"
+                        class="inline-block w-full sm:w-auto bg-transparent border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-all duration-300 transform hover:scale-105"
+                    >
+                        <i data-lucide="play-circle" class="inline h-5 w-5 mr-2"></i>
+                        Ver Funcionalidades
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Características -->
+    <section id="caracteristicas" class="py-20 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-white mb-4">
+                    ¿Por qué elegir PLANIFICAPRO?
+                </h2>
+                <p class="text-xl text-blue-200 max-w-3xl mx-auto">
+                    Herramientas poderosas y fáciles de usar para transformar tu relación con el dinero
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Característica 1 -->
+                <div class="bg-white/10 backdrop-blur-lg rounded-xl p-8 border border-white/20 hover:bg-white/20 transition-all duration-300">
+                    <div class="bg-blue-600 rounded-lg p-3 w-fit mb-4">
+                        <i data-lucide="bar-chart-3" class="h-8 w-8 text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-white mb-3">Control Total</h3>
+                    <p class="text-blue-200">
+                        Visualiza todos tus ingresos y gastos en tiempo real con dashboards intuitivos.
+                    </p>
+                </div>
+                
+                <!-- Característica 2 -->
+                <div class="bg-white/10 backdrop-blur-lg rounded-xl p-8 border border-white/20 hover:bg-white/20 transition-all duration-300">
+                    <div class="bg-purple-600 rounded-lg p-3 w-fit mb-4">
+                        <i data-lucide="target" class="h-8 w-8 text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-white mb-3">Metas Claras</h3>
+                    <p class="text-blue-200">
+                        Define objetivos financieros y haz seguimiento automático de tu progreso.
+                    </p>
+                </div>
+                
+                <!-- Característica 3 -->
+                <div class="bg-white/10 backdrop-blur-lg rounded-xl p-8 border border-white/20 hover:bg-white/20 transition-all duration-300">
+                    <div class="bg-green-600 rounded-lg p-3 w-fit mb-4">
+                        <i data-lucide="shield-check" class="h-8 w-8 text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-white mb-3">100% Seguro</h3>
+                    <p class="text-blue-200">
+                        Tus datos están protegidos con la más alta seguridad y encriptación.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Funcionalidades del Sistema -->
+    <section id="funcionalidades" class="py-20 px-4 sm:px-6 lg:px-8 bg-black/20">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-white mb-4">
+                    Tu Sistema de Gestión Financiera
+                </h2>
+                <p class="text-xl text-blue-200">
+                    Todas las herramientas que necesitas para controlar tus finanzas en un solo lugar
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- Ingresos -->
+                <div class="bg-green-600/20 backdrop-blur-lg rounded-xl p-6 border border-green-500/30 hover:bg-green-600/30 transition-all duration-300">
+                    <div class="bg-green-600 rounded-lg p-3 w-fit mb-4 mx-auto">
+                        <i data-lucide="trending-up" class="h-8 w-8 text-white"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-white mb-2 text-center">Ingresos</h3>
+                    <p class="text-green-200 text-sm text-center">
+                        Registra y categoriza todos tus ingresos mensuales
+                    </p>
+                </div>
+                
+                <!-- Gastos -->
+                <div class="bg-red-600/20 backdrop-blur-lg rounded-xl p-6 border border-red-500/30 hover:bg-red-600/30 transition-all duration-300">
+                    <div class="bg-red-600 rounded-lg p-3 w-fit mb-4 mx-auto">
+                        <i data-lucide="trending-down" class="h-8 w-8 text-white"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-white mb-2 text-center">Gastos</h3>
+                    <p class="text-red-200 text-sm text-center">
+                        Controla y organiza todos tus gastos por categorías
+                    </p>
+                </div>
+                
+                <!-- Créditos -->
+                <div class="bg-blue-600/20 backdrop-blur-lg rounded-xl p-6 border border-blue-500/30 hover:bg-blue-600/30 transition-all duration-300">
+                    <div class="bg-blue-600 rounded-lg p-3 w-fit mb-4 mx-auto">
+                        <i data-lucide="credit-card" class="h-8 w-8 text-white"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-white mb-2 text-center">Créditos</h3>
+                    <p class="text-blue-200 text-sm text-center">
+                        Gestiona tus préstamos y líneas de crédito
+                    </p>
+                </div>
+                
+                <!-- Reportes -->
+                <div class="bg-purple-600/20 backdrop-blur-lg rounded-xl p-6 border border-purple-500/30 hover:bg-purple-600/30 transition-all duration-300">
+                    <div class="bg-purple-600 rounded-lg p-3 w-fit mb-4 mx-auto">
+                        <i data-lucide="bar-chart" class="h-8 w-8 text-white"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-white mb-2 text-center">Reportes</h3>
+                    <p class="text-purple-200 text-sm text-center">
+                        Análisis detallados y gráficos de tu situación financiera
+                    </p>
+                </div>
+                
+                <!-- Sugerencias -->
+                <div class="bg-yellow-600/20 backdrop-blur-lg rounded-xl p-6 border border-yellow-500/30 hover:bg-yellow-600/30 transition-all duration-300">
+                    <div class="bg-yellow-600 rounded-lg p-3 w-fit mb-4 mx-auto">
+                        <i data-lucide="lightbulb" class="h-8 w-8 text-white"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-white mb-2 text-center">Sugerencias</h3>
+                    <p class="text-yellow-200 text-sm text-center">
+                        Recomendaciones inteligentes para optimizar tus finanzas
+                    </p>
+                </div>
+                
+                <!-- Tributario -->
+                <div class="bg-indigo-600/20 backdrop-blur-lg rounded-xl p-6 border border-indigo-500/30 hover:bg-indigo-600/30 transition-all duration-300">
+                    <div class="bg-indigo-600 rounded-lg p-3 w-fit mb-4 mx-auto">
+                        <i data-lucide="file-text" class="h-8 w-8 text-white"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-white mb-2 text-center">Tributario</h3>
+                    <p class="text-indigo-200 text-sm text-center">
+                        Gestión de impuestos y obligaciones fiscales
+                    </p>
+                </div>
+                
+                <!-- Asistente IA -->
+                <div class="bg-gradient-to-br from-pink-600/20 to-purple-600/20 backdrop-blur-lg rounded-xl p-6 border border-pink-500/30 hover:from-pink-600/30 hover:to-purple-600/30 transition-all duration-300 md:col-span-2">
+                    <div class="bg-gradient-to-r from-pink-600 to-purple-600 rounded-lg p-3 w-fit mb-4 mx-auto">
+                        <i data-lucide="brain-circuit" class="h-8 w-8 text-white"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-white mb-2 text-center">Asistente de IA</h3>
+                    <p class="text-pink-200 text-sm text-center">
+                        Inteligencia artificial que te ayuda a tomar mejores decisiones financieras y responde tus consultas
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Call to Action -->
+            <div class="text-center mt-12">
+                <div class="bg-gradient-to-r from-green-600/20 to-blue-600/20 backdrop-blur-lg rounded-xl p-8 border border-white/10">
+                    <h3 class="text-2xl font-bold text-white mb-4">
+                        🎉 ¡Completamente GRATIS!
+                    </h3>
+                    <p class="text-lg text-blue-200 mb-6">
+                        Todas estas funcionalidades están disponibles sin costo alguno. 
+                        Registrate ahora y comienza a gestionar tus finanzas profesionalmente.
+                    </p>
+                    <a 
+                        href="register.html"
+                        class="inline-block bg-gradient-to-r from-green-600 to-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:from-green-700 hover:to-blue-700 transition-all duration-300 transform hover:scale-105 shadow-lg"
+                    >
+                        <i data-lucide="user-plus" class="inline h-5 w-5 mr-2"></i>
+                        Crear Cuenta Gratis
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contacto -->
+    <section id="contacto" class="py-20 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto text-center">
+            <h2 class="text-4xl font-bold text-white mb-4">
+                ¿Listo para transformar tus finanzas?
+            </h2>
+            <p class="text-xl text-blue-200 mb-8">
+                Únete a miles de usuarios que ya controlan su futuro financiero
+            </p>
+            <a 
+                href="register.html"
+                class="inline-block bg-gradient-to-r from-blue-600 to-purple-600 text-white px-12 py-4 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-lg text-lg"
+            >
+                <i data-lucide="arrow-right" class="inline h-6 w-6 mr-2"></i>
+                Comenzar Ahora
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-black/30 py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="bg-white rounded-lg p-2">
+                            <i data-lucide="trending-up" class="h-6 w-6 text-blue-600"></i>
+                        </div>
+                        <span class="text-white text-xl font-bold">PLANIFICAPRO</span>
+                    </div>
+                    <p class="text-blue-200">
+                        Tu plataforma de confianza para la gestión financiera personal.
+                    </p>
+                </div>
+                
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Producto</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-blue-200 hover:text-white transition-colors">Características</a></li>
+                        <li><a href="#" class="text-blue-200 hover:text-white transition-colors">Precios</a></li>
+                        <li><a href="#" class="text-blue-200 hover:text-white transition-colors">Demo</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Soporte</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-blue-200 hover:text-white transition-colors">Centro de ayuda</a></li>
+                        <li><a href="#" class="text-blue-200 hover:text-white transition-colors">Contacto</a></li>
+                        <li><a href="#" class="text-blue-200 hover:text-white transition-colors">Estado del servicio</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Legal</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-blue-200 hover:text-white transition-colors">Privacidad</a></li>
+                        <li><a href="#" class="text-blue-200 hover:text-white transition-colors">Términos</a></li>
+                        <li><a href="#" class="text-blue-200 hover:text-white transition-colors">Cookies</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2025 PlanificaPRO. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/landing.js"></script>
+</body>
+</html>
