@@ -1,4 +1,28 @@
 {
+  "name": "gestion-presupuesto-full",
+  "version": "1.0.0",
+  "description": "Sistema completo de gestión de presupuesto personal - Backend + Frontend",
+  "scripts": {
+    "dev": "concurrently --kill-others-on-fail \"pnpm run dev:backend\" \"pnpm run dev:frontend\"",
+    "dev:backend": "cd backend && pnpm run dev",
+    "dev:frontend": "cd frontend && pnpm run dev",
+    "dev:windows": "cmd /c iniciar-desarrollo.bat",
+    "install:all": "pnpm install && cd backend && pnpm install && cd ../frontend && pnpm install",
+    "start": "pnpm run dev",
+    "build": "cd backend && pnpm run build && cd ../frontend && pnpm run build"
+  },
+  "keywords": [
+    "presupuesto",
+    "finanzas",
+    "nodejs",
+    "express",
+    "postgresql"
+  ],
+  "author": "AIDORA28",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
   "dependencies": {
     "pg": "^8.16.3"
   }

@@ -73,3 +73,7 @@ Diseño:    CDN sin build process
 ---
 
 **🎯 Sistema profesional listo para producción con stack moderno y eficiente**
+
+
+
+cd "d:\VS Code\Gestion_v1-main\Gestion_v2-SVG" ; pnpm run dev

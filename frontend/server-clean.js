@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
 const app = express();
-const port = 3000;
+const port = 3000
 
 // Servir archivos estáticos desde la carpeta actual
 app.use(express.static(__dirname));
@@ -46,6 +46,17 @@ app.get('/backup-referencias/*.html', (req, res) => {
             res.redirect('/');
         }
     });
+});
+
+// Rutas específicas para nuestras páginas
+app.get('/login.html', (req, res) => {
+    console.log('🔐 Sirviendo login.html');
+    res.sendFile(path.join(__dirname, 'login.html'));
+});
+
+app.get('/register.html', (req, res) => {
+    console.log('📝 Sirviendo register.html');
+    res.sendFile(path.join(__dirname, 'register.html'));
 });
 
 // Para cualquier otro archivo .html, redirigir a landing

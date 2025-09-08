@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-gray-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - PLANIFICAPRO</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Notyf -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    
+    <!-- CSS Personalizado -->
+    <link rel="stylesheet" href="css/dashboard-new.css">
+</head>
+
+<body class="h-full">
+    <!-- Loader -->
+    <div id="loader" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg p-6 flex items-center space-x-3">
+            <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+            <span class="text-gray-700">Cargando dashboard...</span>
+        </div>
+    </div>
+
+    <!-- Overlay for mobile sidebar -->
+    <div id="sidebar-overlay" class="hidden fixed inset-0 z-40 bg-black bg-opacity-50 lg:hidden"></div>
+
+    <!-- Sidebar -->
+    <div id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-xl transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out">
+        <!-- Logo -->
+        <div class="flex items-center justify-center h-16 px-6 bg-gradient-to-r from-blue-600 to-purple-600">
+            <div class="flex items-center space-x-3">
+                <div class="bg-white rounded-lg p-2">
+                    <i data-lucide="trending-up" class="h-6 w-6 text-blue-600"></i>
+                </div>
+                <span class="text-white text-lg font-bold">PLANIFICAPRO</span>
+            </div>
+        </div>
+
+        <!-- User Info -->
+        <div class="p-6 border-b border-gray-200">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                    <span id="user-avatar" class="text-white font-semibold">U</span>
+                </div>
+                <div>
+                    <p id="user-name" class="text-sm font-medium text-gray-900">Usuario</p>
+                    <p id="user-email" class="text-xs text-gray-500">usuario@email.com</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="mt-6">
+            <div class="px-3 space-y-2">
+                <a href="#" onclick="showSection('dashboard')" class="nav-item active flex items-center px-4 py-3 text-base font-medium rounded-xl transition-all duration-200">
+                    <i data-lucide="layout-dashboard" class="mr-4 h-6 w-6"></i>
+                    Dashboard
+                </a>
+                <a href="#" onclick="showSection('ingresos')" class="nav-item flex items-center px-4 py-3 text-base font-medium rounded-xl transition-all duration-200">
+                    <i data-lucide="trending-up" class="mr-4 h-6 w-6"></i>
+                    Ingresos
+                </a>
+                <a href="#" onclick="showSection('gastos')" class="nav-item flex items-center px-4 py-3 text-base font-medium rounded-xl transition-all duration-200">
+                    <i data-lucide="trending-down" class="mr-4 h-6 w-6"></i>
+                    Gastos
+                </a>
+                <a href="#" onclick="showSection('creditos')" class="nav-item flex items-center px-4 py-3 text-base font-medium rounded-xl transition-all duration-200">
+                    <i data-lucide="credit-card" class="mr-4 h-6 w-6"></i>
+                    Créditos
+                </a>
+                <a href="#" onclick="showSection('reportes')" class="nav-item flex items-center px-4 py-3 text-base font-medium rounded-xl transition-all duration-200">
+                    <i data-lucide="bar-chart" class="mr-4 h-6 w-6"></i>
+                    Reportes
+                </a>
+                <a href="#" onclick="showSection('sugerencias')" class="nav-item flex items-center px-4 py-3 text-base font-medium rounded-xl transition-all duration-200">
+                    <i data-lucide="lightbulb" class="mr-4 h-6 w-6"></i>
+                    Sugerencias
+                </a>
+                <a href="#" onclick="showSection('tributario')" class="nav-item flex items-center px-4 py-3 text-base font-medium rounded-xl transition-all duration-200">
+                    <i data-lucide="file-text" class="mr-4 h-6 w-6"></i>
+                    Tributario
+                </a>
+                <a href="#" onclick="showSection('asistente')" class="nav-item flex items-center px-4 py-3 text-base font-medium rounded-xl transition-all duration-200">
+                    <i data-lucide="brain-circuit" class="mr-4 h-6 w-6"></i>
+                    Asistente IA
+                </a>
+            </div>
+        </nav>
+
+        <!-- Bottom Actions -->
+        <div class="absolute bottom-0 w-full p-4 border-t border-gray-200">
+            <button onclick="showUserSettings()" class="w-full flex items-center px-4 py-3 text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-xl transition-all duration-200">
+                <i data-lucide="settings" class="mr-4 h-6 w-6"></i>
+                Configuración
+            </button>
+            <button id="logout-btn" class="w-full flex items-center px-4 py-3 text-base font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-xl transition-all duration-200">
+                <i data-lucide="log-out" class="mr-4 h-6 w-6"></i>
+                Cerrar Sesión
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="lg:pl-64">
+        <!-- Top Bar -->
+        <div class="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
+            <button id="sidebar-toggle" onclick="toggleMobileMenu()" class="lg:hidden p-2.5 text-gray-700 hover:text-gray-900 transition-colors">
+                <i data-lucide="menu" class="h-6 w-6"></i>
+            </button>
+
+            <div class="h-6 w-px bg-gray-200 lg:hidden"></div>
+
+            <div class="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
+                <div class="flex items-center gap-x-4 lg:gap-x-6">
+                    <h1 id="page-title" class="text-lg font-semibold text-gray-900">Dashboard</h1>
+                </div>
+                <div class="flex flex-1 justify-end items-center gap-x-4 lg:gap-x-6">
+                    <!-- Quick Actions -->
+                    <button onclick="showQuickAddModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                        <i data-lucide="plus" class="inline h-4 w-4 mr-1"></i>
+                        Agregar
+                    </button>
+                    
+                    <!-- Notifications -->
+                    <button class="relative p-2 text-gray-400 hover:text-gray-500">
+                        <i data-lucide="bell" class="h-6 w-6"></i>
+                        <span class="absolute -top-1 -right-1 h-4 w-4 bg-red-400 rounded-full text-xs text-white flex items-center justify-center">3</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page Content -->
+        <main class="py-8">
+            <!-- Stats Cards - Siempre visibles -->
+            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mb-8">
+                <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                    <!-- Balance Total -->
+                    <div class="bg-white overflow-hidden shadow-lg rounded-lg border border-gray-200 hover:shadow-xl transition-shadow">
+                        <div class="p-5">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                                        <i data-lucide="wallet" class="h-5 w-5 text-white"></i>
+                                    </div>
+                                </div>
+                                <div class="ml-5 w-0 flex-1">
+                                    <dl>
+                                        <dt class="text-sm font-medium text-gray-500 truncate">Balance Total</dt>
+                                        <dd class="text-2xl font-bold text-gray-900" id="balance-total">$0.00</dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ingresos del Mes -->
+                    <div class="bg-white overflow-hidden shadow-lg rounded-lg border border-gray-200 hover:shadow-xl transition-shadow">
+                        <div class="p-5">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                                        <i data-lucide="trending-up" class="h-5 w-5 text-white"></i>
+                                    </div>
+                                </div>
+                                <div class="ml-5 w-0 flex-1">
+                                    <dl>
+                                        <dt class="text-sm font-medium text-gray-500 truncate">Ingresos del Mes</dt>
+                                        <dd class="text-2xl font-bold text-blue-600" id="ingresos-mes">$0.00</dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gastos del Mes -->
+                    <div class="bg-white overflow-hidden shadow-lg rounded-lg border border-gray-200 hover:shadow-xl transition-shadow">
+                        <div class="p-5">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <div class="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
+                                        <i data-lucide="trending-down" class="h-5 w-5 text-white"></i>
+                                    </div>
+                                </div>
+                                <div class="ml-5 w-0 flex-1">
+                                    <dl>
+                                        <dt class="text-sm font-medium text-gray-500 truncate">Gastos del Mes</dt>
+                                        <dd class="text-2xl font-bold text-red-600" id="gastos-mes">$0.00</dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ahorro Proyectado -->
+                    <div class="bg-white overflow-hidden shadow-lg rounded-lg border border-gray-200 hover:shadow-xl transition-shadow">
+                        <div class="p-5">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <div class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
+                                        <i data-lucide="piggy-bank" class="h-5 w-5 text-white"></i>
+                                    </div>
+                                </div>
+                                <div class="ml-5 w-0 flex-1">
+                                    <dl>
+                                        <dt class="text-sm font-medium text-gray-500 truncate">Ahorro Proyectado</dt>
+                                        <dd class="text-2xl font-bold text-purple-600" id="ahorro-proyectado">$0.00</dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Overview -->
+            <div id="section-dashboard" class="section-content">
+                <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <!-- Charts Row -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                        <!-- Income vs Expenses Chart -->
+                        <div class="bg-white shadow-lg rounded-lg border border-gray-200">
+                            <div class="px-6 py-4 border-b border-gray-200">
+                                <h3 class="text-lg font-medium text-gray-900">Ingresos vs Gastos</h3>
+                                <p class="text-sm text-gray-500">Comparación mensual</p>
+                            </div>
+                            <div class="p-6">
+                                <canvas id="incomeExpensesChart" height="300"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Categories Pie Chart -->
+                        <div class="bg-white shadow-lg rounded-lg border border-gray-200">
+                            <div class="px-6 py-4 border-b border-gray-200">
+                                <h3 class="text-lg font-medium text-gray-900">Gastos por Categoría</h3>
+                                <p class="text-sm text-gray-500">Distribución del mes actual</p>
+                            </div>
+                            <div class="p-6">
+                                <canvas id="categoriesChart" height="300"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Transactions -->
+                    <div class="bg-white shadow-lg rounded-lg border border-gray-200">
+                        <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+                            <div>
+                                <h3 class="text-lg font-medium text-gray-900">Transacciones Recientes</h3>
+                                <p class="text-sm text-gray-500">Últimas 10 transacciones</p>
+                            </div>
+                            <button class="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                                Ver todas
+                            </button>
+                        </div>
+                        <div class="overflow-hidden">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Descripción</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Categoría</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Monto</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recent-transactions" class="bg-white divide-y divide-gray-200">
+                                    <!-- Transactions will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Other Sections (Initially Hidden) -->
+            <div id="section-ingresos" class="section-content hidden">
+                <div class="flex items-center justify-center h-64">
+                    <div class="text-center">
+                        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                        <p class="text-gray-600">Cargando módulo de ingresos...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="section-gastos" class="section-content hidden">
+                <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div class="bg-white rounded-lg shadow-lg border border-gray-200 p-8">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-6">Gestión de Gastos</h2>
+                        <p class="text-gray-600">Módulo de gastos en desarrollo...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="section-creditos" class="section-content hidden">
+                <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div class="bg-white rounded-lg shadow-lg border border-gray-200 p-8">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-6">Gestión de Créditos</h2>
+                        <p class="text-gray-600">Módulo de créditos en desarrollo...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="section-reportes" class="section-content hidden">
+                <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div class="bg-white rounded-lg shadow-lg border border-gray-200 p-8">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-6">Reportes Financieros</h2>
+                        <p class="text-gray-600">Módulo de reportes en desarrollo...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="section-sugerencias" class="section-content hidden">
+                <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div class="bg-white rounded-lg shadow-lg border border-gray-200 p-8">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-6">Sugerencias Inteligentes</h2>
+                        <p class="text-gray-600">Módulo de sugerencias en desarrollo...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="section-tributario" class="section-content hidden">
+                <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div class="bg-white rounded-lg shadow-lg border border-gray-200 p-8">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-6">Gestión Tributaria</h2>
+                        <p class="text-gray-600">Módulo tributario en desarrollo...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="section-asistente" class="section-content hidden">
+                <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div class="bg-white rounded-lg shadow-lg border border-gray-200 p-8">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-6">Asistente de IA</h2>
+                        <p class="text-gray-600">Asistente de inteligencia artificial en desarrollo...</p>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Quick Add Modal -->
+    <div id="quick-add-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl max-w-md w-full mx-4 p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">Agregar Transacción</h3>
+                <button onclick="closeQuickAddModal()" class="text-gray-400 hover:text-gray-600">
+                    <i data-lucide="x" class="h-5 w-5"></i>
+                </button>
+            </div>
+            <div class="space-y-4">
+                <div class="flex space-x-2">
+                    <button class="quick-add-type flex-1 bg-green-100 text-green-700 py-2 px-4 rounded-lg font-medium" data-type="ingreso">
+                        Ingreso
+                    </button>
+                    <button class="quick-add-type flex-1 bg-red-100 text-red-700 py-2 px-4 rounded-lg font-medium" data-type="gasto">
+                        Gasto
+                    </button>
+                </div>
+                <input type="text" placeholder="Descripción" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <input type="number" placeholder="Monto" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <button class="w-full bg-blue-600 text-white py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors">
+                    Agregar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/dashboard-handler.js"></script>
+    <script src="js/ingresos.js"></script>
+    <script>
+        // Inicializar iconos de Lucide cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        });
+
+        // Función de debugging simple para el sidebar móvil
+        function debugToggleSidebar() {
+            console.log('🔧 Debugging sidebar toggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            
+            console.log('📱 Sidebar element:', sidebar);
+            console.log('🌫️ Overlay element:', overlay);
+            
+            if (sidebar && overlay) {
+                // Forzar el toggle usando style directo para asegurar que funcione
+                const currentTransform = window.getComputedStyle(sidebar).transform;
+                console.log('🔍 Current transform:', currentTransform);
+                
+                // Comprobar si está oculto usando transform
+                const isHidden = currentTransform.includes('matrix(1, 0, 0, 1, -256, 0)') || 
+                                sidebar.classList.contains('-translate-x-full');
+                
+                console.log('📍 Current state - hidden:', isHidden);
+                
+                if (isHidden) {
+                    console.log('✅ Showing sidebar');
+                    sidebar.style.transform = 'translateX(0)';
+                    sidebar.classList.remove('-translate-x-full');
+                    overlay.style.display = 'block';
+                    overlay.classList.remove('hidden');
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    console.log('❌ Hiding sidebar');
+                    sidebar.style.transform = 'translateX(-100%)';
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.style.display = 'none';
+                    overlay.classList.add('hidden');
+                    document.body.style.overflow = '';
+                }
+            } else {
+                console.error('❌ Elements not found');
+                // Listar todos los elementos para debug
+                console.log('All elements with sidebar in ID:', document.querySelectorAll('[id*="sidebar"]'));
+            }
+        }
+
+        // Override la función toggleMobileMenu con la versión de debugging
+        window.toggleMobileMenu = debugToggleSidebar;
+
+        // Añadir event listener directo al botón después de que el DOM esté listo
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebarToggle = document.getElementById('sidebar-toggle');
+            if (sidebarToggle) {
+                console.log('🎯 Sidebar toggle button found, adding event listener');
+                sidebarToggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('🔄 Sidebar toggle clicked via event listener');
+                    debugToggleSidebar();
+                });
+            } else {
+                console.error('❌ Sidebar toggle button not found');
+            }
+
+            // También añadir listener al overlay para cerrarlo
+            const overlay = document.getElementById('sidebar-overlay');
+            if (overlay) {
+                overlay.addEventListener('click', function() {
+                    console.log('🌫️ Overlay clicked - closing sidebar');
+                    const sidebar = document.getElementById('sidebar');
+                    if (sidebar) {
+                        sidebar.style.transform = 'translateX(-100%)';
+                        sidebar.classList.add('-translate-x-full');
+                        overlay.style.display = 'none';
+                        overlay.classList.add('hidden');
+                        document.body.style.overflow = '';
+                    }
+                });
+            }
+
+            // Event listener para manejar cambios de tamaño de ventana
+            window.addEventListener('resize', function() {
+                const sidebar = document.getElementById('sidebar');
+                const overlay = document.getElementById('sidebar-overlay');
+                
+                // Si cambiamos a desktop (lg breakpoint = 1024px)
+                if (window.innerWidth >= 1024) {
+                    console.log('📱 → 🖥️ Cambiando a modo desktop');
+                    if (sidebar && overlay) {
+                        // Mostrar sidebar en desktop y ocultar overlay
+                        sidebar.style.transform = '';
+                        sidebar.classList.remove('-translate-x-full');
+                        overlay.style.display = 'none';
+                        overlay.classList.add('hidden');
+                        document.body.style.overflow = '';
+                    }
+                } else {
+                    console.log('🖥️ → 📱 Cambiando a modo móvil');
+                    if (sidebar && overlay) {
+                        // Ocultar sidebar en móvil
+                        sidebar.style.transform = 'translateX(-100%)';
+                        sidebar.classList.add('-translate-x-full');
+                        overlay.style.display = 'none';
+                        overlay.classList.add('hidden');
+                        document.body.style.overflow = '';
+                    }
+                }
+            });
+        });
+    </script>
+
+    <!-- Modal para Agregar/Editar Ingreso -->
+    <div id="ingreso-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 id="ingreso-modal-title" class="text-xl font-semibold text-gray-900">Agregar Nuevo Ingreso</h3>
+                    <button onclick="closeIngresoModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                        <i data-lucide="x" class="h-6 w-6"></i>
+                    </button>
+                </div>
+
+                <form id="ingreso-form" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Descripción -->
+                        <div class="md:col-span-2">
+                            <label for="ingreso-descripcion" class="block text-sm font-medium text-gray-700 mb-2">
+                                Descripción del Ingreso <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" id="ingreso-descripcion" name="descripcion" required
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                                   placeholder="Ej: Salario enero, Proyecto freelance, Venta producto...">
+                        </div>
+
+                        <!-- Monto -->
+                        <div>
+                            <label for="ingreso-monto" class="block text-sm font-medium text-gray-700 mb-2">
+                                Monto <span class="text-red-500">*</span>
+                            </label>
+                            <div class="relative">
+                                <span class="absolute left-3 top-2 text-gray-500">$</span>
+                                <input type="number" id="ingreso-monto" name="monto" required min="0" step="0.01"
+                                       class="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                                       placeholder="0.00">
+                            </div>
+                        </div>
+
+                        <!-- Categoría -->
+                        <div>
+                            <label for="ingreso-categoria" class="block text-sm font-medium text-gray-700 mb-2">
+                                Categoría
+                            </label>
+                            <select id="ingreso-categoria" name="categoria"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                                <option value="">Seleccionar categoría</option>
+                                <option value="salario">💼 Salario</option>
+                                <option value="freelance">💻 Freelance</option>
+                                <option value="negocio">🏢 Negocio</option>
+                                <option value="inversiones">📈 Inversiones</option>
+                                <option value="bonos">🎁 Bonos</option>
+                                <option value="comisiones">💰 Comisiones</option>
+                                <option value="ventas">🛒 Ventas</option>
+                                <option value="otros">📝 Otros</option>
+                            </select>
+                        </div>
+
+                        <!-- Fecha -->
+                        <div>
+                            <label for="ingreso-fecha" class="block text-sm font-medium text-gray-700 mb-2">
+                                Fecha
+                            </label>
+                            <input type="date" id="ingreso-fecha" name="fecha"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+
+                        <!-- Es Recurrente -->
+                        <div>
+                            <label class="flex items-center space-x-3">
+                                <input type="checkbox" id="ingreso-recurrente" name="es_recurrente"
+                                       class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                <span class="text-sm font-medium text-gray-700">Es recurrente</span>
+                            </label>
+                            <p class="text-xs text-gray-500 mt-1">Marca si este ingreso se repite regularmente</p>
+                        </div>
+
+                        <!-- Frecuencia (solo si es recurrente) -->
+                        <div id="frecuencia-container" class="hidden">
+                            <label for="ingreso-frecuencia" class="block text-sm font-medium text-gray-700 mb-2">
+                                Frecuencia (días)
+                            </label>
+                            <select id="ingreso-frecuencia" name="frecuencia_dias"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                                <option value="">Seleccionar frecuencia</option>
+                                <option value="7">🗓️ Semanal (7 días)</option>
+                                <option value="15">📅 Quincenal (15 días)</option>
+                                <option value="30">📆 Mensual (30 días)</option>
+                                <option value="90">🗓️ Trimestral (90 días)</option>
+                                <option value="365">📅 Anual (365 días)</option>
+                            </select>
+                        </div>
+
+                        <!-- Notas -->
+                        <div class="md:col-span-2">
+                            <label for="ingreso-notas" class="block text-sm font-medium text-gray-700 mb-2">
+                                Notas adicionales
+                            </label>
+                            <textarea id="ingreso-notas" name="notas" rows="3"
+                                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                                      placeholder="Información adicional sobre este ingreso..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Botones -->
+                    <div class="flex flex-col sm:flex-row gap-3 pt-6 border-t border-gray-200">
+                        <button type="submit" class="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 px-4 rounded-md hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200">
+                            <i data-lucide="save" class="w-4 h-4 mr-2 inline"></i>
+                            <span id="ingreso-submit-text">Guardar Ingreso</span>
+                        </button>
+                        <button type="button" onclick="closeIngresoModal()" class="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors">
+                            Cancelar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmación para Eliminar -->
+    <div id="delete-ingreso-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl max-w-md w-full mx-4 p-6">
+            <div class="flex items-center justify-center w-12 h-12 mx-auto bg-red-100 rounded-full mb-4">
+                <i data-lucide="trash-2" class="w-6 h-6 text-red-600"></i>
+            </div>
+            <div class="text-center">
+                <h3 class="text-lg font-medium text-gray-900 mb-2">Eliminar Ingreso</h3>
+                <p class="text-sm text-gray-500 mb-6">¿Estás seguro de que deseas eliminar este ingreso? Esta acción no se puede deshacer.</p>
+                <div class="flex space-x-3">
+                    <button id="confirm-delete-ingreso" class="flex-1 bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                        Eliminar
+                    </button>
+                    <button onclick="closeDeleteIngresoModal()" class="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                        Cancelar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
