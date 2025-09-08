@@ -1,8 +1,10 @@
-// Proxy para redirigir todas las requests del API a nuestro servidor backend
-const path = require('path');
+/**
+ * 🚀 VERCEL FUNCTION - API PROXY
+ * Redirige todas las requests del API a nuestro servidor backend
+ */
 
-// Requerir el servidor desde la carpeta backend
-const server = require('../backend/server.js');
+// Importar el servidor Express desde backend
+const app = require('../backend/server.js');
 
 // Exportar el handler para Vercel Functions
-module.exports = server;
+module.exports = app;
