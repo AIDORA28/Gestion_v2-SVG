@@ -23,7 +23,7 @@
   "author": "AIDORA28",
   "license": "MIT",
   "engines": {
-    "node": ">=20.0.0"
+    "node": "22.x"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.2",
