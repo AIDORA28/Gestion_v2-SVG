@@ -96,19 +96,7 @@ function setupEventListeners() {
         });
     }
     
-    // Validación especial para campos financieros
-    const financialInputs = ['ingresos_mensuales', 'gastos_fijos'];
-    financialInputs.forEach(fieldId => {
-        const input = document.getElementById(fieldId);
-        if (input) {
-            input.addEventListener('input', function(e) {
-                let value = parseFloat(e.target.value);
-                if (isNaN(value) || value < 0) {
-                    e.target.value = '';
-                }
-            });
-        }
-    });
+
 }
 
 // ================================
@@ -135,9 +123,7 @@ async function handleRegister(event) {
         numero_hijos: parseInt(formData.get('numero_hijos')) || 0,
         profesion: formData.get('profesion')?.trim() || null,
         nacionalidad: formData.get('nacionalidad') || null,
-        direccion: formData.get('direccion')?.trim() || null,
-        ingresos_mensuales: parseFloat(formData.get('ingresos_mensuales')) || 0.00,
-        gastos_fijos: parseFloat(formData.get('gastos_fijos')) || 0.00
+        direccion: formData.get('direccion')?.trim() || null
     };
     
     // Validación básica

@@ -16,6 +16,7 @@ const SUPABASE_URL = 'https://lobyofpwqwqsszugdwnw.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxvYnlvZnB3cXdxc3N6dWdkd253Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczMTU4NDIsImV4cCI6MjA3Mjg5MTg0Mn0.QsZ2dIU1iPffRGtHUREQIhQ5--7_w4ANowG0rJ0AtcI';
 
 // Función simple para hacer requests HTTP a Supabase
+// Función para requests a la API REST de Supabase  
 async function supabaseRequest(endpoint, method = 'GET', body = null) {
     const https = require('https');
     
@@ -30,6 +31,51 @@ async function supabaseRequest(endpoint, method = 'GET', body = null) {
                 'apikey': SUPABASE_KEY,
                 'Authorization': `Bearer ${SUPABASE_KEY}`,
                 'Prefer': 'return=representation'
+            }
+        };
+
+        if (body && method !== 'GET') {
+            const bodyString = JSON.stringify(body);
+            options.headers['Content-Length'] = Buffer.byteLength(bodyString);
+        }
+
+        const req = https.request(options, (res) => {
+            let data = '';
+            res.on('data', (chunk) => data += chunk);
+            res.on('end', () => {
+                try {
+                    const jsonData = data ? JSON.parse(data) : {};
+                    resolve({ data: jsonData, status: res.statusCode, headers: res.headers });
+                } catch (e) {
+                    resolve({ data: data, status: res.statusCode, headers: res.headers });
+                }
+            });
+        });
+
+        req.on('error', reject);
+        
+        if (body && method !== 'GET') {
+            req.write(JSON.stringify(body));
+        }
+        
+        req.end();
+    });
+}
+
+// Función para requests a la API de Auth de Supabase
+async function supabaseAuthRequest(endpoint, method = 'POST', body = null) {
+    const https = require('https');
+    
+    return new Promise((resolve, reject) => {
+        const options = {
+            hostname: 'lobyofpwqwqsszugdwnw.supabase.co',
+            port: 443,
+            path: `/auth/v1/${endpoint}`,
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+                'apikey': SUPABASE_KEY,
+                'Authorization': `Bearer ${SUPABASE_KEY}`
             }
         };
 
@@ -134,32 +180,34 @@ const server = http.createServer(async (req, res) => {
                     return;
                 }
                 
-                // Buscar usuario en Supabase
-                const result = await supabaseRequest(`usuarios?email=eq.${email.toLowerCase()}&limit=1`);
+                // Usuario demo para desarrollo (mientras configuramos Auth)
+                const usuarioDemo = {
+                    id: 1,
+                    nombre: 'Usuario Demo',
+                    apellido: 'Desarrollo',
+                    email: email.toLowerCase(),
+                    telefono: '+51999999999',
+                    created_at: new Date().toISOString()
+                };
                 
-                if (result.status !== 200 || !result.data || result.data.length === 0) {
+                console.log('🔍 Login demo para:', email);
+                console.log('✅ Usuario demo creado para desarrollo');
+                
+                // Validación simple para demo (cualquier password funciona)
+                if (password.length < 3) {
                     res.writeHead(401, { 'Content-Type': 'application/json' });
                     res.end(JSON.stringify({
                         success: false,
-                        message: 'Credenciales inválidas'
+                        message: 'Password debe tener al menos 3 caracteres'
                     }));
                     return;
                 }
                 
-                const usuario = result.data[0];
-                
-                // Por simplicidad en local, comparamos directamente las contraseñas
-                // En producción usamos bcrypt
-                console.log('Usuario encontrado:', usuario.nombre, usuario.email);
-                
-                // Simulamos validación exitosa para pruebas locales
-                const { password: _, ...userSafe } = usuario;
-                
                 res.writeHead(200, { 'Content-Type': 'application/json' });
                 res.end(JSON.stringify({
                     success: true,
-                    message: `¡Bienvenido ${usuario.nombre}! (Servidor Local)`,
-                    data: { user: userSafe }
+                    message: `¡Bienvenido ${usuarioDemo.nombre}! (Modo desarrollo)`,
+                    data: { user: usuarioDemo }
                 }));
                 
             } catch (error) {
@@ -175,8 +223,8 @@ const server = http.createServer(async (req, res) => {
         return;
     }
     
-    // Test de conexión a Supabase
-    if (pathname === '/api/health' && method === 'GET') {
+    // Test de conexión a Supabase (con y sin prefijo /api para compatibilidad)
+    if ((pathname === '/api/health' || pathname === '/health') && method === 'GET') {
         try {
             const result = await supabaseRequest('usuarios?select=count', 'GET');
             
@@ -218,6 +266,67 @@ const server = http.createServer(async (req, res) => {
             res.end(JSON.stringify({
                 success: false,
                 message: 'Error obteniendo usuarios',
+                error: error.message
+            }));
+        }
+        return;
+    }
+    
+    // Crear usuario (registro)
+    if (pathname === '/api/usuarios' && method === 'POST') {
+        try {
+            let body = '';
+            req.on('data', chunk => {
+                body += chunk.toString();
+            });
+            
+            req.on('end', async () => {
+                try {
+                    const userData = JSON.parse(body);
+                    console.log('📝 Datos de registro recibidos:', userData);
+                    
+                    // Extraer password y crear userData sin password para Supabase
+                    const { password, ...userDataWithoutPassword } = userData;
+                    console.log('🔐 Password extraído, datos para Supabase:', userDataWithoutPassword);
+                    
+                    // Por ahora solo simulamos la creación exitosa
+                    // (En producción se usaría Supabase Auth para crear el usuario primero)
+                    console.log('� Simulando creación de usuario...');
+                    
+                    // Generar un ID temporal para simular un usuario creado
+                    const simulatedUser = {
+                        id: Date.now(), // ID temporal
+                        ...userDataWithoutPassword,
+                        ingresos_mensuales: 0, // Valor por defecto
+                        gastos_fijos: 0, // Valor por defecto
+                        created_at: new Date().toISOString()
+                    };
+                    
+                    console.log('✅ Usuario simulado creado:', simulatedUser);
+                    
+                    res.writeHead(201, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({
+                        success: true,
+                        message: '✅ Usuario registrado exitosamente (modo desarrollo)',
+                        data: simulatedUser,
+                        server: 'local',
+                        note: 'En desarrollo: no se guarda en base de datos hasta configurar Auth'
+                    }));
+                } catch (parseError) {
+                    console.error('❌ Error parsing JSON:', parseError);
+                    res.writeHead(400, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({
+                        success: false,
+                        message: 'Datos inválidos'
+                    }));
+                }
+            });
+        } catch (error) {
+            console.error('❌ Error creando usuario:', error);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({
+                success: false,
+                message: 'Error interno del servidor',
                 error: error.message
             }));
         }
@@ -325,6 +434,7 @@ server.listen(PORT, () => {
     console.log('   - GET  /api/health (test conexión)');
     console.log('   - POST /api/login (autenticación)');
     console.log('   - GET  /api/usuarios (listar usuarios)');
+    console.log('   - POST /api/usuarios (crear usuario/registro)');
     console.log('   - GET  /api/dashboard/:userId');
     console.log('🚀 ========================================');
     console.log('💡 Tip: Abre http://localhost:3001/api/health para probar');

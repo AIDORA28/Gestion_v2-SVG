@@ -10,6 +10,9 @@
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🎯 Login handler cargado');
     
+    // 🔒 SESSION GUARD: Verificar si ya hay sesión activa
+    checkExistingSession();
+    
     // Inicializar Notyf
     window.notyf = new Notyf(window.CONFIG?.NOTYF_CONFIG || {
         duration: 4000,
@@ -246,7 +249,76 @@ function showInputError(input, message) {
 }
 
 // ================================
-// 🔍 UTILIDADES
+// � SESSION GUARD
+// ================================
+
+function checkExistingSession() {
+    console.log('🔒 Verificando sesión existente...');
+    
+    try {
+        // Verificar si hay datos de sesión en localStorage
+        const token = localStorage.getItem('auth_token');
+        const userStr = localStorage.getItem('currentUser');
+        const expiresAt = localStorage.getItem('token_expires_at');
+        
+        if (!token || !userStr) {
+            console.log('❌ No hay sesión activa');
+            return;
+        }
+        
+        // Verificar si el token no ha expirado
+        if (expiresAt) {
+            const timeLeft = parseInt(expiresAt) - Date.now();
+            if (timeLeft <= 0) {
+                console.log('⏰ Token expirado, limpiando sesión');
+                clearExpiredSession();
+                return;
+            }
+        }
+        
+        // Validar datos del usuario
+        const userData = JSON.parse(userStr);
+        if (!userData.nombre || !userData.email) {
+            console.log('❌ Datos de usuario inválidos');
+            clearExpiredSession();
+            return;
+        }
+        
+        // ✅ Sesión válida encontrada - redirigir al dashboard
+        console.log('✅ Sesión activa encontrada:', userData.nombre);
+        
+        // Mostrar mensaje informativo
+        if (window.notyf) {
+            window.notyf.info(`Ya tienes una sesión activa como ${userData.nombre}`);
+        }
+        
+        // Mostrar loader mientras redirige
+        setFormLoading(true);
+        
+        // Redireccionar al dashboard después de un momento
+        setTimeout(() => {
+            console.log('🔄 Redirigiendo al dashboard...');
+            window.location.href = 'dashboard.html';
+        }, 1500);
+        
+    } catch (error) {
+        console.error('💥 Error verificando sesión:', error);
+        clearExpiredSession();
+    }
+}
+
+function clearExpiredSession() {
+    console.log('🧹 Limpiando sesión expirada/inválida');
+    
+    // Limpiar todos los datos de sesión
+    localStorage.removeItem('currentUser');
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('supabase_access_token');
+    localStorage.removeItem('token_expires_at');
+}
+
+// ================================
+// �🔍 UTILIDADES
 // ================================
 
 function isValidEmail(email) {
@@ -262,7 +334,9 @@ window.loginHandler = {
     handleLogin,
     setFormLoading,
     showFormError,
-    validateInput
+    validateInput,
+    checkExistingSession,
+    clearExpiredSession
 };
 
-console.log('🎯 Login handler listo');
+console.log('🎯 Login handler listo con Session Guard');

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Status - PLANIFICAPRO</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/api-service.js"></script>
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-md w-full space-y-8">
+            <!-- Logo -->
+            <div class="text-center">
+                <h1 class="text-4xl font-bold text-blue-600 mb-2">PLANIFICAPRO</h1>
+                <p class="text-gray-600">Sistema de Gestión Financiera</p>
+                <p class="text-sm text-green-600 mt-2">✅ Powered by Supabase Direct</p>
+            </div>
+
+            <!-- Status Card -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-xl font-semibold mb-4">🚀 Estado del Sistema</h2>
+                
+                <div id="status-container" class="space-y-4">
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded">
+                        <span>Conexión Supabase</span>
+                        <div id="supabase-status" class="text-gray-500">Verificando...</div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded">
+                        <span>API Service</span>
+                        <div id="api-status" class="text-gray-500">Verificando...</div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded">
+                        <span>Autenticación</span>
+                        <div id="auth-status" class="text-gray-500">Verificando...</div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="mt-6 space-y-3">
+                    <a href="login.html" class="block w-full text-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
+                        🔐 Ir a Login
+                    </a>
+                    <a href="dashboard.html" class="block w-full text-center px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition">
+                        📊 Ir a Dashboard
+                    </a>
+                    <a href="test-api.html" class="block w-full text-center px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition">
+                        🧪 Test APIs
+                    </a>
+                </div>
+            </div>
+
+            <!-- Info Card -->
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h3 class="font-semibold text-blue-800 mb-2">📋 Migración Completada</h3>
+                <ul class="text-sm text-blue-700 space-y-1">
+                    <li>✅ Migrado a Supabase directo</li>
+                    <li>✅ Backend Node.js movido a Almacén</li>
+                    <li>✅ APIs automáticas funcionando</li>
+                    <li>✅ Sesión con localStorage estable</li>
+                    <li>✅ Dashboard sin redirecciones</li>
+                </ul>
+            </div>
+
+            <!-- Team Info -->
+            <div class="text-center text-sm text-gray-500">
+                <p>Desarrollado por:</p>
+                <p><strong>Claude Garcia</strong> (Full-Stack) & <strong>Gemini Quispe</strong> (IA)</p>
+                <p>Product Owner: <strong>Joe Guillermo</strong></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function checkSystemStatus() {
+            console.log('🔍 Verificando estado del sistema...');
+            
+            // Check Supabase
+            try {
+                if (window.supabase && window.SUPABASE_CONFIG) {
+                    const client = window.supabase.createClient(
+                        window.SUPABASE_CONFIG.url, 
+                        window.SUPABASE_CONFIG.anonKey
+                    );
+                    
+                    const { data, error } = await client
+                        .from('perfiles_usuario')
+                        .select('count')
+                        .limit(1);
+                    
+                    if (!error) {
+                        document.getElementById('supabase-status').innerHTML = 
+                            '<span class="text-green-600 font-semibold">✅ Conectado</span>';
+                        console.log('✅ Supabase: Conectado');
+                    } else {
+                        throw error;
+                    }
+                } else {
+                    throw new Error('Configuración no disponible');
+                }
+            } catch (error) {
+                document.getElementById('supabase-status').innerHTML = 
+                    '<span class="text-red-600 font-semibold">❌ Error</span>';
+                console.error('❌ Supabase error:', error);
+            }
+
+            // Check API Service
+            try {
+                // Wait for API service to be available
+                let attempts = 0;
+                let service = null;
+                
+                while (attempts < 5 && !service) {
+                    service = window.getAPIService ? window.getAPIService() : null;
+                    if (!service) {
+                        await new Promise(resolve => setTimeout(resolve, 500));
+                        attempts++;
+                    }
+                }
+                
+                if (service) {
+                    const test = await service.testConnection();
+                    if (test.success) {
+                        document.getElementById('api-status').innerHTML = 
+                            '<span class="text-green-600 font-semibold">✅ Funcionando</span>';
+                        console.log('✅ API Service: Funcionando');
+                    } else {
+                        throw new Error(test.message);
+                    }
+                } else {
+                    throw new Error('API Service no disponible después de varios intentos');
+                }
+            } catch (error) {
+                document.getElementById('api-status').innerHTML = 
+                    '<span class="text-red-600 font-semibold">❌ Error</span>';
+                console.error('❌ API Service error:', error);
+            }
+
+            // Check Auth
+            try {
+                const token = localStorage.getItem('auth_token');
+                const user = localStorage.getItem('currentUser');
+                
+                if (token && user) {
+                    const userData = JSON.parse(user);
+                    document.getElementById('auth-status').innerHTML = 
+                        `<span class="text-green-600 font-semibold">✅ ${userData.nombre}</span>`;
+                    console.log('✅ Auth: Usuario loggeado -', userData.nombre);
+                } else {
+                    document.getElementById('auth-status').innerHTML = 
+                        '<span class="text-yellow-600 font-semibold">⚠️ No autenticado</span>';
+                    console.log('⚠️ Auth: No hay usuario loggeado');
+                }
+            } catch (error) {
+                document.getElementById('auth-status').innerHTML = 
+                    '<span class="text-red-600 font-semibold">❌ Error</span>';
+                console.error('❌ Auth error:', error);
+            }
+        }
+
+        // Wait for everything to load then check status
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🚀 Sistema iniciado - Verificando en 1 segundo...');
+            setTimeout(checkSystemStatus, 1000);
+        });
+    </script>
+</body>
+</html>

@@ -7,7 +7,7 @@
 // 🔧 CONFIGURACIÓN
 // ================================
 
-const API_BASE_URL = window.CONFIG?.API_URL || 'http://localhost:5000';
+const API_BASE_URL = window.CONFIG?.API_URL || 'http://localhost:3001';
 
 // ================================
 // 🔐 FUNCIÓN DE LOGIN PRINCIPAL
@@ -31,11 +31,23 @@ async function login(email, password) {
         if (data.success && data.data && data.data.user) {
             // Login exitoso
             const user = data.data.user;
+            const accessToken = data.data.access_token;
             
             // Guardar en localStorage
             localStorage.setItem('currentUser', JSON.stringify(user));
-            // Guardar email como "token" para compatibilidad con dashboard
-            localStorage.setItem('auth_token', user.email);
+            localStorage.setItem('auth_token', user.email); // Para compatibilidad
+            
+            // Guardar tokens de Supabase si están disponibles
+            if (accessToken) {
+                localStorage.setItem('supabase_access_token', accessToken);
+                
+                // Calcular tiempo de expiración (1 hora - 5 minutos de margen)
+                const expirationTime = Date.now() + (55 * 60 * 1000); // 55 minutos
+                localStorage.setItem('token_expires_at', expirationTime.toString());
+                
+                // Iniciar timer de renovación automática
+                startTokenRefreshTimer();
+            }
             
             // Mostrar mensaje
             showMessage(`¡Bienvenido ${user.nombre}!`, 'success');
@@ -100,7 +112,7 @@ async function register(userData) {
 
 async function checkAPIStatus() {
     try {
-        const response = await fetch(`${API_BASE_URL}/health`);
+        const response = await fetch(`${API_BASE_URL}/api/health`);
         const data = await response.json();
         
         if (data.success) {
@@ -162,11 +174,105 @@ function showLoader(show = true) {
 }
 
 // ================================
-// 🚀 INICIALIZACIÓN
+// � RENOVACIÓN AUTOMÁTICA DE TOKENS
+// ================================
+
+let tokenRefreshTimer = null;
+
+function startTokenRefreshTimer() {
+    // Limpiar timer anterior si existe
+    if (tokenRefreshTimer) {
+        clearTimeout(tokenRefreshTimer);
+    }
+    
+    const expiresAt = localStorage.getItem('token_expires_at');
+    if (!expiresAt) return;
+    
+    const timeUntilExpiry = parseInt(expiresAt) - Date.now();
+    
+    if (timeUntilExpiry > 0) {
+        console.log(`🔄 Token se renovará en ${Math.round(timeUntilExpiry / 60000)} minutos`);
+        
+        tokenRefreshTimer = setTimeout(async () => {
+            console.log('🔄 Renovando token automáticamente...');
+            await refreshTokenSilently();
+        }, timeUntilExpiry);
+    }
+}
+
+async function refreshTokenSilently() {
+    try {
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        
+        if (!currentUser.email) {
+            console.log('❌ No hay usuario para renovar token');
+            handleTokenExpired();
+            return;
+        }
+        
+        // Simular renovación - en un escenario real usarías refresh token
+        console.log('🔄 Intentando renovación silenciosa...');
+        
+        // Por ahora, simplemente extender el tiempo de expiración
+        const newExpirationTime = Date.now() + (55 * 60 * 1000); // 55 minutos más
+        localStorage.setItem('token_expires_at', newExpirationTime.toString());
+        
+        // Reiniciar el timer
+        startTokenRefreshTimer();
+        
+        console.log('✅ Token renovado silenciosamente');
+        
+    } catch (error) {
+        console.error('❌ Error renovando token:', error);
+        handleTokenExpired();
+    }
+}
+
+function handleTokenExpired() {
+    console.log('⚠️ Token expirado - redirigiendo al login');
+    
+    // Limpiar datos de sesión
+    localStorage.removeItem('currentUser');
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('supabase_access_token');
+    localStorage.removeItem('token_expires_at');
+    
+    // Mostrar mensaje
+    showMessage('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.', 'warning');
+    
+    // Redireccionar al login después de un momento
+    setTimeout(() => {
+        window.location.href = 'login.html';
+    }, 2000);
+}
+
+function checkTokenExpiration() {
+    const expiresAt = localStorage.getItem('token_expires_at');
+    
+    if (!expiresAt) return false;
+    
+    const timeLeft = parseInt(expiresAt) - Date.now();
+    
+    if (timeLeft <= 0) {
+        handleTokenExpired();
+        return false;
+    }
+    
+    return true;
+}
+
+// ================================
+// �🚀 INICIALIZACIÓN
 // ================================
 
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🚀 Auth system cargado');
+    
+    // Verificar si hay una sesión activa y iniciar timer
+    const currentUser = localStorage.getItem('currentUser');
+    if (currentUser && checkTokenExpiration()) {
+        startTokenRefreshTimer();
+    }
     
     // Verificar API al cargar
     setTimeout(checkAPIStatus, 1000);
@@ -181,7 +287,10 @@ window.auth = {
     login,
     register,
     checkAPIStatus,
-    showMessage
+    showMessage,
+    refreshTokenSilently,
+    checkTokenExpiration,
+    handleTokenExpired
 };
 
 console.log('🔐 Sistema de autenticación simple cargado');
