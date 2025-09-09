@@ -796,6 +796,105 @@ const server = http.createServer(async (req, res) => {
         return;
     }
     
+    // ================================
+    // 💸 RUTAS API DE GASTOS
+    // ================================
+    
+    // GET /api/gastos - Obtener lista de gastos del usuario
+    if (pathname === '/api/gastos' && method === 'GET') {
+        try {
+            const token = getTokenFromRequest(req);
+            if (!token) {
+                res.writeHead(401, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({
+                    success: false,
+                    message: 'Token de autorización requerido'
+                }));
+                return;
+            }
+            
+            const userId = getUserIdFromToken(token);
+            const { page = 1, limit = 10, search = '', categoria = '', fechaDesde = '', fechaHasta = '' } = parsedUrl.query;
+            
+            // Construir filtros para Supabase
+            let filters = [`usuario_id=eq.${userId}`];
+            
+            if (search) {
+                filters.push(`or=(descripcion.ilike.*${search}*,notas.ilike.*${search}*)`);
+            }
+            if (categoria) {
+                filters.push(`categoria=eq.${categoria}`);
+            }
+            if (fechaDesde) {
+                filters.push(`fecha=gte.${fechaDesde}`);
+            }
+            if (fechaHasta) {
+                filters.push(`fecha=lte.${fechaHasta}`);
+            }
+            
+            const filtersString = filters.join('&');
+            const offset = (page - 1) * limit;
+            
+            // Obtener gastos con filtros y paginación
+            const gastosResult = await supabaseRequest(
+                `gastos?${filtersString}&order=fecha.desc,created_at.desc&limit=${limit}&offset=${offset}`
+            );
+            
+            // Obtener total de registros para paginación
+            const countResult = await supabaseRequest(
+                `gastos?${filtersString}&select=count`
+            );
+            
+            const gastos = gastosResult.data || [];
+            const totalCount = countResult.data?.[0]?.count || 0;
+            
+            // Calcular resumen
+            const summaryResult = await supabaseRequest(
+                `gastos?${filtersString}&select=monto`
+            );
+            const allGastos = summaryResult.data || [];
+            const totalMonto = allGastos.reduce((sum, item) => sum + parseFloat(item.monto || 0), 0);
+            
+            // Gastos del mes actual
+            const currentMonth = new Date().toISOString().substring(0, 7); // YYYY-MM
+            const monthlyFilter = filters.concat([`fecha=gte.${currentMonth}-01`, `fecha=lt.${currentMonth}-32`]).join('&');
+            const monthlyResult = await supabaseRequest(`gastos?${monthlyFilter}&select=monto`);
+            const monthlyGastos = monthlyResult.data || [];
+            const monthlyTotal = monthlyGastos.reduce((sum, item) => sum + parseFloat(item.monto || 0), 0);
+            
+            const totalPages = Math.ceil(totalCount / limit);
+            
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({
+                success: true,
+                gastos: gastos,
+                summary: {
+                    gastosTotal: totalMonto,
+                    gastosMes: monthlyTotal,
+                    cantidadRegistros: totalCount
+                },
+                pagination: {
+                    page: parseInt(page),
+                    limit: parseInt(limit),
+                    total: totalCount,
+                    totalPages: totalPages,
+                    from: offset + 1,
+                    to: Math.min(offset + parseInt(limit), totalCount)
+                }
+            }));
+            
+        } catch (error) {
+            console.error('Error obteniendo gastos:', error);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({
+                success: false,
+                message: 'Error obteniendo gastos',
+                error: error.message
+            }));
+        }
+        return;
+    }
+    
     // GET /api/user - Obtener información del usuario actual desde token
     if (pathname === '/api/user' && method === 'GET') {
         try {

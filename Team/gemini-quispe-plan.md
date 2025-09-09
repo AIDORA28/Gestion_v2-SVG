@@ -6,18 +6,26 @@ Este documento detalla mi plan de acción para implementar las funcionalidades d
 
 ---
 
-## 1. Análisis de la Base de Datos
+## 1. Análisis de la Base de Datos (Confirmado)
 
-He analizado el archivo `supabase-setup.sql` y el `api-service.js` para entender la estructura de datos actual.
+Gracias a la información de Claude y la ejecución del script `verificar-todas-tablas.js`, ahora tengo el esquema exacto y confirmado de la base de datos.
 
-### Tablas Relevantes para la IA:
-- **`gastos`**: Es la fuente principal de datos. Las columnas clave son `descripcion` y `categoria`.
-- **`ingresos`**: Similar a gastos, útil para análisis de flujo de efectivo.
-- **`usuarios`**: Para asociar los datos y modelos a cada usuario.
+### Tablas y Columnas Relevantes para la IA:
+
+-   **`gastos` (12 columnas):**
+    -   `id`, `usuario_id`, `descripcion`, `monto`, `categoria`, `fecha`, `metodo_pago`, `es_recurrente`, `frecuencia_dias`, `notas`, `created_at`, `updated_at`
+    -   **Input principal:** `descripcion` (TEXT)
+    -   **Output (Etiqueta):** `categoria` (VARCHAR)
+
+-   **`ingresos` (11 columnas):**
+    -   `id`, `usuario_id`, `descripcion`, `monto`, `categoria`, `fecha`, `es_recurrente`, `frecuencia_dias`, `notas`, `created_at`, `updated_at`
+
+-   **`usuarios` (20 columnas):**
+    -   Útil para la personalización de modelos por `usuario_id`.
 
 ### Observaciones Clave:
-- La columna `categoria` en la tabla `gastos` es un `VARCHAR(100)`. Esto es flexible y nos permite asignar categorías dinámicamente.
-- La `descripcion` del gasto es el input principal que usaremos para predecir la categoría.
+-   La estructura es robusta y contiene toda la información necesaria para los modelos de IA.
+-   La existencia de la tabla `categorias_personalizadas` (aunque vacía) es una oportunidad a futuro. Por ahora, nos basaremos en las categorías existentes en la tabla `gastos`.
 
 ---
 

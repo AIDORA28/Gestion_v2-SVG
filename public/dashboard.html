@@ -287,36 +287,9 @@
             </div>
 
             <!-- Other Sections (Initially Hidden) -->
+            <!-- Sección Ingresos - Se carga dinámicamente -->
             <div id="section-ingresos" class="section-content hidden">
-                <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                    <div class="bg-white rounded-lg shadow-lg border border-gray-200 p-8">
-                        <h2 class="text-2xl font-bold text-gray-900 mb-6">Gestión de Ingresos</h2>
-                        <p class="text-gray-600 mb-6">Registra y administra todos tus ingresos de manera eficiente</p>
-                        <div class="max-w-md mx-auto space-y-4">
-                            <div class="bg-gradient-to-r from-green-500 to-blue-500 p-6 rounded-xl text-white">
-                                <div class="flex items-center justify-center w-12 h-12 bg-white bg-opacity-20 rounded-lg mx-auto mb-4">
-                                    <i data-lucide="trending-up" class="h-6 w-6"></i>
-                                </div>
-                                <h3 class="text-lg font-semibold mb-2">Control Total de Ingresos</h3>
-                                <p class="text-sm opacity-90 mb-4">Organiza por fuentes y categorías tus ingresos</p>
-                                <a href="ingresos.html" class="inline-flex items-center px-4 py-2 bg-white text-green-600 font-medium rounded-lg hover:bg-gray-100 transition-colors">
-                                    <i data-lucide="external-link" class="w-4 h-4 mr-2"></i>
-                                    Ir a Ingresos
-                                </a>
-                            </div>
-                            <div class="grid grid-cols-2 gap-4 text-sm">
-                                <div class="bg-gray-50 p-4 rounded-lg">
-                                    <div class="text-green-600 font-semibold">Fuentes</div>
-                                    <div class="text-gray-600">Salario, Freelance, Inversiones, etc.</div>
-                                </div>
-                                <div class="bg-gray-50 p-4 rounded-lg">
-                                    <div class="text-green-600 font-semibold">Análisis</div>
-                                    <div class="text-gray-600">Estadísticas y reportes</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <!-- El contenido se carga dinámicamente mediante dashboard-handler.js -->
             </div>
 
             <div id="section-gastos" class="section-content hidden">
@@ -473,11 +446,16 @@
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script src="js/supabase-config.js"></script>
     <script src="js/config.js"></script>
+    <script src="js/supabase-auth.js"></script>
     <script src="js/simple-auth.js"></script>
-    <!-- 🔥 NUEVO: API Service con CRUD completo -->
+    <!-- � Module System -->
+    <script src="js/module-loader.js"></script>
+    <!-- �🔥 NUEVO: API Service con CRUD completo -->
     <script src="js/api-service.js"></script>
+    <!-- 🧠 NUEVO: IA Service por Gemini Quispe -->
+    <script src="js/ia-service.js"></script>
     <script src="js/dashboard-handler.js"></script>
-    <script src="js/ingresos.js"></script>
+    <script src="js/ingresos-module-handler.js"></script>
     <script>
         // Inicializar iconos de Lucide cuando el DOM esté listo
         document.addEventListener('DOMContentLoaded', function() {

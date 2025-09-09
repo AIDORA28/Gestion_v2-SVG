@@ -107,14 +107,22 @@ async function handleLogin(event) {
     setFormLoading(true);
     
     try {
-        // Llamar función de login
-        if (window.auth && typeof window.auth.login === 'function') {
+        // Llamar función de login de Supabase directo
+        if (window.supabaseAuth && typeof window.supabaseAuth.login === 'function') {
+            console.log('🔐 Usando autenticación Supabase directo');
+            const success = await window.supabaseAuth.login(email, password);
+            
+            if (!success) {
+                setFormLoading(false);
+            }
+            // Si success es true, la redirección se maneja en supabase-auth.js
+        } else if (window.auth && typeof window.auth.login === 'function') {
+            console.log('🔐 Fallback a autenticación local');
             const success = await window.auth.login(email, password);
             
             if (!success) {
                 setFormLoading(false);
             }
-            // Si success es true, la redirección se maneja en simple-auth.js
         } else {
             throw new Error('Sistema de autenticación no disponible');
         }
@@ -255,9 +263,18 @@ function showInputError(input, message) {
 function checkExistingSession() {
     console.log('🔒 Verificando sesión existente...');
     
+    // Primero intentar con Supabase Auth
+    if (window.supabaseAuth && typeof window.supabaseAuth.checkSession === 'function') {
+        const hasSession = window.supabaseAuth.checkSession();
+        if (hasSession) {
+            console.log('✅ Sesión Supabase válida, redirigiendo');
+            return;
+        }
+    }
+    
     try {
-        // Verificar si hay datos de sesión en localStorage
-        const token = localStorage.getItem('auth_token');
+        // Verificar si hay datos de sesión en localStorage (fallback)
+        const token = localStorage.getItem('supabase_access_token') || localStorage.getItem('auth_token');
         const userStr = localStorage.getItem('currentUser');
         const expiresAt = localStorage.getItem('token_expires_at');
         

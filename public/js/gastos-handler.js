@@ -4,19 +4,33 @@
  */
 
 class GastosHandler {
-    constructor() {
+    constructor(apiService, iaService) {
+        this.apiService = apiService;
+        this.iaService = iaService;
         this.gastos = [];
         this.currentEditId = null;
         this.notyf = new Notyf({
             duration: 4000,
             position: { x: 'right', y: 'top' }
         });
+        this.currentUser = this.apiService.getCurrentUser();
+        if (!this.currentUser) {
+            console.error("Usuario no autenticado. Redirigiendo a login...");
+            window.location.href = 'login.html';
+            return;
+        }
         this.init();
     }
 
-    init() {
+    async init() {
         console.log('🎯 Inicializando GastosHandler...');
         this.setupEventListeners();
+        
+        // Entrenar el modelo de IA y luego cargar los gastos
+        if (this.iaService) {
+            await this.iaService.trainWithUserExpenses(this.currentUser.id);
+        }
+        
         this.loadGastos();
         this.setDefaultDate();
         this.setupFilters();
@@ -59,6 +73,53 @@ class GastosHandler {
         if (clearFilters) {
             clearFilters.addEventListener('click', () => this.clearFilters());
         }
+
+        // 🔥 NUEVO: Event listener para la predicción de categoría
+        const descripcionInput = document.getElementById('descripcion');
+        if (descripcionInput) {
+            descripcionInput.addEventListener('input', (e) => this.handleDescriptionInput(e));
+        }
+    }
+
+    // 🔥 NUEVO: Método para manejar la predicción en tiempo real
+    handleDescriptionInput(e) {
+        const description = e.target.value;
+        if (description.length > 10 && this.iaService) { // Predecir después de 10 caracteres
+            const predictedCategory = this.iaService.predict(description);
+            if (predictedCategory) {
+                const categoriaSelect = document.getElementById('categoria');
+                
+                // Corregir los valores del select para que coincidan con la base de datos
+                const categoryMap = {
+                    'Alimentación': 'alimentacion',
+                    'Transporte': 'transporte',
+                    'Vivienda': 'vivienda',
+                    'Salud': 'salud',
+                    'Ocio': 'entretenimiento', // 'Ocio' se mapea a 'entretenimiento'
+                    'Educación': 'educacion',
+                    'Otros': 'otros'
+                };
+
+                const selectValue = categoryMap[predictedCategory];
+
+                if (selectValue) {
+                    const optionExists = [...categoriaSelect.options].some(option => option.value === selectValue);
+
+                    if (optionExists) {
+                        // Solo actualiza si la categoría es diferente para no molestar al usuario
+                        if (categoriaSelect.value !== selectValue) {
+                            categoriaSelect.value = selectValue;
+                            this.notyf.success({
+                                message: `Sugerencia: Categoría establecida a <b>${predictedCategory}</b>`,
+                                icon: '🧠'
+                            });
+                        }
+                    } else {
+                        console.warn(`El valor de categoría predicha "${selectValue}" no existe en el select.`);
+                    }
+                }
+            }
+        }
     }
 
     setDefaultDate() {
@@ -85,21 +146,15 @@ class GastosHandler {
             this.showLoader();
             console.log('📥 Cargando gastos...');
             
-            const response = await fetch(`${API_BASE_URL}/gastos`);
+            const { success, data, error } = await this.apiService.getGastos(this.currentUser.id);
             
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
-            
-            const result = await response.json();
-            
-            if (result.success) {
-                this.gastos = result.data || [];
+            if (success) {
+                this.gastos = data || [];
                 console.log(`✅ ${this.gastos.length} gastos cargados`);
                 this.renderGastos();
                 this.updateStats();
             } else {
-                throw new Error(result.message || 'Error desconocido');
+                throw new Error(error.message || 'Error desconocido al cargar gastos');
             }
             
         } catch (error) {
@@ -330,7 +385,8 @@ class GastosHandler {
             metodo_pago: formData.get('metodo_pago'),
             es_recurrente: formData.get('es_recurrente') === 'on',
             frecuencia_dias: formData.get('frecuencia_dias') ? parseInt(formData.get('frecuencia_dias')) : null,
-            notas: formData.get('notas') || null
+            notas: formData.get('notas') || null,
+            user_id: this.currentUser.id // Asegurarse de enviar el user_id
         };
         
         // Validaciones
@@ -347,35 +403,21 @@ class GastosHandler {
         try {
             this.showLoader();
             
-            let response;
+            let result;
             if (this.currentEditId) {
                 // Actualizar
-                response = await fetch(`${API_BASE_URL}/gastos/${this.currentEditId}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
+                result = await this.apiService.updateGasto(this.currentEditId, data);
             } else {
                 // Crear
-                response = await fetch(`${API_BASE_URL}/gastos`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
+                result = await this.apiService.createGasto(data);
             }
-            
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
-            
-            const result = await response.json();
             
             if (result.success) {
-                this.notyf.success(result.message || (this.currentEditId ? 'Gasto actualizado' : 'Gasto creado'));
+                this.notyf.success(this.currentEditId ? 'Gasto actualizado' : 'Gasto creado');
                 this.closeGastoModal();
                 this.loadGastos(); // Recargar lista
             } else {
-                throw new Error(result.message || 'Error desconocido');
+                throw new Error(result.error.message || 'Error desconocido');
             }
             
         } catch (error) {
@@ -416,22 +458,14 @@ class GastosHandler {
         try {
             this.showLoader();
             
-            const response = await fetch(`${API_BASE_URL}/gastos/${id}`, {
-                method: 'DELETE'
-            });
-            
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
-            
-            const result = await response.json();
+            const result = await this.apiService.deleteGasto(id);
             
             if (result.success) {
                 this.notyf.success('Gasto eliminado exitosamente');
                 this.closeDeleteModal();
                 this.loadGastos(); // Recargar lista
             } else {
-                throw new Error(result.message || 'Error desconocido');
+                throw new Error(result.error.message || 'Error desconocido');
             }
             
         } catch (error) {
@@ -532,6 +566,20 @@ function closeDeleteModal() {
 
 // Inicializar cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 DOM cargado, inicializando GastosHandler...');
-    window.gastosHandler = new GastosHandler();
+    console.log('🚀 DOM cargado, esperando servicios...');
+    
+    // Esperar a que los servicios estén listos
+    setTimeout(() => {
+        const apiService = window.getAPIService();
+        const iaService = window.getIAService();
+
+        if (apiService && iaService) {
+            console.log('✅ Servicios API e IA listos. Inicializando GastosHandler...');
+            window.gastosHandler = new GastosHandler(apiService, iaService);
+        } else {
+            console.error('❌ No se pudieron inicializar los servicios. API o IA no están disponibles.');
+            if (!apiService) console.error('APIService no encontrado.');
+            if (!iaService) console.error('IAService no encontrado.');
+        }
+    }, 500); // Dar un margen para que se carguen los otros scripts
 });

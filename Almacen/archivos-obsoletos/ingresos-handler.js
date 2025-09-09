@@ -1,25 +1,115 @@
 /**
- * 🎯 HANDLER PARA GESTIÓN DE INGRESOS
- * Maneja toda la funcionalidad de la página ingresos.html
+ * 💰 HANDLER PARA GESTIÓN DE INGRESOS
+ * Conectado a Supabase directo con autenticación real
  */
 
 class IngresosHandler {
     constructor() {
+        // 🔗 Configuración Supabase
+        this.supabaseUrl = 'https://lobyofpwqwqsszugdwnw.supabase.co';
+        this.supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxvYnlvZnB3cXdxc3N6dWdkd253Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczMTU4NDIsImV4cCI6MjA3Mjg5MTg0Mn0.QsZ2dIU1iPffRGtHUREQIhQ5--7_w4ANowG0rJ0AtcI';
+        
+        // 🎯 Estado de la aplicación
         this.ingresos = [];
         this.currentEditId = null;
+        this.currentUser = null;
+        this.authToken = null;
+        this.usuarioId = null;
+        
+        // 🎨 Configuración UI
         this.notyf = new Notyf({
             duration: 4000,
-            position: { x: 'right', y: 'top' }
+            position: { x: 'right', y: 'top' },
+            types: [
+                { type: 'success', background: '#10b981', icon: false },
+                { type: 'error', background: '#ef4444', icon: false },
+                { type: 'warning', background: '#f59e0b', icon: false },
+                { type: 'info', background: '#3b82f6', icon: false }
+            ]
         });
+        
+        // 📊 Categorías disponibles
+        this.categorias = [
+            'Salario',
+            'Freelance', 
+            'Inversiones',
+            'Ventas',
+            'Consultoría',
+            'Dividendos',
+            'Alquiler',
+            'Otros'
+        ];
+        
         this.init();
     }
 
-    init() {
-        console.log('🎯 Inicializando IngresosHandler...');
-        this.setupEventListeners();
-        this.loadIngresos();
-        this.setDefaultDate();
-        this.setupFilters();
+    async init() {
+        console.log('💰 Inicializando módulo de Ingresos...');
+        
+        try {
+            // 🔐 Verificar autenticación
+            await this.checkAuth();
+            
+            // 🎮 Configurar eventos
+            this.setupEventListeners();
+            
+            // 📊 Cargar datos
+            await this.loadIngresos();
+            
+            // 🎨 Configurar interfaz
+            this.setDefaultDate();
+            this.setupFilters();
+            this.setupCategories();
+            
+            console.log('✅ Módulo de Ingresos inicializado correctamente');
+            
+        } catch (error) {
+            console.error('❌ Error inicializando módulo de Ingresos:', error);
+            this.notyf.error('Error al cargar el módulo de ingresos');
+        }
+    }
+
+    // ================================
+    // 🔐 AUTENTICACIÓN Y SESIÓN
+    // ================================
+    
+    async checkAuth() {
+        console.log('🔒 Verificando autenticación para módulo Ingresos...');
+        
+        const userStr = localStorage.getItem('currentUser');
+        const supabaseToken = localStorage.getItem('supabase_access_token');
+        
+        if (!userStr || !supabaseToken) {
+            console.log('❌ No hay sesión activa, redirigiendo a login');
+            this.notyf.error('Debes iniciar sesión para acceder a los ingresos');
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 2000);
+            throw new Error('No hay sesión activa');
+        }
+
+        try {
+            const userData = JSON.parse(userStr);
+            
+            if (!userData.id || !userData.email) {
+                throw new Error('Datos de usuario inválidos');
+            }
+            
+            // ✅ Configurar datos de sesión
+            this.currentUser = userData;
+            this.authToken = supabaseToken;
+            this.usuarioId = userData.id;
+            
+            console.log('✅ Autenticación válida para:', this.currentUser.nombre);
+            
+        } catch (error) {
+            console.error('❌ Error procesando datos de usuario:', error);
+            this.notyf.error('Error de autenticación');
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 2000);
+            throw error;
+        }
     }
 
     setupEventListeners() {
@@ -76,27 +166,70 @@ class IngresosHandler {
         this.applyFilters();
     }
 
+    setupCategories() {
+        // 📊 Configurar dropdown de categorías en el formulario
+        const categoriaSelect = document.getElementById('categoria');
+        if (categoriaSelect && categoriaSelect.children.length <= 1) {
+            this.categorias.forEach(categoria => {
+                const option = document.createElement('option');
+                option.value = categoria.toLowerCase();
+                option.textContent = categoria;
+                categoriaSelect.appendChild(option);
+            });
+        }
+        
+        // 📊 Configurar filtro de categorías
+        const filterCategoria = document.getElementById('filter-categoria');
+        if (filterCategoria && filterCategoria.children.length <= 1) {
+            this.categorias.forEach(categoria => {
+                const option = document.createElement('option');
+                option.value = categoria.toLowerCase();
+                option.textContent = categoria;
+                filterCategoria.appendChild(option);
+            });
+        }
+    }
+
     async loadIngresos() {
         try {
             this.showLoader();
-            console.log('📥 Cargando ingresos...');
+            console.log('📥 Cargando ingresos desde Supabase...');
             
-            const response = await fetch(`${API_BASE_URL}/ingresos`);
+            // 🔒 Verificar autenticación
+            if (!this.authToken || !this.usuarioId) {
+                throw new Error('Usuario no autenticado');
+            }
+            
+            // 🌐 Consultar Supabase con filtro por usuario
+            const url = `${this.supabaseUrl}/rest/v1/ingresos?usuario_id=eq.${this.usuarioId}&select=*&order=fecha.desc,created_at.desc`;
+            
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'apikey': this.supabaseKey,
+                    'Authorization': `Bearer ${this.authToken}`,
+                    'Content-Type': 'application/json'
+                }
+            });
             
             if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                const errorText = await response.text();
+                console.error(`❌ Error HTTP ${response.status}:`, errorText);
+                
+                if (response.status === 401) {
+                    this.notyf.error('Sesión expirada, redirigiendo a login');
+                    setTimeout(() => window.location.href = 'login.html', 2000);
+                    return;
+                }
+                
+                throw new Error(`Error ${response.status}: ${response.statusText}`);
             }
             
-            const result = await response.json();
+            this.ingresos = await response.json();
+            console.log(`✅ ${this.ingresos.length} ingresos cargados desde Supabase`);
             
-            if (result.success) {
-                this.ingresos = result.data || [];
-                console.log(`✅ ${this.ingresos.length} ingresos cargados`);
-                this.renderIngresos();
-                this.updateStats();
-            } else {
-                throw new Error(result.message || 'Error desconocido');
-            }
+            this.renderIngresos();
+            this.updateStats();
             
         } catch (error) {
             console.error('❌ Error cargando ingresos:', error);
@@ -329,35 +462,68 @@ class IngresosHandler {
         try {
             this.showLoader();
             
-            let response;
-            if (this.currentEditId) {
-                // Actualizar
-                response = await fetch(`${API_BASE_URL}/ingresos/${this.currentEditId}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-            } else {
-                // Crear
-                response = await fetch(`${API_BASE_URL}/ingresos`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
+            // 🔒 Verificar autenticación
+            if (!this.authToken || !this.usuarioId) {
+                throw new Error('Usuario no autenticado');
             }
+            
+            // 📊 Preparar datos para Supabase
+            const supabaseData = {
+                ...data,
+                usuario_id: this.usuarioId
+            };
+            
+            let response;
+            let url;
+            let method;
+            
+            if (this.currentEditId) {
+                // 📝 Actualizar ingreso existente
+                url = `${this.supabaseUrl}/rest/v1/ingresos?id=eq.${this.currentEditId}`;
+                method = 'PATCH';
+                console.log('📝 Actualizando ingreso:', this.currentEditId);
+            } else {
+                // ➕ Crear nuevo ingreso
+                url = `${this.supabaseUrl}/rest/v1/ingresos`;
+                method = 'POST';
+                console.log('➕ Creando nuevo ingreso');
+            }
+            
+            response = await fetch(url, {
+                method: method,
+                headers: {
+                    'apikey': this.supabaseKey,
+                    'Authorization': `Bearer ${this.authToken}`,
+                    'Content-Type': 'application/json',
+                    'Prefer': 'return=minimal'
+                },
+                body: JSON.stringify(supabaseData)
+            });
             
             if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                const errorText = await response.text();
+                console.error(`❌ Error HTTP ${response.status}:`, errorText);
+                
+                if (response.status === 401) {
+                    this.notyf.error('Sesión expirada, redirigiendo a login');
+                    setTimeout(() => window.location.href = 'login.html', 2000);
+                    return;
+                }
+                
+                throw new Error(`Error ${response.status}: ${response.statusText}`);
             }
             
-            const result = await response.json();
+            // ✅ Éxito
+            const successMessage = this.currentEditId ? 'Ingreso actualizado correctamente' : 'Ingreso creado correctamente';
+            this.notyf.success(successMessage);
             
-            if (result.success) {
-                this.notyf.success(result.message || (this.currentEditId ? 'Ingreso actualizado' : 'Ingreso creado'));
-                this.closeIngresoModal();
-                this.loadIngresos(); // Recargar lista
-            } else {
-                throw new Error(result.message || 'Error desconocido');
+            this.closeIngresoModal();
+            await this.loadIngresos(); // Recargar lista
+            
+            // 🔄 Actualizar dashboard si existe
+            if (window.dashboardManager && typeof window.dashboardManager.loadDashboardData === 'function') {
+                console.log('🔄 Actualizando dashboard...');
+                await window.dashboardManager.loadDashboardData();
             }
             
         } catch (error) {
@@ -398,22 +564,44 @@ class IngresosHandler {
         try {
             this.showLoader();
             
-            const response = await fetch(`${API_BASE_URL}/ingresos/${id}`, {
-                method: 'DELETE'
+            // 🔒 Verificar autenticación
+            if (!this.authToken || !this.usuarioId) {
+                throw new Error('Usuario no autenticado');
+            }
+            
+            console.log('🗑️ Eliminando ingreso:', id);
+            
+            const response = await fetch(`${this.supabaseUrl}/rest/v1/ingresos?id=eq.${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'apikey': this.supabaseKey,
+                    'Authorization': `Bearer ${this.authToken}`,
+                    'Content-Type': 'application/json'
+                }
             });
             
             if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                const errorText = await response.text();
+                console.error(`❌ Error HTTP ${response.status}:`, errorText);
+                
+                if (response.status === 401) {
+                    this.notyf.error('Sesión expirada, redirigiendo a login');
+                    setTimeout(() => window.location.href = 'login.html', 2000);
+                    return;
+                }
+                
+                throw new Error(`Error ${response.status}: ${response.statusText}`);
             }
             
-            const result = await response.json();
+            // ✅ Éxito
+            this.notyf.success('Ingreso eliminado correctamente');
+            this.closeDeleteModal();
+            await this.loadIngresos(); // Recargar lista
             
-            if (result.success) {
-                this.notyf.success('Ingreso eliminado exitosamente');
-                this.closeDeleteModal();
-                this.loadIngresos(); // Recargar lista
-            } else {
-                throw new Error(result.message || 'Error desconocido');
+            // 🔄 Actualizar dashboard si existe
+            if (window.dashboardManager && typeof window.dashboardManager.loadDashboardData === 'function') {
+                console.log('🔄 Actualizando dashboard tras eliminación...');
+                await window.dashboardManager.loadDashboardData();
             }
             
         } catch (error) {
