@@ -3,9 +3,10 @@
   "version": "2.0.1",
   "description": "PLANIFICAPRO - Sistema profesional de gestión financiera personal",
   "scripts": {
+    "build": "echo 'Static files ready - no build needed'",
+    "vercel-build": "echo 'Vercel: Static deployment ready'",
     "start": "node backend/server.js",
-    "build": "echo 'Production build ready - v2.0.1'",
-    "vercel-build": "echo 'No build step needed - using static files'",
+    "dev": "node servidor-prueba.js",
     "deploy": "vercel --prod"
   },
   "keywords": [

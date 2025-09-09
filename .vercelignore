@@ -1,0 +1,32 @@
+# 🚫 ARCHIVOS EXCLUIDOS DE VERCEL DEPLOYMENT
+
+# Carpetas de desarrollo
+Almacen/
+Team/
+Pruebas/
+.git/
+node_modules/
+
+# Archivos de configuración local
+.env
+.env.local
+*.log
+*.tmp
+
+# Archivos de prueba y desarrollo
+test-*.js
+debug-*.js
+servidor-prueba.js
+verificacion-*.js
+
+# Archivos de documentación de desarrollo
+README_DEPLOY.md
+CREDENCIALES.md
+
+# Archivos temporales
+*.bak
+*.swp
+.DS_Store
+Thumbs.db
+
+# Solo incluir public/ y api/ para production
