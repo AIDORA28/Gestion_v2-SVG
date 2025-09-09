@@ -6,18 +6,63 @@ Este documento detalla mi plan de acción para implementar las funcionalidades d
 
 ---
 
-## 1. Análisis de la Base de Datos
+## 1. Análisis de la Base de Datos (✅ ACTUALIZADO - Sep 9, 2025)
 
-He analizado el archivo `supabase-setup.sql` y el `api-service.js` para entender la estructura de datos actual.
+**Esquema Base de Datos - Supabase PLANIFICAPRO** (Proporcionado por Claude):
+
+```sql
+-- TABLA: ingresos
+CREATE TABLE ingresos (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    usuario_id UUID REFERENCES usuarios(id) ON DELETE CASCADE,
+    descripcion TEXT NOT NULL,
+    monto DECIMAL(12,2) NOT NULL,
+    categoria VARCHAR(100) NOT NULL,
+    fecha DATE NOT NULL,
+    es_recurrente BOOLEAN DEFAULT FALSE,
+    frecuencia_dias INTEGER,
+    notas TEXT,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- TABLA: gastos  
+CREATE TABLE gastos (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    usuario_id UUID REFERENCES usuarios(id) ON DELETE CASCADE,
+    descripcion TEXT NOT NULL,
+    monto DECIMAL(12,2) NOT NULL,
+    categoria VARCHAR(100) NOT NULL,
+    fecha DATE NOT NULL,
+    es_recurrente BOOLEAN DEFAULT FALSE,
+    frecuencia_dias INTEGER,
+    notas TEXT,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- TABLA: usuarios
+CREATE TABLE usuarios (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    token VARCHAR(255) UNIQUE NOT NULL,
+    nombre VARCHAR(255),
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+```
 
 ### Tablas Relevantes para la IA:
-- **`gastos`**: Es la fuente principal de datos. Las columnas clave son `descripcion` y `categoria`.
-- **`ingresos`**: Similar a gastos, útil para análisis de flujo de efectivo.
-- **`usuarios`**: Para asociar los datos y modelos a cada usuario.
+- **`gastos`**: Fuente principal para Smart Categorization. Campos clave: `descripcion` (TEXT) y `categoria` (VARCHAR(100))
+- **`ingresos`**: Similar estructura para futuros análisis predictivos
+- **`usuarios`**: Para modelos personalizados por usuario
 
 ### Observaciones Clave:
-- La columna `categoria` en la tabla `gastos` es un `VARCHAR(100)`. Esto es flexible y nos permite asignar categorías dinámicamente.
-- La `descripcion` del gasto es el input principal que usaremos para predecir la categoría.
+- ✅ **Columna `descripcion`**: Campo TEXT perfecto para análisis de texto e IA
+- ✅ **Columna `categoria`**: VARCHAR(100) flexible para categorías dinámicas
+- ✅ **Campo `monto`**: DECIMAL(12,2) para análisis de patrones financieros
+- ✅ **Campo `fecha`**: DATE para análisis temporal y tendencias
+- ✅ **Row Level Security**: Implementado para privacidad por usuario
 
 ---
 
