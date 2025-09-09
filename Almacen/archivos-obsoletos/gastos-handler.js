@@ -284,11 +284,11 @@ class GastosHandler {
         });
         const totalMesActual = gastosMesActual.reduce((sum, gasto) => sum + parseFloat(gasto.monto), 0);
         
-        if (totalElement) totalElement.textContent = `$${total.toFixed(2)}`;
+        if (totalElement) totalElement.textContent = `S/ ${total.toFixed(2)}`;
         if (recurrentesElement) recurrentesElement.textContent = recurrentes.toString();
         if (categoriasElement) categoriasElement.textContent = categorias.toString();
         if (mesActualElement) mesActualElement.textContent = gastosMesActual.length.toString();
-        if (totalMesElement) totalMesElement.textContent = `$${totalMesActual.toFixed(2)}`;
+        if (totalMesElement) totalMesElement.textContent = `S/ ${totalMesActual.toFixed(2)}`;
     }
 
     applyFilters() {

@@ -921,7 +921,7 @@ class DashboardManager {
             if (!targetSection) return;
 
             // Solo cargar si es un módulo que debe ser cargado dinámicamente
-            const dynamicModules = ['ingresos', 'gastos', 'creditos', 'reportes'];
+            const dynamicModules = ['ingresos', 'gastos', 'creditos', 'reportes', 'sugerencias'];
             
             if (dynamicModules.includes(moduleName)) {
                 // Verificar si ya está cargado
@@ -1045,6 +1045,76 @@ class DashboardManager {
                         }
                     }
                     break;
+
+                case 'gastos':
+                    if (!window.gastosModuleHandler) {
+                        console.log('🚀 Inicializando GastosModuleHandler...');
+                        setTimeout(() => {
+                            if (typeof GastosModuleHandler !== 'undefined') {
+                                window.gastosModuleHandler = new GastosModuleHandler();
+                                window.gastosModuleHandler.init();
+                                console.log('✅ GastosModuleHandler inicializado correctamente');
+                            } else {
+                                console.error('❌ GastosModuleHandler no está disponible');
+                            }
+                        }, 200);
+                    } else {
+                        console.log('✅ GastosModuleHandler ya está inicializado');
+                        // Recargar datos
+                        if (window.gastosModuleHandler.loadGastos) {
+                            window.gastosModuleHandler.loadGastos();
+                        }
+                    }
+                    break;
+
+                case 'sugerencias':
+                    console.log('🧠 Inicializando módulo Sugerencias...');
+                    
+                    // Esperar a que el template se cargue completamente
+                    setTimeout(() => {
+                        if (!window.sugerenciasModuleHandler) {
+                            console.log('🔧 Creando SugerenciasModuleHandler...');
+                            
+                            if (typeof SugerenciasModuleHandler !== 'undefined') {
+                                try {
+                                    window.sugerenciasModuleHandler = new SugerenciasModuleHandler();
+                                    console.log('✅ SugerenciasModuleHandler creado exitosamente');
+                                    
+                                    // Intentar inicializar
+                                    if (window.sugerenciasModuleHandler.init) {
+                                        window.sugerenciasModuleHandler.init().then(() => {
+                                            console.log('✅ Handler de Sugerencias inicializado completamente');
+                                        }).catch(error => {
+                                            console.log('⚠️ Error inicializando handler:', error.message);
+                                        });
+                                    }
+                                } catch (error) {
+                                    console.error('❌ Error creando SugerenciasModuleHandler:', error);
+                                    
+                                    // Activar solución de emergencia si está disponible
+                                    if (window.solucionEmergencia) {
+                                        console.log('🚨 Activando solución de emergencia...');
+                                        setTimeout(() => {
+                                            window.solucionEmergencia.completa();
+                                        }, 1000);
+                                    }
+                                }
+                            } else {
+                                console.error('❌ Clase SugerenciasModuleHandler no disponible');
+                                
+                                // Activar solución de emergencia si está disponible
+                                if (window.solucionEmergencia) {
+                                    console.log('🚨 Activando solución de emergencia...');
+                                    setTimeout(() => {
+                                        window.solucionEmergencia.completa();
+                                    }, 1000);
+                                }
+                            }
+                        } else {
+                            console.log('✅ SugerenciasModuleHandler ya existe');
+                        }
+                    }, 500); // Aumentar timeout para dar más tiempo al template
+                    break;
                     
                 case 'dashboard':
                     // El dashboard ya está inicializado en el constructor
@@ -1136,10 +1206,10 @@ class DashboardManager {
     }
 
     formatCurrency(amount) {
-        return new Intl.NumberFormat('es-CO', {
+        return new Intl.NumberFormat('es-PE', {
             style: 'currency',
-            currency: 'COP',
-            minimumFractionDigits: 0
+            currency: 'PEN',
+            minimumFractionDigits: 2
         }).format(amount);
     }
 

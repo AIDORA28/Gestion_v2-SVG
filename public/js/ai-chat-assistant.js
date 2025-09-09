@@ -1,109 +1,192 @@
 /*
-🤖 IA CHAT ASSISTANT - GEMINI QUISPE
-Asistente de chat inteligente para consultas financieras
+🤖 IA CHAT ASSISTANT CON DATOS REALES - GEMINI QUISPE
+Asistente financiero inteligente conectado a Supabase
 */
 
 class IAChatAssistant {
     constructor() {
         this.isOpen = false;
-        this.conversationHistory = [];
         this.apiService = null;
         
-        // Patrones de intenciones
+        // Patrones inteligentes para detectar intenciones (más flexibles)
         this.intentPatterns = {
-            'consultar_gastos': {
-                patterns: ['gasto', 'gasté', 'cuanto gasté', 'mis gastos', 'gastos de', 'dinero gastado'],
-                response: this.handleGastosQuery.bind(this)
-            },
-            'consultar_ingresos': {
-                patterns: ['ingreso', 'gané', 'cuanto gané', 'mis ingresos', 'ingresos de', 'dinero ganado'],
-                response: this.handleIngresosQuery.bind(this)
-            },
-            'balance': {
-                patterns: ['balance', 'saldo', 'cuanto tengo', 'mi situación', 'resumen', 'estado financiero'],
-                response: this.handleBalanceQuery.bind(this)
-            },
-            'categorias': {
-                patterns: ['categoría', 'categoria', 'qué categoria', 'tipos de gasto', 'clasificación'],
-                response: this.handleCategoriasQuery.bind(this)
-            },
-            'ayuda': {
-                patterns: ['ayuda', 'help', 'qué puedes hacer', 'como funciona', 'comandos'],
-                response: this.handleAyudaQuery.bind(this)
-            },
-            'saludo': {
-                patterns: ['hola', 'hi', 'hello', 'buenos días', 'buenas tardes', 'hey'],
-                response: this.handleSaludoQuery.bind(this)
-            }
+            'gastos_ayer': ['ayer', 'gasté ayer', 'gasto ayer', 'cuanto gasté ayer', 'gaste ayer'],
+            'gastos_hoy': ['hoy', 'gasté hoy', 'gasto hoy', 'cuanto gasté hoy', 'gaste hoy'],
+            'gastos_mes': ['este mes', 'gasté este mes', 'mes', 'mensual', 'cuanto gasté este mes', 'gaste este mes'],
+            'gastos_total': ['gastos', 'gasté', 'cuanto gasté', 'mis gastos', 'gaste', 'cuanto gaste', 'total gastos', 'todos mis gastos'],
+            'ingresos': ['ingresos', 'gané', 'cuanto gané', 'mis ingresos', 'ingreso', 'cuanto ingreso', 'gane', 'dinero que gané', 'dinero que gane', 'total ingresos'],
+            'balance': ['balance', 'saldo', 'cuanto tengo', 'resumen', 'estado financiero', 'situación financiera', 'cuanto me queda'],
+            'conversacional': ['como estas', 'que tal', 'como te va', 'como andas', 'todo bien'],
+            'test': ['test', 'prueba', 'conexion', 'funciona'],
+            'ayuda': ['ayuda', 'help', 'qué puedes hacer', 'que puedes hacer', 'comandos', 'opciones'],
+            'saludo': ['hola', 'hi', 'hello', 'hey', 'buenas', 'buenos dias', 'buenas tardes']
         };
         
         console.log('🤖 IA Chat Assistant inicializado - Gemini Quispe');
     }
 
-    /**
-     * Inicializa el chat assistant
-     */
+    // 🔑 Helper para obtener el user_id del localStorage
+    getUserId() {
+        try {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            console.log('🔍 Debug - currentUser from localStorage:', currentUser);
+            return currentUser.id || null;
+        } catch (error) {
+            console.error('Error obteniendo user_id:', error);
+            return null;
+        }
+    }
+
+    // 🔐 Helper para obtener el token JWT de Supabase
+    getSupabaseToken() {
+        const token = localStorage.getItem('supabase_access_token');
+        console.log('🔍 Debug - supabase_access_token disponible:', !!token);
+        return token;
+    }
+
+    // 🌐 Configuración de Supabase (igual que en el sistema)
+    getSupabaseConfig() {
+        return {
+            url: 'https://lobyofpwqwqsszugdwnw.supabase.co',
+            anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxvYnlvZnB3cXdxc3N6dWdkd253Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczMTU4NDIsImV4cCI6MjA3Mjg5MTg0Mn0.QsZ2dIU1iPffRGtHUREQIhQ5--7_w4ANowG0rJ0AtcI'
+        };
+    }
+
+    // 🌐 Consultar gastos directamente desde Supabase con JWT
+    async queryGastosFromSupabase(userId) {
+        const config = this.getSupabaseConfig();
+        const token = this.getSupabaseToken();
+        
+        if (!token) {
+            throw new Error('No hay token JWT de Supabase');
+        }
+
+        const response = await fetch(`${config.url}/rest/v1/gastos?usuario_id=eq.${userId}&select=*&order=fecha.desc,created_at.desc`, {
+            method: 'GET',
+            headers: {
+                'apikey': config.anonKey,
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error Supabase: ${response.status}`);
+        }
+
+        return await response.json();
+    }
+
+    // 🌐 Consultar ingresos directamente desde Supabase con JWT
+    async queryIngresosFromSupabase(userId) {
+        const config = this.getSupabaseConfig();
+        const token = this.getSupabaseToken();
+        
+        if (!token) {
+            throw new Error('No hay token JWT de Supabase');
+        }
+
+        const response = await fetch(`${config.url}/rest/v1/ingresos?usuario_id=eq.${userId}&select=*&order=fecha.desc,created_at.desc`, {
+            method: 'GET',
+            headers: {
+                'apikey': config.anonKey,
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error Supabase: ${response.status}`);
+        }
+
+        return await response.json();
+    }
+
+    // 🧪 Función de test usando conexión directa a Supabase
+    async testConnection() {
+        console.log('🧪 Test - User ID:', this.getUserId());
+        console.log('🧪 Test - Supabase Token:', !!this.getSupabaseToken());
+        
+        const userId = this.getUserId();
+        const token = this.getSupabaseToken();
+        
+        if (!userId) return "❌ Sin user_id";
+        if (!token) return "❌ Sin token JWT de Supabase";
+        
+        try {
+            const gastosData = await this.queryGastosFromSupabase(userId);
+            const ingresosData = await this.queryIngresosFromSupabase(userId);
+            
+            console.log('🧪 Test - Gastos obtenidos:', gastosData.length);
+            console.log('🧪 Test - Ingresos obtenidos:', ingresosData.length);
+            
+            return `✅ Conexión directa OK!\n📊 Gastos: ${gastosData.length}\n💰 Ingresos: ${ingresosData.length}`;
+        } catch (error) {
+            console.error('🧪 Test - Error:', error);
+            return `❌ Error: ${error.message}`;
+        }
+    }
+
     init() {
         this.createChatUI();
         this.bindEvents();
         
-        // Obtener referencia al API Service
-        if (window.apiService) {
-            this.apiService = window.apiService;
-        } else {
-            console.warn('⚠️ API Service no disponible para Chat Assistant');
-        }
-        
-        console.log('🤖 Chat Assistant listo');
+        // Verificar conexión directa a Supabase
+        this.checkSupabaseConnection();
     }
 
-    /**
-     * Crea la interfaz del chat
-     */
+    checkSupabaseConnection() {
+        const config = this.getSupabaseConfig();
+        const userId = this.getUserId();
+        const token = this.getSupabaseToken();
+        
+        console.log('🔍 Verificando conexión directa a Supabase:');
+        console.log('   URL:', config.url ? 'OK' : 'FALTA');
+        console.log('   User ID:', userId ? 'OK' : 'FALTA');
+        console.log('   JWT Token:', token ? 'OK' : 'FALTA');
+        
+        if (config.url && userId && token) {
+            console.log('✅ Chat IA conectado directamente a Supabase');
+        } else {
+            console.warn('⚠️ Faltan credenciales para Supabase');
+        }
+    }
+
     createChatUI() {
         // Botón flotante
-        const floatingButton = document.createElement('div');
-        floatingButton.id = 'ai-chat-button';
-        floatingButton.className = 'fixed bottom-6 right-6 z-50 bg-blue-600 hover:bg-blue-700 text-white rounded-full p-4 shadow-lg cursor-pointer transition-all duration-300 transform hover:scale-110';
-        floatingButton.innerHTML = `
-            <div class="flex items-center justify-center w-6 h-6">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"></path>
-                </svg>
-            </div>
+        const button = document.createElement('div');
+        button.id = 'ai-chat-button';
+        button.className = 'fixed bottom-6 right-6 z-50 bg-blue-600 hover:bg-blue-700 text-white rounded-full p-4 shadow-lg cursor-pointer transition-all duration-300';
+        button.innerHTML = `
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"></path>
+            </svg>
         `;
 
         // Ventana de chat
-        const chatWindow = document.createElement('div');
-        chatWindow.id = 'ai-chat-window';
-        chatWindow.className = 'fixed bottom-24 right-6 z-50 bg-white rounded-lg shadow-2xl border border-gray-200 w-80 h-96 hidden flex-col';
-        chatWindow.innerHTML = `
-            <!-- Header -->
+        const window = document.createElement('div');
+        window.id = 'ai-chat-window';
+        window.className = 'fixed bottom-24 right-6 z-50 bg-white rounded-lg shadow-2xl border border-gray-200 w-80 h-96 hidden flex-col';
+        window.innerHTML = `
             <div class="bg-blue-600 text-white p-4 rounded-t-lg flex justify-between items-center">
                 <div class="flex items-center space-x-2">
                     <span class="text-lg">🤖</span>
                     <span class="font-semibold">Asistente IA</span>
                 </div>
-                <button id="ai-chat-close" class="text-white hover:text-gray-200">
-                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                    </svg>
-                </button>
+                <button id="ai-chat-close" class="text-white hover:text-gray-200">×</button>
             </div>
             
-            <!-- Messages Area -->
             <div id="ai-chat-messages" class="flex-1 p-4 overflow-y-auto space-y-3 bg-gray-50">
                 <div class="text-sm text-gray-600 text-center">
-                    🤖 ¡Hola! Soy tu asistente financiero. Pregúntame sobre tus gastos, ingresos o balance.
+                    🤖 ¡Hola! Pregúntame sobre tus gastos reales. Ej: "¿cuánto gasté ayer?"
                 </div>
             </div>
             
-            <!-- Input Area -->
             <div class="border-t border-gray-200 p-4">
                 <div class="flex space-x-2">
                     <input type="text" id="ai-chat-input" 
                            class="flex-1 border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500" 
-                           placeholder="Pregunta algo...">
+                           placeholder="Ej: ¿Cuánto gasté ayer?">
                     <button id="ai-chat-send" 
                             class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm font-medium">
                         Enviar
@@ -112,35 +195,19 @@ class IAChatAssistant {
             </div>
         `;
 
-        // Agregar al body
-        document.body.appendChild(floatingButton);
-        document.body.appendChild(chatWindow);
+        document.body.appendChild(button);
+        document.body.appendChild(window);
     }
 
-    /**
-     * Vincula eventos de la UI
-     */
     bindEvents() {
-        const button = document.getElementById('ai-chat-button');
-        const window = document.getElementById('ai-chat-window');
-        const closeBtn = document.getElementById('ai-chat-close');
-        const input = document.getElementById('ai-chat-input');
-        const sendBtn = document.getElementById('ai-chat-send');
-
-        // Abrir/cerrar chat
-        button?.addEventListener('click', () => this.toggleChat());
-        closeBtn?.addEventListener('click', () => this.closeChat());
-
-        // Enviar mensaje
-        sendBtn?.addEventListener('click', () => this.sendMessage());
-        input?.addEventListener('keypress', (e) => {
+        document.getElementById('ai-chat-button')?.addEventListener('click', () => this.toggleChat());
+        document.getElementById('ai-chat-close')?.addEventListener('click', () => this.closeChat());
+        document.getElementById('ai-chat-send')?.addEventListener('click', () => this.sendMessage());
+        document.getElementById('ai-chat-input')?.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') this.sendMessage();
         });
     }
 
-    /**
-     * Toggle del chat
-     */
     toggleChat() {
         this.isOpen = !this.isOpen;
         const chatWindow = document.getElementById('ai-chat-window');
@@ -155,9 +222,6 @@ class IAChatAssistant {
         }
     }
 
-    /**
-     * Cerrar chat
-     */
     closeChat() {
         this.isOpen = false;
         const chatWindow = document.getElementById('ai-chat-window');
@@ -165,37 +229,28 @@ class IAChatAssistant {
         chatWindow.classList.remove('flex');
     }
 
-    /**
-     * Enviar mensaje
-     */
     async sendMessage() {
         const input = document.getElementById('ai-chat-input');
         const message = input.value.trim();
         
         if (!message) return;
 
-        // Agregar mensaje del usuario
         this.addMessage(message, 'user');
         input.value = '';
 
-        // Mostrar typing indicator
         this.showTyping();
 
-        // Procesar mensaje y generar respuesta
         try {
             const response = await this.processMessage(message);
             this.hideTyping();
             this.addMessage(response, 'assistant');
         } catch (error) {
             this.hideTyping();
-            this.addMessage('Lo siento, hubo un error procesando tu consulta. ¿Podrías intentar de nuevo?', 'assistant');
+            this.addMessage('Error procesando tu consulta. ¿Podrías intentar de nuevo?', 'assistant');
             console.error('Error en Chat Assistant:', error);
         }
     }
 
-    /**
-     * Agregar mensaje al chat
-     */
     addMessage(text, sender) {
         const messagesArea = document.getElementById('ai-chat-messages');
         const messageDiv = document.createElement('div');
@@ -210,7 +265,7 @@ class IAChatAssistant {
         } else {
             messageDiv.className = 'flex justify-start';
             messageDiv.innerHTML = `
-                <div class="bg-white border border-gray-200 rounded-lg px-3 py-2 max-w-xs text-sm">
+                <div class="bg-white border border-gray-200 rounded-lg px-3 py-2 max-w-xs text-sm whitespace-pre-line">
                     ${text}
                 </div>
             `;
@@ -220,9 +275,6 @@ class IAChatAssistant {
         messagesArea.scrollTop = messagesArea.scrollHeight;
     }
 
-    /**
-     * Mostrar indicador de typing
-     */
     showTyping() {
         const messagesArea = document.getElementById('ai-chat-messages');
         const typingDiv = document.createElement('div');
@@ -230,45 +282,53 @@ class IAChatAssistant {
         typingDiv.className = 'flex justify-start';
         typingDiv.innerHTML = `
             <div class="bg-gray-100 rounded-lg px-3 py-2 text-sm">
-                🤖 Escribiendo...
+                🤖 Analizando tus datos...
             </div>
         `;
         messagesArea.appendChild(typingDiv);
         messagesArea.scrollTop = messagesArea.scrollHeight;
     }
 
-    /**
-     * Ocultar indicador de typing
-     */
     hideTyping() {
         const typingDiv = document.getElementById('typing-indicator');
-        if (typingDiv) {
-            typingDiv.remove();
-        }
+        if (typingDiv) typingDiv.remove();
     }
 
-    /**
-     * Procesar mensaje del usuario
-     */
     async processMessage(message) {
         const intent = this.detectIntent(message);
-        console.log(`🤖 Intent detectado: ${intent} para mensaje: "${message}"`);
+        console.log(`🤖 Intent: ${intent} - Mensaje: "${message}"`);
 
-        if (this.intentPatterns[intent]) {
-            return await this.intentPatterns[intent].response(message);
-        } else {
-            return "No entiendo tu consulta. Puedes preguntarme sobre gastos, ingresos, balance o escribir 'ayuda' para ver qué puedo hacer.";
+        switch (intent) {
+            case 'gastos_ayer':
+                return await this.getGastosYesterday();
+            case 'gastos_hoy':
+                return await this.getGastosToday();
+            case 'gastos_mes':
+                return await this.getGastosMonth();
+            case 'gastos_total':
+                return await this.getGastosTotal();
+            case 'ingresos':
+                return await this.getIngresos();
+            case 'balance':
+                return await this.getBalance();
+            case 'conversacional':
+                return this.getConversationalResponse(message);
+            case 'test':
+                return await this.testConnection();
+            case 'ayuda':
+                return this.getHelp();
+            case 'saludo':
+                return this.getGreeting();
+            default:
+                return this.getSmartResponse(message);
         }
     }
 
-    /**
-     * Detectar intención del mensaje
-     */
     detectIntent(message) {
         const lowerMessage = message.toLowerCase();
         
-        for (let [intent, config] of Object.entries(this.intentPatterns)) {
-            for (let pattern of config.patterns) {
+        for (let [intent, patterns] of Object.entries(this.intentPatterns)) {
+            for (let pattern of patterns) {
                 if (lowerMessage.includes(pattern)) {
                     return intent;
                 }
@@ -278,88 +338,282 @@ class IAChatAssistant {
         return 'unknown';
     }
 
-    /**
-     * Manejar consultas de gastos
-     */
-    async handleGastosQuery(message) {
-        if (!this.apiService) {
-            return "Lo siento, no puedo acceder a tus datos en este momento.";
-        }
+    // 🔥 CONSULTAS REALES A SUPABASE
 
+    async getGastosYesterday() {
         try {
-            const userId = localStorage.getItem('user_id');
-            if (!userId) {
-                return "Necesitas estar logueado para consultar tus gastos.";
+            const userId = this.getUserId();
+            console.log('🔍 Debug - userId obtenido:', userId);
+            if (!userId) return "🔒 Necesitas estar logueado.";
+
+            console.log('🔍 Debug - Consultando gastos de ayer con JWT para usuario:', userId);
+            const gastosData = await this.queryGastosFromSupabase(userId);
+            console.log('🔍 Debug - Datos recibidos desde Supabase:', gastosData.length);
+            if (!gastosData || gastosData.length === 0) {
+                return "📊 No tienes gastos registrados.";
             }
 
-            // Obtener gastos (esto debería ser implementado en el API service)
-            // Por ahora, respuesta simulada
-            return "📊 Según mis cálculos, este mes has gastado $1,250 principalmente en alimentación ($450) y transporte ($300). ¿Te gustaría más detalles sobre alguna categoría específica?";
-            
+            // Filtrar gastos de ayer
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+            const yesterdayStr = yesterday.toISOString().split('T')[0];
+
+            const gastosYesterday = gastosData.filter(gasto => 
+                gasto.fecha && gasto.fecha.startsWith(yesterdayStr)
+            );
+
+            if (gastosYesterday.length === 0) {
+                return "📅 Ayer no registraste ningún gasto.";
+            }
+
+            const total = gastosYesterday.reduce((sum, gasto) => sum + (gasto.monto || 0), 0);
+            const categorias = this.groupByCategory(gastosYesterday);
+
+            let response = `📅 Ayer gastaste $${total.toFixed(2)}:\n\n`;
+            for (let [categoria, gastos] of Object.entries(categorias)) {
+                const totalCat = gastos.reduce((sum, g) => sum + g.monto, 0);
+                response += `• ${categoria}: $${totalCat.toFixed(2)}\n`;
+            }
+
+            return response;
+
         } catch (error) {
-            console.error('Error obteniendo gastos:', error);
-            return "Hubo un problema consultando tus gastos. ¿Podrías intentar de nuevo?";
+            console.error('❌ Error consultando gastos de ayer:', error);
+            return "⚠️ Hubo un problema consultando tus gastos de ayer. Verifica que estés conectado a internet y que tengas datos registrados.";
         }
     }
 
-    /**
-     * Manejar consultas de ingresos
-     */
-    async handleIngresosQuery(message) {
-        return "💰 Este mes tus ingresos totales son de $2,800. El ingreso más alto fue tu salario ($2,500). ¡Mantén el buen trabajo!";
+    async getGastosToday() {
+        try {
+            const userId = this.getUserId();
+            if (!userId) return "🔒 Necesitas estar logueado.";
+
+            const gastosData = await this.queryGastosFromSupabase(userId);
+            if (!gastosData || gastosData.length === 0) {
+                return "📊 No tienes gastos registrados.";
+            }
+
+            const today = new Date().toISOString().split('T')[0];
+            const gastosToday = gastosData.filter(gasto => 
+                gasto.fecha && gasto.fecha.startsWith(today)
+            );
+
+            if (gastosToday.length === 0) {
+                return "📅 Hoy aún no has registrado gastos.";
+            }
+
+            const total = gastosToday.reduce((sum, gasto) => sum + (gasto.monto || 0), 0);
+            const categorias = this.groupByCategory(gastosToday);
+
+            let response = `📅 Hoy has gastado $${total.toFixed(2)}:\n\n`;
+            for (let [categoria, gastos] of Object.entries(categorias)) {
+                const totalCat = gastos.reduce((sum, g) => sum + g.monto, 0);
+                response += `• ${categoria}: $${totalCat.toFixed(2)}\n`;
+            }
+
+            return response;
+
+        } catch (error) {
+            console.error('❌ Error consultando gastos de hoy:', error);
+            return "⚠️ Hubo un problema consultando tus gastos de hoy. Verifica tu conexión.";
+        }
     }
 
-    /**
-     * Manejar consultas de balance
-     */
-    async handleBalanceQuery(message) {
-        return "⚖️ Tu balance actual es de +$1,550. Ingresos: $2,800, Gastos: $1,250. ¡Estás ahorrando bien este mes!";
+    async getGastosMonth() {
+        try {
+            const userId = this.getUserId();
+            if (!userId) return "🔒 Necesitas estar logueado.";
+
+            const gastosData = await this.queryGastosFromSupabase(userId);
+            if (!gastosData || gastosData.length === 0) {
+                return "📊 No tienes gastos registrados.";
+            }
+
+            const currentMonth = new Date().toISOString().slice(0, 7);
+            const gastosMonth = gastosData.filter(gasto => 
+                gasto.fecha && gasto.fecha.startsWith(currentMonth)
+            );
+
+            if (gastosMonth.length === 0) {
+                return "📊 Este mes no tienes gastos registrados.";
+            }
+
+            const total = gastosMonth.reduce((sum, gasto) => sum + (gasto.monto || 0), 0);
+            const categorias = this.groupByCategory(gastosMonth);
+
+            let response = `📊 Este mes has gastado $${total.toFixed(2)}:\n\n`;
+            
+            const categoriasOrdenadas = Object.entries(categorias)
+                .sort(([,a], [,b]) => {
+                    const totalA = a.reduce((sum, g) => sum + g.monto, 0);
+                    const totalB = b.reduce((sum, g) => sum + g.monto, 0);
+                    return totalB - totalA;
+                });
+
+            for (let [categoria, gastos] of categoriasOrdenadas) {
+                const totalCat = gastos.reduce((sum, g) => sum + g.monto, 0);
+                const porcentaje = ((totalCat / total) * 100).toFixed(1);
+                response += `• ${categoria}: $${totalCat.toFixed(2)} (${porcentaje}%)\n`;
+            }
+
+            return response;
+
+        } catch (error) {
+            console.error('Error:', error);
+            return "Error consultando gastos del mes.";
+        }
     }
 
-    /**
-     * Manejar consultas de categorías
-     */
-    async handleCategoriasQuery(message) {
-        return "📋 Las categorías disponibles son: Alimentación 🍽️, Transporte 🚗, Vivienda 🏠, Salud 🏥, Entretenimiento 🎬, Educación 📚, Tecnología 💻, Ropa 👕, Servicios 🔧 y Otros 📝.";
+    async getGastosTotal() {
+        try {
+            const userId = this.getUserId();
+            if (!userId) return "🔒 Necesitas estar logueado.";
+
+            const gastosData = await this.queryGastosFromSupabase(userId);
+            if (!gastosData || gastosData.length === 0) {
+                return "📊 No tienes gastos registrados.";
+            }
+
+            const total = gastosData.reduce((sum, gasto) => sum + (gasto.monto || 0), 0);
+            const categorias = this.groupByCategory(gastosData);
+
+            let response = `💰 Total gastado: $${total.toFixed(2)} en ${gastosData.length} gastos\n\n🏆 Top categorías:\n`;
+
+            const topCategorias = Object.entries(categorias)
+                .sort(([,a], [,b]) => {
+                    const totalA = a.reduce((sum, g) => sum + g.monto, 0);
+                    const totalB = b.reduce((sum, g) => sum + g.monto, 0);
+                    return totalB - totalA;
+                })
+                .slice(0, 3);
+
+            for (let [categoria, gastos] of topCategorias) {
+                const totalCat = gastos.reduce((sum, g) => sum + g.monto, 0);
+                response += `• ${categoria}: $${totalCat.toFixed(2)}\n`;
+            }
+
+            return response;
+
+        } catch (error) {
+            console.error('Error:', error);
+            return "Error consultando gastos totales.";
+        }
     }
 
-    /**
-     * Manejar consultas de ayuda
-     */
-    async handleAyudaQuery(message) {
-        return `🤖 Puedo ayudarte con:
+    async getIngresos() {
+        try {
+            const userId = this.getUserId();
+            if (!userId) return "🔒 Necesitas estar logueado.";
 
-• 📊 "¿Cuánto gasté este mes?" - Consultar gastos
-• 💰 "¿Cuáles son mis ingresos?" - Ver ingresos  
-• ⚖️ "¿Cuál es mi balance?" - Estado financiero
-• 📋 "¿Qué categorías hay?" - Lista de categorías
-• 🤖 "Ayuda" - Este mensaje
+            const ingresosData = await this.queryIngresosFromSupabase(userId);
+            if (!ingresosData || ingresosData.length === 0) {
+                return "💰 No tienes ingresos registrados.";
+            }
 
-¡Pregúntame lo que necesites!`;
+            const total = ingresosData.reduce((sum, ingreso) => sum + (ingreso.monto || 0), 0);
+            return `💰 Ingresos totales: $${total.toFixed(2)} en ${ingresosData.length} registros`;
+
+        } catch (error) {
+            console.error('Error:', error);
+            return "Error consultando ingresos.";
+        }
     }
 
-    /**
-     * Manejar saludos
-     */
-    async handleSaludoQuery(message) {
-        const saludos = [
-            "¡Hola! 👋 Soy tu asistente financiero. ¿En qué puedo ayudarte hoy?",
-            "¡Hey! 🤖 ¿Quieres revisar tus finanzas? Pregúntame lo que necesites.",
-            "¡Buenas! 😊 Estoy aquí para ayudarte con tus gastos e ingresos."
+    async getBalance() {
+        try {
+            const userId = this.getUserId();
+            if (!userId) return "🔒 Necesitas estar logueado.";
+
+            const [gastosData, ingresosData] = await Promise.all([
+                this.queryGastosFromSupabase(userId),
+                this.queryIngresosFromSupabase(userId)
+            ]);
+
+            const totalGastos = gastosData?.reduce((sum, gasto) => sum + (gasto.monto || 0), 0) || 0;
+            const totalIngresos = ingresosData?.reduce((sum, ingreso) => sum + (ingreso.monto || 0), 0) || 0;
+            const balance = totalIngresos - totalGastos;
+
+            let response = `⚖️ Tu balance:\n\n`;
+            response += `💰 Ingresos: $${totalIngresos.toFixed(2)}\n`;
+            response += `💸 Gastos: $${totalGastos.toFixed(2)}\n`;
+            response += `📊 Balance: $${balance.toFixed(2)}\n\n`;
+
+            if (balance > 0) {
+                response += `✅ ¡Genial! Estás ahorrando`;
+            } else if (balance < 0) {
+                response += `⚠️ Gastas más de lo que ingresas`;
+            } else {
+                response += `⚖️ Estás equilibrado`;
+            }
+
+            return response;
+
+        } catch (error) {
+            console.error('Error:', error);
+            return "Error calculando balance.";
+        }
+    }
+
+    getHelp() {
+        return `🤖 Puedo ayudarte con tus datos reales:\n\n📊 "¿Cuánto gasté ayer?" - Gastos de ayer\n📅 "¿Cuánto gasté hoy?" - Gastos de hoy\n📊 "¿Cuánto gasté este mes?" - Gastos mensuales\n💰 "¿Cuáles son mis ingresos?" - Ingresos totales\n⚖️ "¿Cuál es mi balance?" - Estado financiero\n\n🧪 "test" - Verificar conexión\n\n¡Pregúntame sobre tus datos!`;
+    }
+
+    getGreeting() {
+        const greetings = [
+            "¡Hola! 👋 Pregúntame sobre tus gastos reales.",
+            "¡Hey! 🤖 ¿Quieres revisar tus finanzas?",
+            "¡Buenas! 😊 Estoy conectado a tus datos."
         ];
-        return saludos[Math.floor(Math.random() * saludos.length)];
+        return greetings[Math.floor(Math.random() * greetings.length)];
+    }
+
+    getConversationalResponse(message) {
+        const responses = [
+            "¡Todo bien por aquí! 😊 Soy tu asistente financiero. ¿Te ayudo con algo de tus finanzas?",
+            "¡Excelente! 🤖 Estoy listo para ayudarte con tus gastos e ingresos. ¿Qué quieres saber?",
+            "¡Perfecto! 💰 ¿Quieres que revisemos tus datos financieros?"
+        ];
+        return responses[Math.floor(Math.random() * responses.length)];
+    }
+
+    getSmartResponse(message) {
+        const lowerMessage = message.toLowerCase();
+        
+        // Intentar detectar variaciones de consultas comunes
+        if (lowerMessage.includes('cuanto') && (lowerMessage.includes('gaste') || lowerMessage.includes('gasté'))) {
+            return "📊 Entiendo que quieres saber sobre tus gastos. Prueba con:\n• '¿cuánto gasté ayer?'\n• '¿cuánto gasté hoy?'\n• '¿cuánto gasté este mes?'";
+        }
+        
+        if (lowerMessage.includes('cuanto') && (lowerMessage.includes('gane') || lowerMessage.includes('gané') || lowerMessage.includes('ingreso'))) {
+            return "💰 Veo que preguntas sobre ingresos. Prueba con:\n• '¿cuáles son mis ingresos?'\n• '¿cuánto gané?'";
+        }
+        
+        if (lowerMessage.includes('dinero') || lowerMessage.includes('plata') || lowerMessage.includes('finanzas')) {
+            return "💸 Para consultas financieras puedes preguntar:\n• Gastos: '¿cuánto gasté ayer?'\n• Ingresos: '¿cuáles son mis ingresos?'\n• Balance: '¿cuál es mi balance?'";
+        }
+        
+        return "🤔 No estoy seguro de entender. Puedo ayudarte con:\n• 📊 Consultar gastos\n• 💰 Ver ingresos\n• ⚖️ Calcular balance\n\nEscribe 'ayuda' para más opciones.";
+    }
+
+    groupByCategory(items) {
+        return items.reduce((groups, item) => {
+            const categoria = item.categoria || 'Sin categoría';
+            if (!groups[categoria]) groups[categoria] = [];
+            groups[categoria].push(item);
+            return groups;
+        }, {});
     }
 }
 
 // Instancia global
 window.aiChatAssistant = new IAChatAssistant();
 
-// Auto-inicializar cuando se carga la página
+// Auto-inicializar con más tiempo para que otros scripts carguen
 document.addEventListener('DOMContentLoaded', () => {
-    if (window.aiChatAssistant) {
-        // Pequeño delay para asegurar que otros scripts se carguen
-        setTimeout(() => {
+    setTimeout(() => {
+        if (window.aiChatAssistant) {
             window.aiChatAssistant.init();
-        }, 1000);
-    }
+            console.log('🚀 IA Chat Assistant con datos reales cargado');
+        }
+    }, 3000); // Aumenté a 3 segundos
 });

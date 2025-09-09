@@ -1,0 +1,271 @@
+<!-- Template del Módulo de Gastos -->
+<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="mb-8">
+        <div class="md:flex md:items-center md:justify-between">
+            <div class="flex-1 min-w-0">
+                <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+                    💸 Gestión de Gastos
+                </h2>
+                <p class="mt-1 text-sm text-gray-500">
+                    Administra y controla todos tus gastos de manera eficiente
+                </p>
+            </div>
+            <div class="mt-4 flex md:mt-0 md:ml-4">
+                <button onclick="window.gastosModuleHandler && window.gastosModuleHandler.openGastoModal()" 
+                        class="ml-3 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                    <i data-lucide="plus" class="mr-2 h-4 w-4"></i>
+                    Agregar Gasto
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div id="gastos-stats" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <!-- Stats se generan dinámicamente -->
+    </div>
+
+    <!-- Filtros -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-medium text-gray-900">Filtros</h3>
+            <div class="flex items-center space-x-4">
+                <button id="export-gastos" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors text-sm font-medium">
+                    <i data-lucide="download" class="inline h-4 w-4 mr-2"></i>
+                    Exportar
+                </button>
+                <button id="clear-filters" class="text-gray-600 hover:text-gray-900 text-sm font-medium">
+                    Limpiar filtros
+                </button>
+            </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+                <label for="filter-categoria-gastos" class="block text-sm font-medium text-gray-700 mb-2">Categoría</label>
+                <select id="filter-categoria-gastos" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500">
+                    <option value="">🔍 Todas las categorías</option>
+                    <!-- Categorías se cargan dinámicamente -->
+                </select>
+            </div>
+            <div>
+                <label for="filter-año-gastos" class="block text-sm font-medium text-gray-700 mb-2">Año</label>
+                <select id="filter-año-gastos" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500">
+                    <option value="">📅 Todos los años</option>
+                    <!-- Años se cargan dinámicamente -->
+                </select>
+            </div>
+            <div>
+                <label for="filter-mes-gastos" class="block text-sm font-medium text-gray-700 mb-2">Mes</label>
+                <select id="filter-mes-gastos" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500">
+                    <option value="">📅 Todos los meses</option>
+                    <option value="01">Enero</option>
+                    <option value="02">Febrero</option>
+                    <option value="03">Marzo</option>
+                    <option value="04">Abril</option>
+                    <option value="05">Mayo</option>
+                    <option value="06">Junio</option>
+                    <option value="07">Julio</option>
+                    <option value="08">Agosto</option>
+                    <option value="09">Septiembre</option>
+                    <option value="10">Octubre</option>
+                    <option value="11">Noviembre</option>
+                    <option value="12">Diciembre</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla de Gastos -->
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <div class="flex justify-between items-center">
+                <h3 class="text-lg font-medium text-gray-900">Lista de Gastos</h3>
+                <span id="gastos-count" class="text-sm text-gray-500">0 gastos</span>
+            </div>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Descripción</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Categoría</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Monto (S/)</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Método Pago</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="gastos-table-body" class="bg-white divide-y divide-gray-200">
+                    <!-- Filas se generan dinámicamente -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Agregar/Editar Gasto -->
+<div id="gasto-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+    <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-2/3 lg:w-1/2 shadow-lg rounded-md bg-white">
+        <div class="mt-3">
+            <!-- Header del Modal -->
+            <div class="flex items-center justify-between mb-6">
+                <h3 id="modal-title-gastos" class="text-lg font-medium leading-6 text-gray-900">Agregar Gasto</h3>
+                <button onclick="window.gastosModuleHandler && window.gastosModuleHandler.closeGastoModal()" 
+                        class="text-gray-400 hover:text-gray-600 focus:outline-none">
+                    <i data-lucide="x" class="h-6 w-6"></i>
+                </button>
+            </div>
+
+            <!-- Formulario -->
+            <form id="gasto-form" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Descripción -->
+                    <div>
+                        <label for="descripcion-gastos" class="block text-sm font-medium text-gray-700 mb-2">Descripción *</label>
+                        <input type="text" id="descripcion-gastos" name="descripcion" required
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500"
+                               placeholder="Ej: Supermercado, Gasolina, etc.">
+                    </div>
+                    
+                    <!-- Monto -->
+                    <div>
+                        <label for="monto-gastos" class="block text-sm font-medium text-gray-700 mb-2">Monto * (Soles)</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <span class="text-gray-500 sm:text-sm">S/</span>
+                            </div>
+                            <input type="number" id="monto-gastos" name="monto" step="0.01" min="0" required
+                                   class="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500"
+                                   placeholder="0.00">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Categoría -->
+                    <div>
+                        <label for="categoria-gastos" class="block text-sm font-medium text-gray-700 mb-2">Categoría</label>
+                        <select id="categoria-gastos" name="categoria" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500">
+                            <option value="">Seleccionar categoría</option>
+                            <option value="alimentacion">🍽️ Alimentación</option>
+                            <option value="transporte">🚗 Transporte</option>
+                            <option value="servicios">⚡ Servicios</option>
+                            <option value="entretenimiento">🎬 Entretenimiento</option>
+                            <option value="salud">🏥 Salud</option>
+                            <option value="educacion">📚 Educación</option>
+                            <option value="ropa">👕 Ropa y Accesorios</option>
+                            <option value="hogar">🏠 Hogar</option>
+                            <option value="tecnologia">💻 Tecnología</option>
+                            <option value="viajes">✈️ Viajes</option>
+                            <option value="regalos">🎁 Regalos</option>
+                            <option value="seguros">🛡️ Seguros</option>
+                            <option value="impuestos">🏛️ Impuestos</option>
+                            <option value="prestamos">🏦 Préstamos</option>
+                            <option value="otros">📦 Otros</option>
+                        </select>
+                    </div>
+
+                    <!-- Método de Pago -->
+                    <div>
+                        <label for="metodo-pago-gastos" class="block text-sm font-medium text-gray-700 mb-2">Método de Pago</label>
+                        <select id="metodo-pago-gastos" name="metodo_pago" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500">
+                            <option value="">Seleccionar método</option>
+                            <option value="efectivo">💵 Efectivo</option>
+                            <option value="tarjeta_credito">💳 Tarjeta de Crédito</option>
+                            <option value="tarjeta_debito">💳 Tarjeta de Débito</option>
+                            <option value="transferencia">🏦 Transferencia</option>
+                            <option value="paypal">🎯 PayPal</option>
+                            <option value="criptomonedas">₿ Criptomonedas</option>
+                            <option value="cheque">💰 Cheque</option>
+                            <option value="otros">📦 Otros</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Fecha -->
+                    <div>
+                        <label for="fecha-gastos" class="block text-sm font-medium text-gray-700 mb-2">Fecha</label>
+                        <input type="date" id="fecha-gastos" name="fecha"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500">
+                    </div>
+
+                    <!-- Recurrente -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <input type="checkbox" id="es-recurrente-gastos" name="es_recurrente" class="mr-2">
+                            Es recurrente
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Sección de Recurrencia (oculta por defecto) -->
+                <div id="recurrencia-section-gastos" class="hidden">
+                    <div>
+                        <label for="frecuencia-dias-gastos" class="block text-sm font-medium text-gray-700 mb-2">Repetir cada (días)</label>
+                        <input type="number" id="frecuencia-dias-gastos" name="frecuencia_dias" min="1" max="365"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500"
+                               placeholder="30">
+                    </div>
+                </div>
+
+                <!-- Notas -->
+                <div>
+                    <label for="notas-gastos" class="block text-sm font-medium text-gray-700 mb-2">Notas adicionales</label>
+                    <textarea id="notas-gastos" name="notas" rows="3"
+                              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500"
+                              placeholder="Información adicional (opcional)"></textarea>
+                </div>
+
+                <!-- Botones -->
+                <div class="flex justify-end space-x-3 pt-6">
+                    <button type="button" onclick="window.gastosModuleHandler && window.gastosModuleHandler.closeGastoModal()" 
+                            class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                        Cancelar
+                    </button>
+                    <button type="submit" 
+                            class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                        <span id="submit-text-gastos">Guardar Gasto</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Configurar fecha por defecto
+        const fechaInput = document.getElementById('fecha-gastos');
+        if (fechaInput && !fechaInput.value) {
+            fechaInput.value = new Date().toISOString().split('T')[0];
+        }
+
+        // Manejar checkbox de recurrencia
+        const recurrenteCheckbox = document.getElementById('es-recurrente-gastos');
+        const recurrenciaSection = document.getElementById('recurrencia-section-gastos');
+        
+        if (recurrenteCheckbox && recurrenciaSection) {
+            recurrenteCheckbox.addEventListener('change', function() {
+                if (this.checked) {
+                    recurrenciaSection.classList.remove('hidden');
+                } else {
+                    recurrenciaSection.classList.add('hidden');
+                }
+            });
+        }
+
+        // Validación especial para el monto
+        const montoInput = document.getElementById('monto-gastos');
+        if (montoInput) {
+            montoInput.addEventListener('input', function() {
+                if (this.value && parseFloat(this.value) <= 0) {
+                    this.setCustomValidity('El monto debe ser mayor a 0');
+                } else {
+                    this.setCustomValidity('');
+                }
+            });
+        }
+    });
+</script>

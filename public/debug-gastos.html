@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Gastos Module - PLANIFICAPRO</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+
+<body class="bg-gray-50 min-h-screen py-8">
+    <div class="max-w-4xl mx-auto px-4">
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h1 class="text-2xl font-bold mb-6 flex items-center">
+                <i data-lucide="bug" class="mr-3 h-6 w-6 text-red-600"></i>
+                Debug Gastos Module
+            </h1>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <button onclick="runDebug()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+                    🔧 Run Full Debug
+                </button>
+                <button onclick="testConnection()" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700">
+                    🔗 Test Supabase Connection
+                </button>
+                <button onclick="loadTemplate()" class="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700">
+                    📄 Load Template
+                </button>
+                <button onclick="initHandler()" class="bg-orange-600 text-white px-4 py-2 rounded-md hover:bg-orange-700">
+                    🚀 Init Handler
+                </button>
+            </div>
+            
+            <!-- Console Output -->
+            <div class="bg-gray-900 text-green-400 p-4 rounded-md mb-6 h-96 overflow-y-auto font-mono text-sm" id="console-output">
+                <div class="text-gray-500">Console output will appear here...</div>
+            </div>
+            
+            <!-- Quick Actions -->
+            <div class="flex flex-wrap gap-2">
+                <button onclick="clearConsole()" class="bg-gray-600 text-white px-3 py-1 rounded text-sm">
+                    Clear Console
+                </button>
+                <button onclick="window.location.href='dashboard.html'" class="bg-indigo-600 text-white px-3 py-1 rounded text-sm">
+                    Go to Dashboard
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <!-- Supabase -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/supabase-auth.js"></script>
+    <script src="js/simple-auth.js"></script>
+    <!-- Module System -->
+    <script src="js/module-loader.js"></script>
+    <script src="js/api-service.js"></script>
+    <script src="js/dashboard-handler.js"></script>
+    <script src="js/gastos-module-handler.js"></script>
+    <!-- Debug Script -->
+    <script src="Pruebas/debug-gastos-module.js"></script>
+
+    <script>
+        // Override console methods to capture output
+        const originalLog = console.log;
+        const originalError = console.error;
+        
+        function addToConsole(message, type = 'log') {
+            const consoleOutput = document.getElementById('console-output');
+            const timestamp = new Date().toLocaleTimeString();
+            const color = type === 'error' ? 'text-red-400' : 'text-green-400';
+            
+            const logDiv = document.createElement('div');
+            logDiv.className = `${color} mb-1`;
+            logDiv.innerHTML = `<span class="text-gray-500">[${timestamp}]</span> ${message}`;
+            
+            consoleOutput.appendChild(logDiv);
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
+        }
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            addToConsole(args.join(' '), 'log');
+        };
+        
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            addToConsole(args.join(' '), 'error');
+        };
+        
+        // Debug functions
+        async function runDebug() {
+            if (window.debugGastos) {
+                await window.debugGastos.debugCompleto();
+            } else {
+                console.error('Debug script not loaded');
+            }
+        }
+        
+        async function testConnection() {
+            if (window.debugGastos) {
+                await window.debugGastos.probarConexionSupabase();
+            } else {
+                console.error('Debug script not loaded');
+            }
+        }
+        
+        async function loadTemplate() {
+            if (window.debugGastos) {
+                await window.debugGastos.cargarTemplateGastos();
+            } else {
+                console.error('Debug script not loaded');
+            }
+        }
+        
+        function initHandler() {
+            if (window.debugGastos) {
+                window.debugGastos.inicializarGastosHandler();
+            } else {
+                console.error('Debug script not loaded');
+            }
+        }
+        
+        function clearConsole() {
+            document.getElementById('console-output').innerHTML = '<div class="text-gray-500">Console cleared...</div>';
+        }
+        
+        // Initialize icons
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        });
+        
+        console.log('🐛 Debug page loaded successfully');
+    </script>
+</body>
+</html>

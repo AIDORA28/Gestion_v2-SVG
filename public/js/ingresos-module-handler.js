@@ -21,6 +21,7 @@ class IngresosModuleHandler {
         this.ingresos = [];
         this.ingresosFiltered = [];
         this.currentEditId = null;
+        this.isInitialized = false; // Prevenir múltiples inicializaciones
         
         // 🔍 FILTROS
         this.filters = {
@@ -39,11 +40,20 @@ class IngresosModuleHandler {
     }
 
     /**
-     * 🎯 INICIALIZACIÓN (patrón dashboard exacto)
+     * 🎯 INICIALIZACIÓN (protegida contra múltiples llamadas)
      */
     async init() {
+        // Prevenir múltiples inicializaciones
+        if (this.isInitialized) {
+            console.log('⚠️ IngresosModuleHandler ya está inicializado, saltando...');
+            return;
+        }
+        
         try {
-            console.log('🚀 Inicializando módulo ingresos (patrón dashboard)...');
+            console.log('🚀 Inicializando módulo ingresos...');
+            
+            // Marcar como en proceso de inicialización
+            this.isInitialized = true;
             
             // 🔐 PASO 1: Verificar autenticación automática
             await this.checkAuth();
@@ -55,10 +65,13 @@ class IngresosModuleHandler {
             this.setupFormEvents();
             this.setupFilters();
             
-            console.log('✅ Módulo ingresos inicializado exitosamente (patrón dashboard)');
+            console.log('✅ Módulo ingresos inicializado exitosamente');
             
         } catch (error) {
             console.error('❌ Error inicializando módulo ingresos:', error);
+            
+            // Marcar como no inicializado en caso de error
+            this.isInitialized = false;
             
             // 🎯 PATRÓN DASHBOARD: Auto-redirect en errores de auth
             if (error.message.includes('auth') || error.message.includes('token')) {
@@ -308,15 +321,15 @@ class IngresosModuleHandler {
                     ${ingreso.es_recurrente ? '<div class="text-xs text-blue-600 mt-1">🔄 Recurrente</div>' : ''}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    $${this.formatMoney(ingreso.monto)}
+                    S/ ${this.formatMoney(ingreso.monto)}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button onclick="window.ingresosModuleHandler.editIngreso('${ingreso.id}')" 
-                            class="text-blue-600 hover:text-blue-900 mr-3">
+                    <button data-action="edit" data-id="${ingreso.id}" 
+                            class="btn-edit text-blue-600 hover:text-blue-900 mr-3">
                         Editar
                     </button>
-                    <button onclick="window.ingresosModuleHandler.deleteIngreso('${ingreso.id}')" 
-                            class="text-red-600 hover:text-red-900">
+                    <button data-action="delete" data-id="${ingreso.id}" 
+                            class="btn-delete text-red-600 hover:text-red-900">
                         Eliminar
                     </button>
                 </td>
@@ -327,6 +340,10 @@ class IngresosModuleHandler {
         if (typeof lucide !== 'undefined') {
             lucide.createIcons();
         }
+
+        // 🎯 FIX: Asegurar que los eventos estén configurados después de render
+        this.setupTableEvents();
+        console.log('✅ Eventos de tabla reconfigurados después de render');
     }
 
     /**
@@ -353,7 +370,7 @@ class IngresosModuleHandler {
                         <div class="ml-5 w-0 flex-1">
                             <dl>
                                 <dt class="text-sm font-medium text-gray-500 truncate">Total Ingresos</dt>
-                                <dd class="text-lg font-medium text-gray-900">$${this.formatMoney(total)}</dd>
+                                <dd class="text-lg font-medium text-gray-900">S/ ${this.formatMoney(total)}</dd>
                             </dl>
                         </div>
                     </div>
@@ -369,7 +386,7 @@ class IngresosModuleHandler {
                         <div class="ml-5 w-0 flex-1">
                             <dl>
                                 <dt class="text-sm font-medium text-gray-500 truncate">Promedio</dt>
-                                <dd class="text-lg font-medium text-gray-900">$${this.formatMoney(promedio)}</dd>
+                                <dd class="text-lg font-medium text-gray-900">S/ ${this.formatMoney(promedio)}</dd>
                             </dl>
                         </div>
                     </div>
@@ -400,12 +417,14 @@ class IngresosModuleHandler {
     }
 
     /**
-     * 📝 MANEJAR ENVÍO DE FORMULARIO (patrón dashboard)
+     * 📝 MANEJAR ENVÍO DE FORMULARIO (optimizado)
      */
     async handleSubmit(event) {
         event.preventDefault();
+        console.log('📝 handleSubmit activado');
         
-        console.log('📝 handleSubmit activado (patrón dashboard)');
+        const button = event.target.querySelector('button[type="submit"]');
+        if (button) button.disabled = true;
         
         try {
             const formData = new FormData(event.target);
@@ -416,132 +435,226 @@ class IngresosModuleHandler {
                 categoria: formData.get('categoria'),
                 fecha: formData.get('fecha'),
                 es_recurrente: formData.get('es_recurrente') === 'on',
-                tipo_recurrencia: formData.get('tipo_recurrencia'),
+                frecuencia_dias: formData.get('frecuencia_dias') ? parseInt(formData.get('frecuencia_dias')) : null,
                 notas: formData.get('notas')?.trim()
             };
             
-            console.log('📊 Datos del formulario:', data);
-            
-            // Enviar usando patrón dashboard
             const result = await this.submitIngreso(data);
             
             if (result.success) {
-                console.log('✅ Formulario enviado exitosamente (patrón dashboard)');
-                
-                // Limpiar formulario
                 event.target.reset();
-                
-                // Cerrar modal si existe
                 this.closeIngresoModal();
-                
-            } else {
-                console.error('❌ Error en envío de formulario:', result.error);
             }
             
         } catch (error) {
             console.error('❌ Error en handleSubmit:', error);
-            
             if (this.notyf) {
                 this.notyf.error('Error al procesar formulario');
             }
+        } finally {
+            if (button) button.disabled = false;
         }
     }
 
     /**
-     * 🎨 CONFIGURAR EVENTOS DEL FORMULARIO
+     * 🎨 CONFIGURAR EVENTOS DEL FORMULARIO (sin duplicados)
      */
     setupFormEvents() {
         const form = document.getElementById('ingreso-form');
-        if (form) {
-            // Remover event listeners previos
-            form.removeEventListener('submit', this.handleSubmit.bind(this));
+        if (form && !form.hasAttribute('data-events-configured')) {
+            // Marcar que ya tiene eventos configurados
+            form.setAttribute('data-events-configured', 'true');
             
-            // Agregar event listener
-            form.addEventListener('submit', this.handleSubmit.bind(this));
+            // Configurar submit
+            form.addEventListener('submit', (event) => this.handleSubmit(event));
             
-            console.log('✅ Event listeners configurados (patrón dashboard)');
+            // 🔄 CONFIGURAR CHECKBOX DE RECURRENCIA (MEJORADO)
+            const checkbox = document.getElementById('es_recurrente');
+            if (checkbox) {
+                // Agregar event listener directo
+                checkbox.addEventListener('change', (event) => {
+                    const container = document.getElementById('frecuencia-container');
+                    const frecuenciaInput = document.getElementById('frecuencia_dias');
+                    
+                    console.log('🔄 Checkbox recurrencia cambiado:', event.target.checked);
+                    
+                    if (container) {
+                        if (event.target.checked) {
+                            container.classList.remove('hidden');
+                            console.log('✅ Sección de recurrencia MOSTRADA');
+                            
+                            // Establecer valor por defecto
+                            if (frecuenciaInput && !frecuenciaInput.value) {
+                                frecuenciaInput.value = 30;
+                            }
+                        } else {
+                            container.classList.add('hidden');
+                            console.log('✅ Sección de recurrencia OCULTADA');
+                        }
+                    }
+                });
+                
+                // También agregar el global si existe
+                if (typeof window.handleRecurrenceChange === 'function') {
+                    checkbox.addEventListener('change', window.handleRecurrenceChange);
+                }
+            }
+            
+            console.log('✅ Eventos configurados (una sola vez)');
         }
+
+        // 🎯 CONFIGURAR EVENT DELEGATION PARA BOTONES DE TABLA
+        this.setupTableEvents();
     }
 
     /**
-     * 🎨 ABRIR MODAL (mejorado con recurrencia)
+     * 🎯 CONFIGURAR EVENT DELEGATION PARA TABLA (FIX PRINCIPAL)
+     */
+    setupTableEvents() {
+        const tableContainer = document.querySelector('#section-ingresos');
+        if (!tableContainer) return;
+
+        // Remover listener anterior si existe
+        if (this.tableEventListener) {
+            tableContainer.removeEventListener('click', this.tableEventListener);
+        }
+
+        // Crear nuevo listener
+        this.tableEventListener = (event) => {
+            const button = event.target.closest('button');
+            if (!button) return;
+
+            const action = button.getAttribute('data-action');
+            const id = button.getAttribute('data-id');
+
+            if (action && id) {
+                event.preventDefault();
+                event.stopPropagation();
+
+                console.log(`🎯 Event delegation: ${action} para ID ${id}`);
+
+                if (action === 'edit') {
+                    this.editIngreso(id);
+                } else if (action === 'delete') {
+                    this.deleteIngreso(id);
+                }
+            }
+        };
+
+        // Agregar listener con delegation
+        tableContainer.addEventListener('click', this.tableEventListener);
+        console.log('✅ Event delegation configurado para tabla');
+    }
+
+    /**
+     * 🎨 ABRIR MODAL (simplificado)
      */
     openIngresoModal() {
         const modal = document.getElementById('ingreso-modal');
-        if (modal) {
-            modal.classList.remove('hidden');
-            
-            // Reinicializar elementos del modal
-            setTimeout(() => {
-                // Configurar fecha actual
-                const fechaInput = document.getElementById('fecha');
-                if (fechaInput && !fechaInput.value) {
-                    const today = new Date().toISOString().split('T')[0];
-                    fechaInput.value = today;
-                }
-                
-                // Reconfigurar checkbox de recurrencia
-                if (typeof window.handleRecurrenceChange === 'function') {
-                    const checkbox = document.getElementById('es_recurrente');
-                    const container = document.getElementById('frecuencia-container');
-                    
-                    if (checkbox && container) {
-                        // Asegurar que esté oculto inicialmente
-                        container.classList.add('hidden');
-                        checkbox.checked = false;
-                        
-                        // Remover y reagregar event listener
-                        checkbox.removeEventListener('change', window.handleRecurrenceChange);
-                        checkbox.addEventListener('change', window.handleRecurrenceChange);
-                        
-                        console.log('✅ Modal abierto - recurrencia configurada');
-                    }
-                }
-                
-                // Enfocar primer campo
-                const firstInput = modal.querySelector('input[type="text"]');
-                if (firstInput) {
-                    firstInput.focus();
-                }
-            }, 100);
+        if (!modal) return;
+        
+        modal.classList.remove('hidden');
+        
+        // Configurar fecha actual si está vacía
+        const fechaInput = document.getElementById('fecha');
+        if (fechaInput && !fechaInput.value) {
+            fechaInput.value = new Date().toISOString().split('T')[0];
         }
+        
+        // 🔄 CONFIGURAR RECURRENCIA (FORZAR ESTADO INICIAL)
+        const checkbox = document.getElementById('es_recurrente');
+        const container = document.getElementById('frecuencia-container');
+        const frecuenciaInput = document.getElementById('frecuencia_dias');
+        
+        if (checkbox && container) {
+            // Forzar estado inicial: NO recurrente
+            checkbox.checked = false;
+            container.classList.add('hidden');
+            
+            // Limpiar valor de frecuencia
+            if (frecuenciaInput) {
+                frecuenciaInput.value = '';
+            }
+            
+            console.log('✅ Modal abierto - Recurrencia inicializada como OCULTA');
+        }
+        
+        // Enfocar primer campo
+        const firstInput = modal.querySelector('input[type="text"]');
+        if (firstInput) firstInput.focus();
     }
 
     /**
-     * 🎨 CERRAR MODAL (con limpieza completa)
+     * 🎨 CERRAR MODAL (simplificado)
      */
     closeIngresoModal() {
         const modal = document.getElementById('ingreso-modal');
-        if (modal) {
-            modal.classList.add('hidden');
+        if (!modal) return;
+        
+        modal.classList.add('hidden');
+        
+        // Limpiar formulario
+        const form = document.getElementById('ingreso-form');
+        if (form) {
+            form.reset();
+            // NO remover el atributo data-events-configured para mantener los eventos
+        }
+        
+        // Resetear título del modal
+        const modalTitle = document.getElementById('ingreso-modal-title');
+        if (modalTitle) modalTitle.textContent = 'Agregar Ingreso';
+        
+        // Limpiar estado
+        this.currentEditId = null;
+        
+        // Ocultar sección de recurrencia
+        const frecuenciaContainer = document.getElementById('frecuencia-container');
+        if (frecuenciaContainer) frecuenciaContainer.classList.add('hidden');
+        
+        console.log('✅ Modal cerrado');
+    }
+
+    /**
+     * 📝 LLENAR FORMULARIO CON DATOS
+     */
+    populateForm(ingreso) {
+        // Campos básicos
+        const fields = {
+            'descripcion': ingreso.descripcion || '',
+            'monto': ingreso.monto || '',
+            'categoria': ingreso.categoria || '',
+            'fecha': ingreso.fecha || '',
+            'notas': ingreso.notas || ''
+        };
+        
+        Object.keys(fields).forEach(fieldId => {
+            const input = document.getElementById(fieldId);
+            if (input) input.value = fields[fieldId];
+        });
+        
+        // Checkbox de recurrencia
+        const recurrenteCheckbox = document.getElementById('es_recurrente');
+        const frecuenciaContainer = document.getElementById('frecuencia-container');
+        const frecuenciaInput = document.getElementById('frecuencia_dias');
+        
+        if (recurrenteCheckbox) {
+            recurrenteCheckbox.checked = ingreso.es_recurrente || false;
             
-            // Limpiar formulario
-            const form = document.getElementById('ingreso-form');
-            if (form) {
-                form.reset();
-            }
-            
-            // Resetear título del modal
-            const modalTitle = document.getElementById('ingreso-modal-title');
-            if (modalTitle) {
-                modalTitle.textContent = 'Agregar Ingreso';
-            }
-            
-            // Limpiar ID de edición
-            this.currentEditId = null;
-            
-            // Ocultar sección de recurrencia
-            const frecuenciaContainer = document.getElementById('frecuencia-container');
             if (frecuenciaContainer) {
-                frecuenciaContainer.classList.add('hidden');
+                if (ingreso.es_recurrente) {
+                    frecuenciaContainer.classList.remove('hidden');
+                    if (frecuenciaInput) {
+                        frecuenciaInput.value = ingreso.frecuencia_dias || 30;
+                    }
+                } else {
+                    frecuenciaContainer.classList.add('hidden');
+                }
             }
-            
-            console.log('✅ Modal cerrado y limpiado');
         }
     }
 
     /**
-     * ✏️ EDITAR INGRESO (implementación completa)
+     * ✏️ EDITAR INGRESO (simplificado)
      */
     async editIngreso(id) {
         console.log('✏️ Editando ingreso:', id);
@@ -563,57 +676,17 @@ class IngresosModuleHandler {
             // Abrir modal
             this.openIngresoModal();
             
-            // Esperar a que el modal esté completamente abierto
-            setTimeout(() => {
-                // Cambiar título del modal
-                const modalTitle = document.getElementById('ingreso-modal-title');
-                if (modalTitle) {
-                    modalTitle.textContent = 'Editar Ingreso';
-                }
-                
-                // Llenar formulario con datos existentes
-                const form = document.getElementById('ingreso-form');
-                if (form) {
-                    // Campos básicos
-                    const descripcionInput = document.getElementById('descripcion');
-                    const montoInput = document.getElementById('monto');
-                    const categoriaInput = document.getElementById('categoria');
-                    const fechaInput = document.getElementById('fecha');
-                    const notasInput = document.getElementById('notas');
-                    
-                    if (descripcionInput) descripcionInput.value = ingreso.descripcion || '';
-                    if (montoInput) montoInput.value = ingreso.monto || '';
-                    if (categoriaInput) categoriaInput.value = ingreso.categoria || '';
-                    if (fechaInput) fechaInput.value = ingreso.fecha || '';
-                    if (notasInput) notasInput.value = ingreso.notas || '';
-                    
-                    // Checkbox de recurrencia
-                    const recurrenteCheckbox = document.getElementById('es_recurrente');
-                    const frecuenciaContainer = document.getElementById('frecuencia-container');
-                    const frecuenciaInput = document.getElementById('frecuencia_dias');
-                    
-                    if (recurrenteCheckbox) {
-                        recurrenteCheckbox.checked = ingreso.es_recurrente || false;
-                        
-                        // Mostrar/ocultar sección de frecuencia
-                        if (frecuenciaContainer) {
-                            if (ingreso.es_recurrente) {
-                                frecuenciaContainer.classList.remove('hidden');
-                                if (frecuenciaInput) {
-                                    frecuenciaInput.value = ingreso.frecuencia_dias || 30;
-                                }
-                            } else {
-                                frecuenciaContainer.classList.add('hidden');
-                            }
-                        }
-                    }
-                    
-                    // Guardar ID para actualización
-                    this.currentEditId = id;
-                    
-                    console.log('✅ Formulario llenado para edición');
-                }
-            }, 150);
+            // Cambiar título del modal
+            const modalTitle = document.getElementById('ingreso-modal-title');
+            if (modalTitle) modalTitle.textContent = 'Editar Ingreso';
+            
+            // Llenar formulario con datos existentes
+            this.populateForm(ingreso);
+            
+            // Guardar ID para actualización
+            this.currentEditId = id;
+            
+            console.log('✅ Formulario llenado para edición');
             
         } catch (error) {
             console.error('❌ Error al editar ingreso:', error);
@@ -684,29 +757,7 @@ class IngresosModuleHandler {
         });
     }
 
-    /**
-     * 🧪 DEBUG TEST (funciones de prueba)
-     */
-    async debugTest() {
-        console.log('🧪 === DEBUG TEST INGRESOS (PATRÓN DASHBOARD) ===');
-        
-        const testData = {
-            descripcion: 'Test Debug Optimizado',
-            monto: '888.88',
-            categoria: 'Freelance',
-            fecha: new Date().toISOString().split('T')[0],
-            notas: 'Prueba con patrón dashboard optimizado'
-        };
-        
-        try {
-            const result = await this.submitIngreso(testData);
-            console.log('✅ Debug test completado:', result);
-            return result;
-        } catch (error) {
-            console.error('❌ Error en debug test:', error);
-            return { success: false, error: error.message };
-        }
-    }
+
 
     /**
      * 🔍 CONFIGURAR FILTROS
@@ -724,44 +775,43 @@ class IngresosModuleHandler {
     }
     
     /**
-     * 📋 LLENAR CATEGORÍAS
+     * 📋 LLENAR CATEGORÍAS (COMPLETAS CON ICONOS)
      */
     populateCategories() {
         const categoriaSelect = document.getElementById('filter-categoria');
         if (!categoriaSelect) return;
         
-        // Obtener categorías únicas de los ingresos
-        const categorias = [...new Set(this.ingresos.map(ing => ing.categoria || 'otros'))];
+        // 🎯 CATEGORÍAS COMPLETAS (igual que el formulario)
+        const todasLasCategorias = [
+            { value: 'Salario', text: '💼 Salario' },
+            { value: 'Freelance', text: '💻 Freelance' },
+            { value: 'Negocio', text: '🏪 Negocio' },
+            { value: 'Inversiones', text: '📈 Inversiones' },
+            { value: 'Ventas', text: '🛒 Ventas' },
+            { value: 'Comisiones', text: '🤝 Comisiones' },
+            { value: 'Bonificaciones', text: '🎁 Bonificaciones' },
+            { value: 'Alquiler', text: '🏠 Alquiler' },
+            { value: 'Intereses', text: '💰 Intereses' },
+            { value: 'Dividendos', text: '📊 Dividendos' },
+            { value: 'Pensión', text: '👴 Pensión' },
+            { value: 'Subsidios', text: '🏛️ Subsidios' },
+            { value: 'Regalos', text: '🎉 Regalos' },
+            { value: 'Préstamos', text: '🏦 Préstamos' },
+            { value: 'Otros', text: '📦 Otros' }
+        ];
         
-        // Categorías predefinidas con iconos
-        const categoriasConIconos = {
-            'Salario': '💼 Salario',
-            'Freelance': '💻 Freelance', 
-            'Negocio': '🏪 Negocio',
-            'Inversiones': '📈 Inversiones',
-            'Ventas': '🛒 Ventas',
-            'Comisiones': '🤝 Comisiones',
-            'Bonificaciones': '🎁 Bonificaciones',
-            'Alquiler': '🏠 Alquiler',
-            'Intereses': '💰 Intereses',
-            'Dividendos': '📊 Dividendos',
-            'Pensión': '👴 Pensión',
-            'Subsidios': '🏛️ Subsidios',
-            'Regalos': '🎉 Regalos',
-            'Préstamos': '🏦 Préstamos',
-            'otros': '📦 Otros'
-        };
-        
-        // Limpiar opciones existentes (excepto "Todas")
+        // Limpiar y agregar opción "Todas"
         categoriaSelect.innerHTML = '<option value="">Todas las categorías</option>';
         
-        // Agregar categorías encontradas
-        categorias.forEach(categoria => {
+        // Agregar todas las categorías disponibles
+        todasLasCategorias.forEach(categoria => {
             const option = document.createElement('option');
-            option.value = categoria;
-            option.textContent = categoriasConIconos[categoria] || categoria;
+            option.value = categoria.value;
+            option.textContent = categoria.text;
             categoriaSelect.appendChild(option);
         });
+        
+        console.log(`✅ Filtro de categorías poblado con ${todasLasCategorias.length} opciones`);
     }
     
     /**
@@ -993,16 +1043,7 @@ class IngresosModuleHandler {
 // 🌍 DISPONIBILIDAD GLOBAL
 window.IngresosModuleHandler = IngresosModuleHandler;
 
-// 🧪 FUNCIONES DE DEBUG GLOBALES
-window.debugIngresos = function() {
-    if (window.ingresosModuleHandler) {
-        return window.ingresosModuleHandler.debugTest();
-    } else {
-        console.error('❌ Handler no inicializado');
-        return { success: false, error: 'Handler no inicializado' };
-    }
-};
-
+// 🧪 FUNCIÓN DE DIAGNÓSTICO GLOBAL
 window.diagnosticIngresos = function() {
     if (window.ingresosModuleHandler) {
         return window.ingresosModuleHandler.diagnosticCheck();
@@ -1012,4 +1053,4 @@ window.diagnosticIngresos = function() {
     }
 };
 
-console.log('✅ IngresosModuleHandler (patrón dashboard) cargado y disponible globalmente');
+console.log('✅ IngresosModuleHandler optimizado cargado');

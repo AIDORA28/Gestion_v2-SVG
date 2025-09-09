@@ -1141,8 +1141,8 @@ app.get('/api/dashboard', async (req, res) => {
                 resumen: {
                     status: balance >= 0 ? 'positivo' : 'negativo',
                     mensaje: balance >= 0 ? 
-                        `¡Excelente! Tienes un ahorro de $${balance.toFixed(2)} este mes` :
-                        `Atención: Tienes un déficit de $${Math.abs(balance).toFixed(2)} este mes`
+                        `¡Excelente! Tienes un ahorro de S/ ${balance.toFixed(2)} este mes` :
+                        `Atención: Tienes un déficit de S/ ${Math.abs(balance).toFixed(2)} este mes`
                 }
             }
         });

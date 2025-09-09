@@ -10,23 +10,46 @@
     
     <!-- Notyf -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net    <!-- 💸 Handler unificado de gastos -->
+    <script src="js/gastos-module-handler.js"></script>
     
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-    
-    <!-- Notyf Notifications -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
-    
-    <!-- Config -->
-    <script src="js/config.js"></script>
-    
-    <!-- AI Smart Categorization - Gemini Quispe -->
-    <script src="js/ai-smart-categorization.js"></script>
-    <script src="js/ai-api-endpoint.js"></script>
-    
-    <!-- Force redeploy - Sep 8, 2025 -->
+    <script>
+        // Inicializar iconos de Lucide cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+            
+            // 🚀 INICIALIZAR GASTOS MODULE HANDLER
+            console.log('🚀 Inicializando GastosModuleHandler en página standalone...');
+            if (typeof GastosModuleHandler !== 'undefined') {
+                window.gastosModuleHandler = new GastosModuleHandler();
+                console.log('✅ GastosModuleHandler inicializado correctamente');
+            } else {
+                console.error('❌ GastosModuleHandler no está disponible');
+            }
+        });
+    </script>
+</head>
+
+<body class="h-full">
+        // Inicializar iconos de Lucide cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+            
+            // 🚀 INICIALIZAR GASTOS MODULE HANDLER
+            console.log('🚀 Inicializando GastosModuleHandler en página standalone...');
+            if (typeof GastosModuleHandler !== 'undefined') {
+                window.gastosModuleHandler = new GastosModuleHandler();
+                // El init() ya se llama en el constructor
+                console.log('✅ GastosModuleHandler inicializado correctamente');
+            } else {
+                console.error('❌ GastosModuleHandler no está disponible');
+            }
+        });
+    </script>
 </head>
 
 <body class="h-full">
@@ -81,7 +104,7 @@
                         </div>
                         <div class="text-right">
                             <p class="text-sm text-gray-600">Total Gastos del Mes</p>
-                            <p id="total-gastos-mes" class="text-3xl font-bold text-red-600">$0.00</p>
+                            <p id="total-gastos-mes" class="text-3xl font-bold text-red-600">S/ 0.00</p>
                         </div>
                     </div>
                 </div>
@@ -96,7 +119,7 @@
                         </div>
                         <div class="ml-4">
                             <p class="text-sm font-medium text-gray-600">Total Gastos</p>
-                            <p id="stat-total" class="text-2xl font-bold text-gray-900">$0.00</p>
+                            <p id="stat-total" class="text-2xl font-bold text-gray-900">S/ 0.00</p>
                         </div>
                     </div>
                 </div>
@@ -149,9 +172,6 @@
                                 <option value="salud">🏥 Salud</option>
                                 <option value="entretenimiento">🎬 Entretenimiento</option>
                                 <option value="educacion">📚 Educación</option>
-                                <option value="tecnologia">💻 Tecnología</option>
-                                <option value="ropa">👕 Ropa</option>
-                                <option value="servicios">🔧 Servicios</option>
                                 <option value="otros">📝 Otros</option>
                             </select>
                         </div>
@@ -171,7 +191,11 @@
                             <input type="month" id="filter-mes" class="border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm">
                         </div>
                     </div>
-                    <div class="flex items-center space-x-2">
+                    <div class="flex items-center space-x-4">
+                        <button id="export-gastos" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors text-sm font-medium">
+                            <i data-lucide="download" class="inline h-4 w-4 mr-2"></i>
+                            Exportar
+                        </button>
                         <button id="clear-filters" class="text-gray-600 hover:text-gray-900 text-sm font-medium">
                             Limpiar filtros
                         </button>
@@ -196,13 +220,13 @@
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Descripción</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Categoría</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Monto</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Monto (S/)</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Método</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Recurrente</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
                             </tr>
                         </thead>
-                        <tbody id="gastos-tbody" class="bg-white divide-y divide-gray-200">
+                        <tbody id="gastos-table-body" class="bg-white divide-y divide-gray-200">
                             <!-- Content will be loaded here -->
                         </tbody>
                     </table>
@@ -247,45 +271,21 @@
                         <!-- Monto -->
                         <div>
                             <label for="monto" class="block text-sm font-medium text-gray-700 mb-2">
-                                Monto <span class="text-red-500">*</span>
+                                Monto (Soles) <span class="text-red-500">*</span>
                             </label>
                             <div class="relative">
-                                <span class="absolute left-3 top-2 text-gray-500">$</span>
+                                <span class="absolute left-3 top-2 text-gray-500">S/</span>
                                 <input type="number" id="monto" name="monto" required min="0" step="0.01"
-                                       class="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500"
+                                       class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500"
                                        placeholder="0.00">
                             </div>
                         </div>
 
-                        <!-- Categoría con Smart Categorization -->
+                        <!-- Categoría -->
                         <div>
                             <label for="categoria" class="block text-sm font-medium text-gray-700 mb-2">
                                 Categoría
-                                <span class="text-blue-500 text-xs ml-2">🤖 IA sugerencia activada</span>
                             </label>
-                            
-                            <!-- Smart Suggestion Display -->
-                            <div id="ai-suggestion" class="hidden mb-3 p-3 bg-blue-50 border border-blue-200 rounded-md">
-                                <div class="flex items-center justify-between">
-                                    <div class="flex items-center space-x-2">
-                                        <span class="text-blue-600">🤖</span>
-                                        <span class="text-sm font-medium text-blue-800">Sugerencia IA:</span>
-                                        <span id="ai-suggested-category" class="text-sm font-bold text-blue-900"></span>
-                                    </div>
-                                    <div class="flex space-x-2">
-                                        <button type="button" id="accept-ai-suggestion" 
-                                                class="text-xs bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700">
-                                            ✓ Usar
-                                        </button>
-                                        <button type="button" id="dismiss-ai-suggestion" 
-                                                class="text-xs bg-gray-400 text-white px-2 py-1 rounded hover:bg-gray-500">
-                                            ✗ Ignorar
-                                        </button>
-                                    </div>
-                                </div>
-                                <p id="ai-suggestion-reason" class="text-xs text-blue-600 mt-1"></p>
-                            </div>
-                            
                             <select id="categoria" name="categoria"
                                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500">
                                 <option value="otros">📝 Otros</option>
@@ -295,9 +295,6 @@
                                 <option value="salud">🏥 Salud</option>
                                 <option value="entretenimiento">🎬 Entretenimiento</option>
                                 <option value="educacion">📚 Educación</option>
-                                <option value="tecnologia">💻 Tecnología</option>
-                                <option value="ropa">👕 Ropa</option>
-                                <option value="servicios">🔧 Servicios</option>
                             </select>
                         </div>
 
@@ -406,6 +403,67 @@
         </div>
     </div>
 
+    <!-- 🤖 Botón Flotante IA -->
+    <button id="ai-chat-toggle" class="fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-full shadow-2xl hover:shadow-3xl transform hover:scale-110 transition-all duration-300 flex items-center justify-center z-50 group">
+        <i data-lucide="brain-circuit" class="w-7 h-7 transition-transform group-hover:rotate-12"></i>
+        <div class="absolute -top-12 right-0 bg-gray-900 text-white px-3 py-1 rounded-lg text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+            Asistente IA
+        </div>
+    </button>
+
+    <!-- 🤖 Modal Chat IA -->
+    <div id="ai-chat-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-end justify-end p-4 z-50 hidden">
+        <div class="bg-white rounded-2xl w-full max-w-md h-[600px] flex flex-col shadow-2xl transform transition-all duration-300 translate-y-full" id="ai-chat-container">
+            <!-- Header del Chat -->
+            <div class="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-4 rounded-t-2xl flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                        <i data-lucide="brain-circuit" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold">Asistente IA</h3>
+                        <p class="text-xs opacity-80">Tu consultor financiero personal</p>
+                    </div>
+                </div>
+                <button id="ai-chat-close" class="text-white hover:bg-white hover:bg-opacity-20 rounded-full p-2 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Área de Mensajes -->
+            <div id="ai-chat-messages" class="flex-1 p-4 overflow-y-auto bg-gray-50 space-y-4">
+                <!-- Mensaje de bienvenida -->
+                <div class="flex items-start space-x-3">
+                    <div class="w-8 h-8 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full flex items-center justify-center text-white text-sm">
+                        IA
+                    </div>
+                    <div class="bg-white rounded-2xl rounded-tl-sm px-4 py-3 max-w-[80%] shadow-sm">
+                        <p class="text-gray-800 text-sm">¡Hola! 👋 Soy tu asistente financiero. Veo que estás en la sección de gastos. Puedo ayudarte con:</p>
+                        <ul class="text-xs text-gray-600 mt-2 space-y-1">
+                            <li>• Análisis de tus gastos por categoría</li>
+                            <li>• Sugerencias para reducir gastos</li>
+                            <li>• Identificar patrones de gasto</li>
+                            <li>• Consejos de presupuesto</li>
+                        </ul>
+                        <p class="text-xs text-gray-600 mt-2">¿En qué puedo ayudarte?</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input del Chat -->
+            <div class="p-4 bg-white border-t border-gray-200 rounded-b-2xl">
+                <div class="flex items-center space-x-3">
+                    <input type="text" id="ai-chat-input" placeholder="Pregúntame sobre tus gastos..." 
+                           class="flex-1 px-4 py-3 border border-gray-300 rounded-full focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-sm">
+                    <button id="ai-chat-send" class="bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-full p-3 hover:from-purple-700 hover:to-blue-700 transition-colors">
+                        <i data-lucide="send" class="w-4 h-4"></i>
+                    </button>
+                </div>
+                <p class="text-xs text-gray-500 mt-2 text-center">El asistente está en desarrollo. Funcionalidad básica disponible.</p>
+            </div>
+        </div>
+    </div>
+
     <!-- Supabase -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script src="js/supabase-config.js"></script>
@@ -413,130 +471,16 @@
     <script src="js/api-service.js"></script>
     <!-- 🧠 NUEVO: IA Service por Gemini Quispe -->
     <script src="js/ia-service.js"></script>
-    <script src="js/gastos-handler.js"></script>
-    
-    <!-- Smart Categorization Integration - Gemini Quispe -->
+    <!-- 💸 Handler unificado de gastos -->
+    <script src="js/gastos-module-handler.js"></script>
+    <!-- � Solución robusta para toggle de recurrencia -->
+    <script src="js/force-gastos-toggle.js"></script>
     <script>
-        // Integración de Smart Categorization con el formulario de gastos
+        // Inicializar iconos de Lucide cuando el DOM esté listo
         document.addEventListener('DOMContentLoaded', function() {
-            // Inicializar iconos de Lucide
             if (typeof lucide !== 'undefined') {
                 lucide.createIcons();
             }
-            
-            // Elementos del formulario
-            const descripcionInput = document.getElementById('descripcion');
-            const categoriaSelect = document.getElementById('categoria');
-            const aiSuggestionDiv = document.getElementById('ai-suggestion');
-            const aiSuggestedCategory = document.getElementById('ai-suggested-category');
-            const aiSuggestionReason = document.getElementById('ai-suggestion-reason');
-            const acceptSuggestionBtn = document.getElementById('accept-ai-suggestion');
-            const dismissSuggestionBtn = document.getElementById('dismiss-ai-suggestion');
-            
-            let currentSuggestion = null;
-            let debounceTimer = null;
-            
-            // Función para mostrar sugerencia de IA
-            function showAISuggestion(descripcion) {
-                if (!window.smartCategorization || !descripcion.trim()) {
-                    hideAISuggestion();
-                    return;
-                }
-                
-                const suggestion = window.smartCategorization.getSuggestionWithConfidence(descripcion);
-                
-                // Solo mostrar si no es "otros" y tiene buena confianza
-                if (suggestion.categoria !== 'otros' && suggestion.confidence > 10) {
-                    currentSuggestion = suggestion;
-                    
-                    // Actualizar UI
-                    aiSuggestedCategory.textContent = getCategoryDisplayName(suggestion.categoria);
-                    aiSuggestionReason.textContent = `${suggestion.reason} (Confianza: ${Math.round(suggestion.confidence)}%)`;
-                    aiSuggestionDiv.classList.remove('hidden');
-                    
-                    console.log('🤖 Mostrando sugerencia:', suggestion);
-                } else {
-                    hideAISuggestion();
-                }
-            }
-            
-            // Función para ocultar sugerencia
-            function hideAISuggestion() {
-                aiSuggestionDiv.classList.add('hidden');
-                currentSuggestion = null;
-            }
-            
-            // Función para obtener nombre display de categoría
-            function getCategoryDisplayName(categoria) {
-                const categoryMap = {
-                    'alimentacion': '🍽️ Alimentación',
-                    'transporte': '🚗 Transporte',
-                    'vivienda': '🏠 Vivienda',
-                    'salud': '🏥 Salud',
-                    'entretenimiento': '🎬 Entretenimiento',
-                    'educacion': '📚 Educación',
-                    'tecnologia': '💻 Tecnología',
-                    'ropa': '👕 Ropa',
-                    'servicios': '🔧 Servicios',
-                    'otros': '📝 Otros'
-                };
-                return categoryMap[categoria] || categoria;
-            }
-            
-            // Event listener para descripción input (con debounce)
-            if (descripcionInput) {
-                descripcionInput.addEventListener('input', function(e) {
-                    clearTimeout(debounceTimer);
-                    debounceTimer = setTimeout(() => {
-                        showAISuggestion(e.target.value);
-                    }, 500); // Esperar 500ms después del último keystroke
-                });
-            }
-            
-            // Event listener para aceptar sugerencia
-            if (acceptSuggestionBtn) {
-                acceptSuggestionBtn.addEventListener('click', function() {
-                    if (currentSuggestion) {
-                        categoriaSelect.value = currentSuggestion.categoria;
-                        hideAISuggestion();
-                        
-                        // Mostrar feedback
-                        if (window.notyf) {
-                            window.notyf.success('🤖 ¡Sugerencia aplicada!');
-                        }
-                    }
-                });
-            }
-            
-            // Event listener para descartar sugerencia
-            if (dismissSuggestionBtn) {
-                dismissSuggestionBtn.addEventListener('click', function() {
-                    hideAISuggestion();
-                });
-            }
-            
-            // Event listener para cuando el usuario cambia la categoría manualmente
-            if (categoriaSelect) {
-                categoriaSelect.addEventListener('change', function() {
-                    hideAISuggestion(); // Ocultar sugerencia cuando usuario hace selección manual
-                });
-            }
-            
-            // Hook en el envío del formulario para aprendizaje
-            const gastoForm = document.getElementById('gasto-form');
-            if (gastoForm) {
-                gastoForm.addEventListener('submit', function(e) {
-                    const descripcion = descripcionInput.value;
-                    const categoria = categoriaSelect.value;
-                    
-                    // Si hay descripción y categoría, permitir que la IA aprenda
-                    if (window.smartCategorization && descripcion && categoria && categoria !== 'otros') {
-                        window.smartCategorization.learnFromUser(descripcion, categoria);
-                    }
-                });
-            }
-            
-            console.log('🤖 Smart Categorization integrado con formulario de gastos');
         });
     </script>
 

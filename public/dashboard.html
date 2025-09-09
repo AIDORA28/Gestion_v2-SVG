@@ -86,14 +86,6 @@
                     <i data-lucide="lightbulb" class="mr-4 h-6 w-6"></i>
                     Sugerencias
                 </a>
-                <!-- AI Demo - Gemini Quispe -->
-                <a href="ai-demo.html" class="nav-item flex items-center px-4 py-3 text-base font-medium rounded-xl transition-all duration-200 bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200">
-                    <i data-lucide="brain" class="mr-4 h-6 w-6"></i>
-                    <span class="flex items-center">
-                        🤖 Demo IA
-                        <span class="ml-2 bg-blue-100 text-blue-800 text-xs font-medium px-2 py-0.5 rounded-full">NUEVO</span>
-                    </span>
-                </a>
                 <a href="#" onclick="showSection('sunat')" class="nav-item flex items-center px-4 py-3 text-base font-medium rounded-xl transition-all duration-200">
                     <i data-lucide="building-2" class="mr-4 h-6 w-6"></i>
                     SUNAT
@@ -101,10 +93,6 @@
                 <a href="#" onclick="showSection('tributario')" class="nav-item flex items-center px-4 py-3 text-base font-medium rounded-xl transition-all duration-200">
                     <i data-lucide="file-text" class="mr-4 h-6 w-6"></i>
                     Tributario
-                </a>
-                <a href="#" onclick="showSection('asistente')" class="nav-item flex items-center px-4 py-3 text-base font-medium rounded-xl transition-all duration-200">
-                    <i data-lucide="brain-circuit" class="mr-4 h-6 w-6"></i>
-                    Asistente IA
                 </a>
             </div>
         </nav>
@@ -301,35 +289,7 @@
             </div>
 
             <div id="section-gastos" class="section-content hidden">
-                <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                    <div class="bg-white rounded-lg shadow-lg border border-gray-200 p-8">
-                        <h2 class="text-2xl font-bold text-gray-900 mb-6">Gestión de Gastos</h2>
-                        <p class="text-gray-600 mb-6">Administra y controla todos tus gastos de manera profesional</p>
-                        <div class="max-w-md mx-auto space-y-4">
-                            <div class="bg-gradient-to-r from-red-500 to-pink-500 p-6 rounded-xl text-white">
-                                <div class="flex items-center justify-center w-12 h-12 bg-white bg-opacity-20 rounded-lg mx-auto mb-4">
-                                    <i data-lucide="trending-down" class="h-6 w-6"></i>
-                                </div>
-                                <h3 class="text-lg font-semibold mb-2">Control Total de Gastos</h3>
-                                <p class="text-sm opacity-90 mb-4">Categoriza, filtra y analiza todos tus gastos</p>
-                                <a href="gastos.html" class="inline-flex items-center px-4 py-2 bg-white text-red-600 font-medium rounded-lg hover:bg-gray-100 transition-colors">
-                                    <i data-lucide="external-link" class="w-4 h-4 mr-2"></i>
-                                    Ir a Gastos
-                                </a>
-                            </div>
-                            <div class="grid grid-cols-2 gap-4 text-sm">
-                                <div class="bg-gray-50 p-4 rounded-lg">
-                                    <div class="text-red-600 font-semibold">Categorías</div>
-                                    <div class="text-gray-600">Alimentación, Transporte, Vivienda, Salud, etc.</div>
-                                </div>
-                                <div class="bg-gray-50 p-4 rounded-lg">
-                                    <div class="text-red-600 font-semibold">Métodos</div>
-                                    <div class="text-gray-600">Efectivo, Tarjetas, Transferencias</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <!-- El contenido se carga dinámicamente desde gastos-template.html -->
             </div>
 
             <div id="section-creditos" class="section-content hidden">
@@ -393,12 +353,7 @@
             </div>
 
             <div id="section-sugerencias" class="section-content hidden">
-                <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                    <div class="bg-white rounded-lg shadow-lg border border-gray-200 p-8">
-                        <h2 class="text-2xl font-bold text-gray-900 mb-6">Sugerencias Inteligentes</h2>
-                        <p class="text-gray-600">Módulo de sugerencias en desarrollo...</p>
-                    </div>
-                </div>
+                <!-- El módulo de sugerencias se cargará dinámicamente aquí -->
             </div>
 
             <div id="section-tributario" class="section-content hidden">
@@ -462,8 +417,19 @@
     <script src="js/api-service.js"></script>
     <!-- 🧠 NUEVO: IA Service por Gemini Quispe -->
     <script src="js/ia-service.js"></script>
+    <!-- 🤖 NUEVO: Chat Assistant IA -->
+    <script src="js/ai-chat-assistant.js"></script>
+    <!-- 🎯 NUEVO: Sistema de Sugerencias Inteligentes por Gemini Quispe -->
+    <script src="js/sugerencias-inteligentes.js"></script>
+    <!-- 🧠 NUEVO: Módulo Handler de Sugerencias -->
+    <script src="js/sugerencias-module-handler.js"></script>
+    
+    <!-- 🧪 Scripts de prueba y diagnóstico -->
+    <script src="js/solucion-emergencia-sugerencias.js"></script>
+    
     <script src="js/dashboard-handler.js"></script>
     <script src="js/ingresos-module-handler.js"></script>
+    <script src="js/gastos-module-handler.js"></script>
     <script>
         // Inicializar iconos de Lucide cuando el DOM esté listo
         document.addEventListener('DOMContentLoaded', function() {
@@ -578,10 +544,6 @@
         });
     </script>
 
-    <!-- AI Chat Assistant - Gemini Quispe -->
-    <script src="js/ai-chat-assistant.js"></script>
-    <script src="js/ai-api-endpoint.js"></script>
-
     <!-- Modal para Agregar/Editar Ingreso -->
     <div id="ingreso-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
         <div class="bg-white rounded-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
@@ -649,7 +611,7 @@
                         <!-- Es Recurrente -->
                         <div>
                             <label class="flex items-center space-x-3">
-                                <input type="checkbox" id="ingreso-recurrente" name="es_recurrente"
+                                <input type="checkbox" id="es_recurrente" name="es_recurrente"
                                        class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
                                 <span class="text-sm font-medium text-gray-700">Es recurrente</span>
                             </label>
@@ -658,10 +620,10 @@
 
                         <!-- Frecuencia (solo si es recurrente) -->
                         <div id="frecuencia-container" class="hidden">
-                            <label for="ingreso-frecuencia" class="block text-sm font-medium text-gray-700 mb-2">
+                            <label for="frecuencia_dias" class="block text-sm font-medium text-gray-700 mb-2">
                                 Frecuencia (días)
                             </label>
-                            <select id="ingreso-frecuencia" name="frecuencia_dias"
+                            <select id="frecuencia_dias" name="frecuencia_dias"
                                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
                                 <option value="">Seleccionar frecuencia</option>
                                 <option value="7">🗓️ Semanal (7 días)</option>
