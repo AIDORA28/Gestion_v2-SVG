@@ -12,6 +12,18 @@
       "destination": "/public/landing.html"
     },
     {
+      "source": "/dashboard",
+      "destination": "/public/dashboard.html"
+    },
+    {
+      "source": "/login", 
+      "destination": "/public/login.html"
+    },
+    {
+      "source": "/register",
+      "destination": "/public/register.html"
+    },
+    {
       "source": "/admin",
       "destination": "/public/index.html"
     },
@@ -43,6 +55,18 @@
         {
           "key": "X-XSS-Protection",
           "value": "1; mode=block"
+        },
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, PUT, DELETE, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers", 
+          "value": "Content-Type, Authorization, X-Requested-With"
         }
       ]
     }
