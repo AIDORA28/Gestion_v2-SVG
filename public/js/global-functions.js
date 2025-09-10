@@ -26,11 +26,15 @@ window.showSection = function(section) {
 window.showUserSettings = function() {
     console.log('🔧 Mostrando configuraciones de usuario');
     // Implementar modal de configuraciones
-    const notyf = window.notyf || new Notyf();
-    notyf.open({
-        type: 'info',
-        message: '⚙️ Configuraciones de usuario próximamente disponibles'
-    });
+    const notyf = window.globalNotyf || window.notyf || new Notyf();
+    if (notyf.open) {
+        notyf.open({
+            type: 'info',
+            message: '⚙️ Configuraciones de usuario próximamente disponibles'
+        });
+    } else {
+        notyf.info('⚙️ Configuraciones de usuario próximamente disponibles');
+    }
 };
 
 // ===============================
@@ -132,11 +136,15 @@ window.quickAddIngreso = function() {
  */
 window.quickAddGasto = function() {
     console.log('💸 Quick add gasto');
-    const notyf = window.notyf || new Notyf();
-    notyf.open({
-        type: 'info',
-        message: '💸 Función de gastos próximamente disponible'
-    });
+    const notyf = window.globalNotyf || window.notyf || new Notyf();
+    if (notyf.open) {
+        notyf.open({
+            type: 'info',
+            message: '💸 Función de gastos próximamente disponible'
+        });
+    } else {
+        notyf.info('💸 Función de gastos próximamente disponible');
+    }
 };
 
 // ===============================
@@ -171,8 +179,10 @@ window.initGlobalFunctions = function() {
 window.handleGlobalError = function(functionName, error) {
     console.error(`❌ Error en función global ${functionName}:`, error);
     
-    const notyf = window.notyf || new Notyf();
-    notyf.error(`Error en ${functionName}: ${error.message}`);
+    const notyf = window.globalNotyf || window.notyf || new Notyf();
+    if (notyf.error) {
+        notyf.error(`Error en ${functionName}: ${error.message}`);
+    }
 };
 
 // ===============================

@@ -1,0 +1,432 @@
+<!-- ✨ MÓDULO DE SUNAT - CALCULADORA TRIBUTARIA PREMIUM -->
+<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" data-aos="fade-up" data-aos-duration="600">
+    
+    <!-- 🧾 Header Premium con animaciones -->
+    <div class="mb-8 relative">
+        <!-- Fondo decorativo con gradiente -->
+        <div class="absolute inset-0 bg-gradient-to-r from-red-50 to-orange-50 rounded-2xl transform -skew-y-1 shadow-lg"></div>
+        
+        <!-- Contenido principal -->
+        <div class="relative p-6 md:flex md:items-center md:justify-between">
+            <div class="flex-1 min-w-0">
+                <div class="flex items-center space-x-3">
+                    <!-- Icono animado con FontAwesome CDN -->
+                    <div class="flex-shrink-0">
+                        <div class="w-12 h-12 bg-gradient-to-r from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg">
+                            <i class="fas fa-calculator text-white text-xl animate-pulse"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl">
+                            🧾 Calculadora SUNAT
+                        </h2>
+                        <p class="mt-1 text-sm text-gray-600 flex items-center">
+                            <i class="fas fa-percent mr-2 text-red-500"></i>
+                            Calcula IGV, Impuesto a la Renta y otros tributos del Perú
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Botón de acción mejorado -->
+            <div class="mt-6 md:mt-0 md:ml-6">
+                <button onclick="window.sunatModuleHandler && window.sunatModuleHandler.openCalculatorModal()" 
+                        class="group inline-flex items-center px-6 py-3 border border-transparent rounded-xl shadow-lg text-sm font-semibold text-white bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 focus:outline-none focus:ring-4 focus:ring-red-500/30 transform hover:scale-105 transition-all duration-200">
+                    <i class="fas fa-plus mr-2 h-4 w-4 group-hover:rotate-90 transition-transform duration-200"></i>
+                    Nueva Calculadora
+                    <div class="absolute inset-0 rounded-xl bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 📊 Calculadoras Rápidas Premium -->
+    <div class="mb-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" data-aos="fade-up" data-aos-delay="200">
+        
+        <!-- Calculadora IGV -->
+        <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transform hover:scale-105 transition-all duration-300">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
+                    <i class="fas fa-receipt text-white text-lg"></i>
+                </div>
+                <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full font-medium">18%</span>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">IGV</h3>
+            <p class="text-sm text-gray-600 mb-4">Impuesto General a las Ventas</p>
+            
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-medium text-gray-700 mb-1">Monto Base</label>
+                    <input type="number" id="igv-base" placeholder="1000" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+                <button onclick="window.sunatModuleHandler && window.sunatModuleHandler.calcularIGV()" 
+                        class="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-2 px-4 rounded-lg text-sm font-medium hover:from-blue-600 hover:to-blue-700 transition-all duration-200">
+                    <i class="fas fa-calculator mr-2"></i>Calcular IGV
+                </button>
+            </div>
+            
+            <div id="igv-resultado" class="mt-4 p-3 bg-blue-50 rounded-lg hidden">
+                <div class="text-xs space-y-1">
+                    <div class="flex justify-between">
+                        <span>Base:</span>
+                        <span id="igv-base-result" class="font-medium">S/ 0.00</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>IGV (18%):</span>
+                        <span id="igv-impuesto-result" class="font-medium text-blue-600">S/ 0.00</span>
+                    </div>
+                    <div class="flex justify-between border-t pt-1">
+                        <span class="font-medium">Total:</span>
+                        <span id="igv-total-result" class="font-bold text-blue-700">S/ 0.00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Calculadora Renta 5ta -->
+        <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transform hover:scale-105 transition-all duration-300">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-green-600 rounded-xl flex items-center justify-center">
+                    <i class="fas fa-user-tie text-white text-lg"></i>
+                </div>
+                <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full font-medium">5ta</span>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">Renta 5ta</h3>
+            <p class="text-sm text-gray-600 mb-4">Impuesto a trabajadores</p>
+            
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-medium text-gray-700 mb-1">Sueldo Bruto</label>
+                    <input type="number" id="renta5-sueldo" placeholder="3000" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                </div>
+                <button onclick="window.sunatModuleHandler && window.sunatModuleHandler.calcularRenta5ta()" 
+                        class="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-2 px-4 rounded-lg text-sm font-medium hover:from-green-600 hover:to-green-700 transition-all duration-200">
+                    <i class="fas fa-calculator mr-2"></i>Calcular Renta
+                </button>
+            </div>
+            
+            <div id="renta5-resultado" class="mt-4 p-3 bg-green-50 rounded-lg hidden">
+                <div class="text-xs space-y-1">
+                    <div class="flex justify-between">
+                        <span>Sueldo Bruto:</span>
+                        <span id="renta5-bruto-result" class="font-medium">S/ 0.00</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>UIT Mensual:</span>
+                        <span id="renta5-uit-result" class="font-medium">S/ 412.50</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Renta 5ta:</span>
+                        <span id="renta5-impuesto-result" class="font-medium text-green-600">S/ 0.00</span>
+                    </div>
+                    <div class="flex justify-between border-t pt-1">
+                        <span class="font-medium">Sueldo Neto:</span>
+                        <span id="renta5-neto-result" class="font-bold text-green-700">S/ 0.00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Calculadora Renta 4ta -->
+        <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transform hover:scale-105 transition-all duration-300">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl flex items-center justify-center">
+                    <i class="fas fa-briefcase text-white text-lg"></i>
+                </div>
+                <span class="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded-full font-medium">4ta</span>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">Renta 4ta</h3>
+            <p class="text-sm text-gray-600 mb-4">Independientes/Recibos</p>
+            
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-medium text-gray-700 mb-1">Honorarios</label>
+                    <input type="number" id="renta4-honorarios" placeholder="2000" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                </div>
+                <button onclick="window.sunatModuleHandler && window.sunatModuleHandler.calcularRenta4ta()" 
+                        class="w-full bg-gradient-to-r from-purple-500 to-purple-600 text-white py-2 px-4 rounded-lg text-sm font-medium hover:from-purple-600 hover:to-purple-700 transition-all duration-200">
+                    <i class="fas fa-calculator mr-2"></i>Calcular Renta
+                </button>
+            </div>
+            
+            <div id="renta4-resultado" class="mt-4 p-3 bg-purple-50 rounded-lg hidden">
+                <div class="text-xs space-y-1">
+                    <div class="flex justify-between">
+                        <span>Honorarios:</span>
+                        <span id="renta4-honorarios-result" class="font-medium">S/ 0.00</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Retención (8%):</span>
+                        <span id="renta4-retencion-result" class="font-medium text-purple-600">S/ 0.00</span>
+                    </div>
+                    <div class="flex justify-between border-t pt-1">
+                        <span class="font-medium">A Cobrar:</span>
+                        <span id="renta4-neto-result" class="font-bold text-purple-700">S/ 0.00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Calculadora Gratificaciones -->
+        <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transform hover:scale-105 transition-all duration-300">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-xl flex items-center justify-center">
+                    <i class="fas fa-gift text-white text-lg"></i>
+                </div>
+                <span class="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full font-medium">GRAT</span>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">Gratificaciones</h3>
+            <p class="text-sm text-gray-600 mb-4">Julio y Diciembre</p>
+            
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-medium text-gray-700 mb-1">Sueldo Básico</label>
+                    <input type="number" id="grat-sueldo" placeholder="2500" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-700 mb-1">Meses Trabajados</label>
+                    <select id="grat-meses" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
+                        <option value="6">6 meses</option>
+                        <option value="5">5 meses</option>
+                        <option value="4">4 meses</option>
+                        <option value="3">3 meses</option>
+                        <option value="2">2 meses</option>
+                        <option value="1">1 mes</option>
+                    </select>
+                </div>
+                <button onclick="window.sunatModuleHandler && window.sunatModuleHandler.calcularGratificacion()" 
+                        class="w-full bg-gradient-to-r from-yellow-500 to-orange-500 text-white py-2 px-4 rounded-lg text-sm font-medium hover:from-yellow-600 hover:to-orange-600 transition-all duration-200">
+                    <i class="fas fa-calculator mr-2"></i>Calcular Gratificación
+                </button>
+            </div>
+            
+            <div id="grat-resultado" class="mt-4 p-3 bg-yellow-50 rounded-lg hidden">
+                <div class="text-xs space-y-1">
+                    <div class="flex justify-between">
+                        <span>Gratificación:</span>
+                        <span id="grat-bruto-result" class="font-medium">S/ 0.00</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Bonif. (9%):</span>
+                        <span id="grat-bonif-result" class="font-medium text-yellow-600">S/ 0.00</span>
+                    </div>
+                    <div class="flex justify-between border-t pt-1">
+                        <span class="font-medium">Total Bruto:</span>
+                        <span id="grat-total-result" class="font-bold text-yellow-700">S/ 0.00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 📋 Historial y Configuraciones -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+        
+        <!-- Historial de Cálculos -->
+        <div class="lg:col-span-2">
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                        <i class="fas fa-history text-red-500 mr-2"></i>
+                        Historial de Cálculos
+                    </h3>
+                    <button onclick="window.sunatModuleHandler && window.sunatModuleHandler.clearHistory()" 
+                            class="text-xs bg-gray-100 hover:bg-red-50 text-gray-600 hover:text-red-600 px-3 py-1 rounded-lg transition-all duration-200">
+                        <i class="fas fa-trash mr-1"></i>Limpiar
+                    </button>
+                </div>
+                
+                <div id="sunat-historial" class="space-y-3 max-h-96 overflow-y-auto">
+                    <div class="text-center text-gray-500 py-8">
+                        <i class="fas fa-calculator text-4xl text-gray-300 mb-4"></i>
+                        <p>No hay cálculos realizados aún</p>
+                        <p class="text-sm">Usa las calculadoras de arriba para empezar</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel de Configuraciones -->
+        <div class="space-y-6">
+            <!-- Parámetros Tributarios -->
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-cog text-red-500 mr-2"></i>
+                    Parámetros 2024
+                </h3>
+                
+                <div class="space-y-4 text-sm">
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-600">IGV:</span>
+                        <div class="flex items-center">
+                            <input type="number" id="config-igv" value="18" step="0.1" 
+                                   class="w-16 px-2 py-1 border border-gray-300 rounded text-center text-xs">
+                            <span class="ml-1 text-gray-500">%</span>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-600">UIT Anual:</span>
+                        <div class="flex items-center">
+                            <span class="text-xs mr-1">S/</span>
+                            <input type="number" id="config-uit" value="4950" step="50" 
+                                   class="w-20 px-2 py-1 border border-gray-300 rounded text-center text-xs">
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-600">Renta 4ta:</span>
+                        <div class="flex items-center">
+                            <input type="number" id="config-renta4" value="8" step="0.1" 
+                                   class="w-16 px-2 py-1 border border-gray-300 rounded text-center text-xs">
+                            <span class="ml-1 text-gray-500">%</span>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-600">Bonif. Grat.:</span>
+                        <div class="flex items-center">
+                            <input type="number" id="config-bonif" value="9" step="0.1" 
+                                   class="w-16 px-2 py-1 border border-gray-300 rounded text-center text-xs">
+                            <span class="ml-1 text-gray-500">%</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <button onclick="window.sunatModuleHandler && window.sunatModuleHandler.updateConfig()" 
+                        class="w-full mt-4 bg-gradient-to-r from-red-500 to-red-600 text-white py-2 px-4 rounded-lg text-sm font-medium hover:from-red-600 hover:to-red-700 transition-all duration-200">
+                    <i class="fas fa-save mr-2"></i>Actualizar
+                </button>
+            </div>
+
+            <!-- Enlaces Útiles -->
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-external-link-alt text-red-500 mr-2"></i>
+                    Enlaces SUNAT
+                </h3>
+                
+                <div class="space-y-3">
+                    <a href="https://www.sunat.gob.pe" target="_blank" 
+                       class="flex items-center p-3 rounded-lg hover:bg-red-50 transition-all duration-200 group">
+                        <i class="fas fa-home text-red-500 mr-3"></i>
+                        <div>
+                            <div class="text-sm font-medium group-hover:text-red-600">Portal SUNAT</div>
+                            <div class="text-xs text-gray-500">Página oficial</div>
+                        </div>
+                    </a>
+                    
+                    <a href="https://e-menu.sunat.gob.pe/cl-ti-itmenu/MenuInternet.htm" target="_blank" 
+                       class="flex items-center p-3 rounded-lg hover:bg-red-50 transition-all duration-200 group">
+                        <i class="fas fa-calculator text-red-500 mr-3"></i>
+                        <div>
+                            <div class="text-sm font-medium group-hover:text-red-600">SOL</div>
+                            <div class="text-xs text-gray-500">Sistema Online</div>
+                        </div>
+                    </a>
+                    
+                    <a href="https://www.sunat.gob.pe/orientacionTributaria/mypeTributario/index.html" target="_blank" 
+                       class="flex items-center p-3 rounded-lg hover:bg-red-50 transition-all duration-200 group">
+                        <i class="fas fa-building text-red-500 mr-3"></i>
+                        <div>
+                            <div class="text-sm font-medium group-hover:text-red-600">MYPE</div>
+                            <div class="text-xs text-gray-500">Orientación</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 🎨 Estilos CSS Premium para SUNAT -->
+<style>
+    /* Animaciones personalizadas para SUNAT */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes slideInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes sunatFloat {
+        0%, 100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-3px);
+        }
+    }
+
+    .animate-fadeIn {
+        animation: fadeIn 0.5s ease-out forwards;
+    }
+
+    .animate-slideInLeft {
+        animation: slideInLeft 0.6s ease-out forwards;
+    }
+
+    .animate-sunat-float {
+        animation: sunatFloat 2s ease-in-out infinite;
+    }
+
+    /* Efectos premium para calculadoras */
+    .calculadora-card:hover {
+        background: linear-gradient(135deg, #fef2f2, #fee2e2);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(239, 68, 68, 0.15);
+    }
+
+    /* Efectos para montos calculados */
+    .monto-calculado {
+        color: #dc2626;
+        font-weight: 700;
+        font-feature-settings: "tnum";
+    }
+
+    /* Scrollbar personalizado para historial */
+    #sunat-historial::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    #sunat-historial::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 3px;
+    }
+
+    #sunat-historial::-webkit-scrollbar-thumb {
+        background: #dc2626;
+        border-radius: 3px;
+    }
+
+    #sunat-historial::-webkit-scrollbar-thumb:hover {
+        background: #b91c1c;
+    }
+
+    /* Efectos de focus mejorados */
+    input:focus, select:focus {
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+        border-color: #dc2626;
+    }
+
+    /* Animación de resultados */
+    .resultado-animado {
+        animation: fadeIn 0.3s ease-out;
+    }
+</style>

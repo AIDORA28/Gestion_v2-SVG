@@ -117,8 +117,13 @@ class DashboardManager {
         localStorage.removeItem('token_expires_at');
         
         // Mostrar mensaje si es posible
-        if (window.notyf) {
-            window.notyf.warning(reason);
+        const notyf = window.globalNotyf || window.notyf;
+        if (notyf) {
+            if (notyf.open) {
+                notyf.open({ type: 'warning', message: reason });
+            } else {
+                notyf.warning(reason);
+            }
         }
         
         // Redirigir después de un momento
@@ -131,8 +136,13 @@ class DashboardManager {
     redirectToLogin(reason) {
         console.log('🔄 Dashboard Guard: Redirigiendo -', reason);
         
-        if (window.notyf) {
-            window.notyf.info(reason);
+        const notyf = window.globalNotyf || window.notyf;
+        if (notyf) {
+            if (notyf.open) {
+                notyf.open({ type: 'info', message: reason });
+            } else {
+                notyf.info(reason);
+            }
         }
         
         setTimeout(() => {
@@ -643,26 +653,58 @@ class DashboardManager {
         console.log('📋 Actualizando tabla con transacciones reales:', transactions.length);
         
         tableBody.innerHTML = transactions.map(transaction => `
-            <tr class="transaction-row hover:bg-gray-50">
-                <td class="px-6 py-4 text-sm text-gray-500">
-                    ${this.formatDate(transaction.fecha_transaccion || transaction.fecha || transaction.created_at)}
-                </td>
-                <td class="px-6 py-4">
+            <tr class="group hover:bg-gradient-to-r hover:from-gray-50 hover:to-blue-50/30 transition-all duration-300 border-l-4 border-l-transparent hover:border-l-indigo-400">
+                <td class="px-6 py-4 whitespace-nowrap">
                     <div class="flex items-center">
-                        <i data-lucide="${transaction.icono || this.getTransactionIcon(transaction.tipo)}" class="w-5 h-5 mr-3 ${transaction.color || 'text-gray-500'}"></i>
+                        <div class="w-10 h-10 ${transaction.tipo === 'ingreso' ? 'bg-green-100' : 'bg-red-100'} rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas ${transaction.tipo === 'ingreso' ? 'fa-arrow-up' : 'fa-arrow-down'} ${transaction.tipo === 'ingreso' ? 'text-green-600' : 'text-red-600'} text-sm"></i>
+                        </div>
                         <div>
-                            <span class="font-medium">${transaction.descripcion || transaction.concepto || 'Sin descripción'}</span>
-                            ${transaction.categoria ? `<br><span class="text-xs text-gray-400">${transaction.categoria}</span>` : ''}
+                            <div class="text-sm font-medium text-gray-900">${this.formatDate(transaction.fecha_transaccion || transaction.fecha || transaction.created_at)}</div>
+                            <div class="text-xs text-gray-500">${this.getTimeAgo(transaction.fecha_transaccion || transaction.fecha || transaction.created_at)}</div>
                         </div>
                     </div>
                 </td>
-                <td class="px-6 py-4 text-sm text-gray-500">
-                    ${transaction.categoria || 'Sin categoría'}
-                </td>
                 <td class="px-6 py-4">
-                    <span class="${transaction.tipo === 'ingreso' ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold'}">
-                        ${transaction.tipo === 'ingreso' ? '+' : '-'}${this.formatCurrency(Math.abs(parseFloat(transaction.monto || 0)))}
+                    <div class="max-w-xs">
+                        <div class="text-sm font-semibold text-gray-900 truncate">${transaction.descripcion || transaction.concepto || 'Sin descripción'}</div>
+                        <div class="text-xs text-gray-500 mt-1 flex items-center">
+                            <span class="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
+                            Completado
+                        </div>
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${transaction.tipo === 'ingreso' ? 'bg-green-100 text-green-800 border-green-200' : 'bg-red-100 text-red-800 border-red-200'}">
+                        <i class="fas fa-tag mr-1"></i>
+                        ${transaction.categoria || 'Sin categoría'}
                     </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                        <div class="text-sm font-bold ${transaction.tipo === 'ingreso' ? 'text-green-600' : 'text-red-600'}">
+                            ${transaction.tipo === 'ingreso' ? '+' : ''}${this.formatCurrency(Math.abs(parseFloat(transaction.monto || 0)))}
+                        </div>
+                        <i class="fas ${transaction.tipo === 'ingreso' ? 'fa-arrow-up' : 'fa-arrow-down'} ml-2 ${transaction.tipo === 'ingreso' ? 'text-green-600' : 'text-red-600'} text-xs"></i>
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 bg-gradient-to-r from-indigo-100 to-purple-100 rounded-lg flex items-center justify-center mr-2">
+                            <i class="fas ${this.getPaymentIcon(transaction.metodo_pago || 'Efectivo')} text-indigo-600 text-xs"></i>
+                        </div>
+                        <span class="text-sm text-gray-700 font-medium">${transaction.metodo_pago || 'Efectivo'}</span>
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-center">
+                    <div class="flex items-center justify-center space-x-2">
+                        <button onclick="showSection('${transaction.tipo === 'ingreso' ? 'ingresos' : 'gastos'}')" 
+                                class="group/btn p-2 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-100 rounded-lg transition-all duration-200" 
+                                title="Ver en módulo">
+                            <i class="fas fa-external-link-alt group-hover/btn:scale-110 transition-transform duration-200"></i>
+                        </button>
+                        <span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded-full">Solo lectura</span>
+                    </div>
                 </td>
             </tr>
         `).join('');
@@ -671,6 +713,9 @@ class DashboardManager {
         if (typeof lucide !== 'undefined') {
             lucide.createIcons();
         }
+        
+        // Actualizar contadores en el footer
+        this.updateTransactionCounters(transactions);
         
         console.log('✅ Tabla de transacciones actualizada con datos reales');
     }
@@ -921,7 +966,7 @@ class DashboardManager {
             if (!targetSection) return;
 
             // Solo cargar si es un módulo que debe ser cargado dinámicamente
-            const dynamicModules = ['ingresos', 'gastos', 'creditos', 'reportes', 'sugerencias'];
+            const dynamicModules = ['ingresos', 'gastos', 'creditos', 'sugerencias', 'sunat'];
             
             if (dynamicModules.includes(moduleName)) {
                 // Verificar si ya está cargado
@@ -1067,6 +1112,32 @@ class DashboardManager {
                     }
                     break;
 
+                case 'creditos':
+                    if (!window.creditosModuleHandler) {
+                        console.log('🚀 Inicializando CreditosModuleHandler...');
+                        setTimeout(async () => {
+                            if (typeof CreditosModuleHandler !== 'undefined') {
+                                try {
+                                    window.creditosModuleHandler = new CreditosModuleHandler();
+                                    console.log('✅ CreditosModuleHandler inicializado correctamente');
+                                    // Cargar datos inmediatamente después de la inicialización
+                                    await window.creditosModuleHandler.loadCreditos();
+                                } catch (error) {
+                                    console.error('❌ Error inicializando CreditosModuleHandler:', error);
+                                }
+                            } else {
+                                console.error('❌ CreditosModuleHandler no está disponible');
+                            }
+                        }, 500); // Aumentar timeout a 500ms
+                    } else {
+                        console.log('✅ CreditosModuleHandler ya está inicializado');
+                        // Recargar datos
+                        if (window.creditosModuleHandler.loadCreditos) {
+                            window.creditosModuleHandler.loadCreditos();
+                        }
+                    }
+                    break;
+
                 case 'sugerencias':
                     console.log('🧠 Inicializando módulo Sugerencias...');
                     
@@ -1115,6 +1186,34 @@ class DashboardManager {
                         }
                     }, 500); // Aumentar timeout para dar más tiempo al template
                     break;
+
+                case 'sunat':
+                    if (!window.sunatModuleHandler) {
+                        console.log('🚀 Inicializando SunatModuleHandler...');
+                        setTimeout(() => {
+                            if (typeof SunatModuleHandler !== 'undefined') {
+                                try {
+                                    window.sunatModuleHandler = new SunatModuleHandler();
+                                    console.log('✅ SunatModuleHandler creado exitosamente');
+                                    
+                                    // Intentar inicializar
+                                    if (window.sunatModuleHandler.init) {
+                                        window.sunatModuleHandler.init();
+                                        console.log('✅ Handler de SUNAT inicializado completamente');
+                                    }
+                                } catch (error) {
+                                    console.error('❌ Error creando SunatModuleHandler:', error);
+                                }
+                            } else {
+                                console.error('❌ Clase SunatModuleHandler no disponible');
+                            }
+                        }, 500);
+                    } else {
+                        console.log('✅ SunatModuleHandler ya existe');
+                    }
+                    break;
+
+
                     
                 case 'dashboard':
                     // El dashboard ya está inicializado en el constructor
@@ -1231,13 +1330,16 @@ class DashboardManager {
     }
 
     showNotification(message, type = 'info') {
-        if (window.notyf) {
+        const notyf = window.globalNotyf || window.notyf;
+        if (notyf) {
             if (type === 'success') {
-                window.notyf.success(message);
+                notyf.success(message);
             } else if (type === 'error') {
-                window.notyf.error(message);
+                notyf.error(message);
+            } else if (type === 'warning') {
+                notyf.open({ type: 'warning', message });
             } else {
-                window.notyf.open({ type: 'info', message });
+                notyf.open({ type: 'info', message });
             }
         } else {
             console.log(`${type.toUpperCase()}: ${message}`);
@@ -1262,14 +1364,64 @@ class DashboardManager {
         localStorage.removeItem('lastActivity');
         
         // Mostrar mensaje de confirmación
-        if (window.notyf) {
-            window.notyf.success('Sesión cerrada correctamente');
+        const notyf = window.globalNotyf || window.notyf;
+        if (notyf) {
+            notyf.success('Sesión cerrada correctamente');
         }
         
         // Usar replace en lugar de href para evitar history
         setTimeout(() => {
             window.location.replace('login.html');
         }, 500);
+    }
+
+    // 🕒 Función auxiliar para calcular tiempo transcurrido
+    getTimeAgo(date) {
+        const now = new Date();
+        const transactionDate = new Date(date);
+        const diffTime = now - transactionDate;
+        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+        
+        if (diffDays === 0) return 'Hoy';
+        if (diffDays === 1) return 'Ayer';
+        if (diffDays < 7) return `Hace ${diffDays} días`;
+        if (diffDays < 30) return `Hace ${Math.floor(diffDays / 7)} semanas`;
+        return `Hace ${Math.floor(diffDays / 30)} meses`;
+    }
+
+    // 💳 Función auxiliar para iconos de métodos de pago
+    getPaymentIcon(metodo) {
+        const iconMap = {
+            'Transferencia': 'fa-exchange-alt',
+            'Tarjeta': 'fa-credit-card',
+            'Depósito': 'fa-university',
+            'Débito': 'fa-money-check',
+            'PayPal': 'fa-paypal',
+            'Efectivo': 'fa-money-bill-wave',
+            'Cheque': 'fa-money-check-alt'
+        };
+        return iconMap[metodo] || 'fa-money-bill-wave';
+    }
+
+    // 📊 Actualizar contadores de transacciones
+    updateTransactionCounters(transactions) {
+        const totalElement = document.getElementById('total-transactions-count');
+        const monthElement = document.getElementById('month-transactions-count');
+        
+        if (totalElement) {
+            totalElement.textContent = transactions.length;
+        }
+        
+        if (monthElement) {
+            // Filtrar transacciones del mes actual
+            const currentMonth = new Date().getMonth();
+            const currentYear = new Date().getFullYear();
+            const monthTransactions = transactions.filter(t => {
+                const transDate = new Date(t.fecha_transaccion || t.fecha || t.created_at);
+                return transDate.getMonth() === currentMonth && transDate.getFullYear() === currentYear;
+            });
+            monthElement.textContent = monthTransactions.length;
+        }
     }
 }
 
@@ -1328,7 +1480,7 @@ window.closeQuickAddModal = function() {
 window.showUserSettings = function() {
     if (window.dashboard) {
         console.log('Configuración de usuario - Funcionalidad pendiente');
-        window.dashboard.showNotification('Configuración próximamente', 'info');
+        window.dashboard.showNotification('⚙️ Configuraciones de usuario próximamente disponibles', 'info');
     }
 };
 

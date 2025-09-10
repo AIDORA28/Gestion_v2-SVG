@@ -15,6 +15,53 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
     <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
     
+    <!-- Estilos personalizados para notificaciones -->
+    <style>
+        /* Personalización de Notyf para mejor visibilidad */
+        .notyf__toast {
+            border-radius: 12px !important;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2) !important;
+            font-weight: 500 !important;
+            font-size: 14px !important;
+        }
+        
+        .notyf__message {
+            color: white !important;
+            font-weight: 500 !important;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+        }
+        
+        .notyf__icon {
+            color: white !important;
+        }
+        
+        /* Colores específicos para cada tipo */
+        .notyf--success {
+            background: linear-gradient(135deg, #10B981, #059669) !important;
+        }
+        
+        .notyf--error {
+            background: linear-gradient(135deg, #EF4444, #DC2626) !important;
+        }
+        
+        .notyf--warning {
+            background: linear-gradient(135deg, #F59E0B, #D97706) !important;
+        }
+        
+        .notyf--info {
+            background: linear-gradient(135deg, #3B82F6, #2563EB) !important;
+        }
+        
+        /* Animaciones suaves */
+        .notyf__toast {
+            transition: all 0.3s ease !important;
+        }
+        
+        .notyf__toast:hover {
+            transform: translateX(-5px) !important;
+        }
+    </style>
+    
     <!-- Font Awesome Icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
@@ -97,6 +144,15 @@
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     
+    <!-- CountUp.js - Animaciones de números -->
+    <script src="https://cdn.jsdelivr.net/npm/countup.js@2.6.2/dist/countUp.umd.js"></script>
+    
+    <!-- Typed.js - Efectos de escritura -->
+    <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.16"></script>
+    
+    <!-- Particles.js - Efectos de partículas -->
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    
     <!-- CSS Optimizado -->
     <link rel="stylesheet" href="css/dashboard-optimized.css">
     <link rel="stylesheet" href="css/sugerencias-modules.css">
@@ -110,44 +166,50 @@
         document.addEventListener('DOMContentLoaded', function() {
             if (typeof Notyf !== 'undefined') {
                 window.globalNotyf = new Notyf({
-                    duration: 4000,
+                    duration: 5000,
                     position: { x: 'right', y: 'top' },
+                    dismissible: true,
+                    ripple: true,
                     types: [
                         {
                             type: 'success',
-                            background: '#10B981',
+                            background: 'linear-gradient(135deg, #10B981, #059669)',
                             icon: {
-                                className: 'fas fa-check',
+                                className: 'fas fa-check-circle',
                                 tagName: 'i',
                                 color: 'white'
-                            }
+                            },
+                            className: 'notyf--success'
                         },
                         {
                             type: 'error',
-                            background: '#EF4444',
+                            background: 'linear-gradient(135deg, #EF4444, #DC2626)',
                             icon: {
-                                className: 'fas fa-times',
+                                className: 'fas fa-times-circle',
                                 tagName: 'i',
                                 color: 'white'
-                            }
+                            },
+                            className: 'notyf--error'
                         },
                         {
                             type: 'warning',
-                            background: '#F59E0B',
+                            background: 'linear-gradient(135deg, #F59E0B, #D97706)',
                             icon: {
                                 className: 'fas fa-exclamation-triangle',
                                 tagName: 'i',
                                 color: 'white'
-                            }
+                            },
+                            className: 'notyf--warning'
                         },
                         {
                             type: 'info',
-                            background: '#3B82F6',
+                            background: 'linear-gradient(135deg, #3B82F6, #2563EB)',
                             icon: {
                                 className: 'fas fa-info-circle',
                                 tagName: 'i',
                                 color: 'white'
-                            }
+                            },
+                            className: 'notyf--info'
                         }
                     ]
                 });
@@ -382,16 +444,7 @@
                     </div>
                 </a>
 
-                <!-- Reportes -->
-                <a href="#" onclick="showSection('reportes')" class="nav-item group flex items-center px-4 py-3 text-base font-medium rounded-xl transition-all duration-300 hover:shadow-lg transform hover:scale-105" data-aos="fade-right" data-aos-delay="350">
-                    <div class="mr-4 w-8 h-8 flex items-center justify-center rounded-lg bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-md group-hover:shadow-lg transition-all duration-300">
-                        <i class="fas fa-chart-bar text-sm"></i>
-                    </div>
-                    <span class="group-hover:translate-x-1 transition-transform duration-300">Reportes</span>
-                    <div class="ml-auto opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <i class="fas fa-download text-xs text-amber-400"></i>
-                    </div>
-                </a>
+
 
                 <!-- Sugerencias -->
                 <a href="#" onclick="showSection('sugerencias')" class="nav-item group flex items-center px-4 py-3 text-base font-medium rounded-xl transition-all duration-300 hover:shadow-lg transform hover:scale-105" data-aos="fade-right" data-aos-delay="400">
@@ -405,24 +458,13 @@
                 </a>
 
                 <!-- SUNAT -->
-                <a href="#" onclick="showSection('sunat')" class="nav-item group flex items-center px-4 py-3 text-base font-medium rounded-xl transition-all duration-300 hover:shadow-lg transform hover:scale-105" data-aos="fade-right" data-aos-delay="450">
-                    <div class="mr-4 w-8 h-8 flex items-center justify-center rounded-lg bg-gradient-to-r from-indigo-500 to-blue-600 text-white shadow-md group-hover:shadow-lg transition-all duration-300">
-                        <i class="fas fa-building text-sm"></i>
+                <a href="#sunat" onclick="showSection('sunat')" class="nav-item group flex items-center px-4 py-3 text-base font-medium rounded-xl transition-all duration-300 hover:shadow-lg transform hover:scale-105" data-aos="fade-right" data-aos-delay="500">
+                    <div class="mr-4 w-8 h-8 flex items-center justify-center rounded-lg bg-gradient-to-r from-red-500 to-red-600 text-white shadow-md group-hover:shadow-lg transition-all duration-300">
+                        <i class="fas fa-calculator text-sm"></i>
                     </div>
                     <span class="group-hover:translate-x-1 transition-transform duration-300">SUNAT</span>
                     <div class="ml-auto opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <i class="fas fa-file-invoice text-xs text-indigo-400"></i>
-                    </div>
-                </a>
-
-                <!-- Tributario -->
-                <a href="#" onclick="showSection('tributario')" class="nav-item group flex items-center px-4 py-3 text-base font-medium rounded-xl transition-all duration-300 hover:shadow-lg transform hover:scale-105" data-aos="fade-right" data-aos-delay="500">
-                    <div class="mr-4 w-8 h-8 flex items-center justify-center rounded-lg bg-gradient-to-r from-slate-500 to-gray-600 text-white shadow-md group-hover:shadow-lg transition-all duration-300">
-                        <i class="fas fa-file-contract text-sm"></i>
-                    </div>
-                    <span class="group-hover:translate-x-1 transition-transform duration-300">Tributario</span>
-                    <div class="ml-auto opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <i class="fas fa-gavel text-xs text-slate-400"></i>
+                        <i class="fas fa-percent text-xs text-red-400"></i>
                     </div>
                 </a>
             </div>
@@ -610,16 +652,186 @@
                 </div>
             </div>
 
-            <!-- Dashboard Overview -->
+            <!-- ✨ DASHBOARD OVERVIEW PREMIUM CON CDN -->
             <div id="section-dashboard" class="section-content">
-                <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                    <!-- Charts Row -->
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" data-aos="fade-up" data-aos-duration="600">
+                    
+                    <!-- 🏠 Header Premium del Dashboard -->
+                    <div class="mb-8 relative">
+                        <!-- Fondo decorativo con gradiente -->
+                        <div class="absolute inset-0 bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 rounded-2xl transform -skew-y-1 shadow-lg"></div>
+                        
+                        <!-- Contenido principal -->
+                        <div class="relative p-6 md:flex md:items-center md:justify-between">
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center space-x-3">
+                                    <!-- Icono animado con FontAwesome CDN -->
+                                    <div class="flex-shrink-0">
+                                        <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                                            <i class="fas fa-chart-pie text-white text-xl animate-pulse"></i>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl">
+                                            🏠 Dashboard Principal
+                                        </h2>
+                                        <p class="mt-1 text-sm text-gray-600 flex items-center">
+                                            <i class="fas fa-analytics mr-2 text-blue-500"></i>
+                                            Panel de control con todas tus métricas financieras
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Botones de acción mejorados -->
+                            <div class="mt-6 md:mt-0 md:ml-6 flex space-x-3">
+                                <button onclick="location.reload()" 
+                                        class="group inline-flex items-center px-4 py-2 border border-gray-300 rounded-xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-4 focus:ring-blue-500/30 transform hover:scale-105 transition-all duration-200">
+                                    <i class="fas fa-sync-alt mr-2 h-4 w-4 group-hover:rotate-180 transition-transform duration-500"></i>
+                                    Actualizar
+                                </button>
+                                <!-- Dropdown de Exportar mejorado -->
+                                <div class="relative">
+                                    <button id="export-dropdown-button" onclick="toggleExportDropdown()" 
+                                            class="group inline-flex items-center px-6 py-3 border border-transparent rounded-xl shadow-lg text-sm font-semibold text-white bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 focus:outline-none focus:ring-4 focus:ring-emerald-500/30 transform hover:scale-105 transition-all duration-200">
+                                        <i class="fas fa-file-export mr-2 h-4 w-4 group-hover:rotate-12 transition-transform duration-200"></i>
+                                        Exportar Reporte
+                                        <i class="fas fa-chevron-down ml-2 h-3 w-3 group-hover:rotate-180 transition-transform duration-200"></i>
+                                        <div class="absolute inset-0 rounded-xl bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
+                                    </button>
+                                    
+                                    <!-- Dropdown Menu -->
+                                    <div id="export-dropdown" class="hidden absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-gray-200 z-50">
+                                        <div class="p-2">
+                                            <button onclick="exportToPDF()" class="w-full flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors">
+                                                <i class="fas fa-file-pdf mr-3 text-red-500"></i>
+                                                <div class="text-left">
+                                                    <div class="font-medium">Exportar a PDF</div>
+                                                    <div class="text-xs text-gray-500">Reporte completo imprimible</div>
+                                                </div>
+                                            </button>
+                                            <button onclick="exportToExcel()" class="w-full flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-green-50 hover:text-green-600 rounded-lg transition-colors">
+                                                <i class="fas fa-file-excel mr-3 text-green-500"></i>
+                                                <div class="text-left">
+                                                    <div class="font-medium">Exportar a Excel</div>
+                                                    <div class="text-xs text-gray-500">Datos para análisis</div>
+                                                </div>
+                                            </button>
+                                            <button onclick="exportToCSV()" class="w-full flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors">
+                                                <i class="fas fa-file-csv mr-3 text-blue-500"></i>
+                                                <div class="text-left">
+                                                    <div class="font-medium">Exportar a CSV</div>
+                                                    <div class="text-xs text-gray-500">Datos en formato CSV</div>
+                                                </div>
+                                            </button>
+                                            <hr class="my-2 border-gray-200">
+                                            <button onclick="window.print()" class="w-full flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
+                                                <i class="fas fa-print mr-3 text-gray-500"></i>
+                                                <div class="text-left">
+                                                    <div class="font-medium">Imprimir</div>
+                                                    <div class="text-xs text-gray-500">Vista previa de impresión</div>
+                                                </div>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 📊 Stats Cards Premium -->
+                    <div class="mb-8 grid grid-cols-1 md:grid-cols-4 gap-6" data-aos="fade-up" data-aos-delay="200">
+                        <!-- Total Ingresos -->
+                        <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-2xl p-6 shadow-lg border border-green-200 hover:shadow-xl transform hover:scale-105 transition-all duration-300">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-green-600 mb-1">Total Ingresos</p>
+                                    <p id="total-ingresos" class="text-2xl font-bold text-green-900">S/ 0.00</p>
+                                    <p class="text-xs text-green-600 flex items-center mt-1">
+                                        <i class="fas fa-arrow-up mr-1"></i>
+                                        +12.3% vs mes anterior
+                                    </p>
+                                </div>
+                                <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-green-600 rounded-xl flex items-center justify-center">
+                                    <i class="fas fa-coins text-white text-lg"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Total Gastos -->
+                        <div class="bg-gradient-to-br from-red-50 to-red-100 rounded-2xl p-6 shadow-lg border border-red-200 hover:shadow-xl transform hover:scale-105 transition-all duration-300">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-red-600 mb-1">Total Gastos</p>
+                                    <p id="total-gastos" class="text-2xl font-bold text-red-900">S/ 0.00</p>
+                                    <p class="text-xs text-red-600 flex items-center mt-1">
+                                        <i class="fas fa-arrow-down mr-1"></i>
+                                        -5.2% vs mes anterior
+                                    </p>
+                                </div>
+                                <div class="w-12 h-12 bg-gradient-to-r from-red-500 to-red-600 rounded-xl flex items-center justify-center">
+                                    <i class="fas fa-receipt text-white text-lg"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Balance -->
+                        <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-6 shadow-lg border border-blue-200 hover:shadow-xl transform hover:scale-105 transition-all duration-300">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-blue-600 mb-1">Balance</p>
+                                    <p id="balance-total" class="text-2xl font-bold text-blue-900">S/ 0.00</p>
+                                    <p class="text-xs text-blue-600 flex items-center mt-1">
+                                        <i class="fas fa-chart-line mr-1"></i>
+                                        Ahorro mensual
+                                    </p>
+                                </div>
+                                <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
+                                    <i class="fas fa-balance-scale text-white text-lg"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Créditos Activos -->
+                        <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-6 shadow-lg border border-purple-200 hover:shadow-xl transform hover:scale-105 transition-all duration-300">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-purple-600 mb-1">Créditos</p>
+                                    <p id="total-creditos" class="text-2xl font-bold text-purple-900">3</p>
+                                    <p class="text-xs text-purple-600 flex items-center mt-1">
+                                        <i class="fas fa-calculator mr-1"></i>
+                                        Simulaciones activas
+                                    </p>
+                                </div>
+                                <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl flex items-center justify-center">
+                                    <i class="fas fa-credit-card text-white text-lg"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 📈 Charts Row Premium -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8" data-aos="fade-up" data-aos-delay="400">
                         <!-- Income vs Expenses Chart -->
-                        <div class="bg-white shadow-lg rounded-lg border border-gray-200">
-                            <div class="px-6 py-4 border-b border-gray-200">
-                                <h3 class="text-lg font-medium text-gray-900">Ingresos vs Gastos</h3>
-                                <p class="text-sm text-gray-500">Comparación mensual</p>
+                        <div class="bg-white rounded-2xl shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300">
+                            <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-green-50 to-red-50 rounded-t-2xl">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h3 class="text-lg font-bold text-gray-900 flex items-center">
+                                            <i class="fas fa-chart-line mr-2 text-blue-500"></i>
+                                            Ingresos vs Gastos
+                                        </h3>
+                                        <p class="text-sm text-gray-600">Comparación mensual detallada</p>
+                                    </div>
+                                    <div class="flex space-x-2">
+                                        <span class="px-3 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
+                                            <i class="fas fa-circle mr-1"></i>Ingresos
+                                        </span>
+                                        <span class="px-3 py-1 bg-red-100 text-red-800 text-xs font-medium rounded-full">
+                                            <i class="fas fa-circle mr-1"></i>Gastos
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
                             <div class="p-6">
                                 <canvas id="incomeExpensesChart" height="300"></canvas>
@@ -627,10 +839,20 @@
                         </div>
 
                         <!-- Categories Pie Chart -->
-                        <div class="bg-white shadow-lg rounded-lg border border-gray-200">
-                            <div class="px-6 py-4 border-b border-gray-200">
-                                <h3 class="text-lg font-medium text-gray-900">Gastos por Categoría</h3>
-                                <p class="text-sm text-gray-500">Distribución del mes actual</p>
+                        <div class="bg-white rounded-2xl shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300">
+                            <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-purple-50 to-pink-50 rounded-t-2xl">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h3 class="text-lg font-bold text-gray-900 flex items-center">
+                                            <i class="fas fa-chart-pie mr-2 text-purple-500"></i>
+                                            Gastos por Categoría
+                                        </h3>
+                                        <p class="text-sm text-gray-600">Distribución del mes actual</p>
+                                    </div>
+                                    <button class="text-purple-600 hover:text-purple-700 text-sm font-medium bg-purple-100 px-3 py-1 rounded-full hover:bg-purple-200 transition-colors">
+                                        <i class="fas fa-expand-alt mr-1"></i>Ampliar
+                                    </button>
+                                </div>
                             </div>
                             <div class="p-6">
                                 <canvas id="categoriesChart" height="300"></canvas>
@@ -638,31 +860,180 @@
                         </div>
                     </div>
 
-                    <!-- Recent Transactions -->
-                    <div class="bg-white shadow-lg rounded-lg border border-gray-200">
-                        <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-                            <div>
-                                <h3 class="text-lg font-medium text-gray-900">Transacciones Recientes</h3>
-                                <p class="text-sm text-gray-500">Últimas 10 transacciones</p>
+                    <!-- 📋 Recent Transactions Premium - Estilo Ingresos/Gastos -->
+                    <div class="bg-white rounded-2xl shadow-lg border border-gray-200 hover:shadow-xl transform hover:scale-[1.01] transition-all duration-300" data-aos="fade-up" data-aos-delay="600">
+                        <!-- Header Premium con gradiente -->
+                        <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-indigo-50 via-blue-50 to-purple-50 rounded-t-2xl relative overflow-hidden">
+                            <!-- Fondo decorativo -->
+                            <div class="absolute inset-0 bg-gradient-to-r from-indigo-100/20 to-purple-100/20"></div>
+                            <div class="relative flex items-center justify-between">
+                                <div>
+                                    <h3 class="text-lg font-bold text-gray-900 flex items-center">
+                                        <div class="w-8 h-8 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center mr-3 shadow-md">
+                                            <i class="fas fa-history text-white text-sm"></i>
+                                        </div>
+                                        Transacciones Recientes
+                                        <span class="ml-3 px-3 py-1 bg-indigo-100 text-indigo-800 text-xs font-medium rounded-full">
+                                            Live
+                                        </span>
+                                    </h3>
+                                    <p class="text-sm text-gray-600 mt-1 flex items-center">
+                                        <i class="fas fa-clock mr-2 text-indigo-500"></i>
+                                        Últimas 10 transacciones registradas
+                                        <span class="ml-2 text-xs text-gray-500">• Actualizado hace 2 min</span>
+                                    </p>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <span class="text-xs text-gray-500 bg-gray-100 px-3 py-2 rounded-xl border border-gray-200">
+                                        <i class="fas fa-eye mr-2"></i>Solo lectura
+                                    </span>
+                                    <button onclick="location.reload()" class="group text-indigo-600 hover:text-indigo-700 text-sm font-medium bg-white/80 backdrop-blur-sm px-3 py-2 rounded-xl border border-indigo-200 hover:bg-indigo-50 hover:border-indigo-300 transition-all duration-200 shadow-sm">
+                                        <i class="fas fa-sync-alt group-hover:rotate-180 transition-transform duration-500"></i>
+                                    </button>
+                                </div>
                             </div>
-                            <button class="text-blue-600 hover:text-blue-700 text-sm font-medium">
-                                Ver todas
-                            </button>
                         </div>
-                        <div class="overflow-hidden">
+
+                        <!-- Tabla Premium Responsiva -->
+                        <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-50">
+                                <!-- Header Premium con efectos hover -->
+                                <thead class="bg-gradient-to-r from-gray-50 via-slate-50 to-gray-100">
                                     <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Descripción</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Categoría</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Monto</th>
+                                        <th class="group px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider hover:bg-gray-100 transition-colors duration-200">
+                                            <div class="flex items-center space-x-2">
+                                                <i class="fas fa-calendar-alt text-blue-500 group-hover:text-blue-600 transition-colors"></i>
+                                                <span class="group-hover:text-gray-700 transition-colors">Fecha</span>
+                                                <i class="fas fa-sort text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                                            </div>
+                                        </th>
+                                        <th class="group px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider hover:bg-gray-100 transition-colors duration-200">
+                                            <div class="flex items-center space-x-2">
+                                                <i class="fas fa-file-alt text-green-500 group-hover:text-green-600 transition-colors"></i>
+                                                <span class="group-hover:text-gray-700 transition-colors">Descripción</span>
+                                                <i class="fas fa-sort text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                                            </div>
+                                        </th>
+                                        <th class="group px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider hover:bg-gray-100 transition-colors duration-200">
+                                            <div class="flex items-center space-x-2">
+                                                <i class="fas fa-tags text-purple-500 group-hover:text-purple-600 transition-colors"></i>
+                                                <span class="group-hover:text-gray-700 transition-colors">Categoría</span>
+                                                <i class="fas fa-sort text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                                            </div>
+                                        </th>
+                                        <th class="group px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider hover:bg-gray-100 transition-colors duration-200">
+                                            <div class="flex items-center space-x-2">
+                                                <i class="fas fa-coins text-yellow-500 group-hover:text-yellow-600 transition-colors"></i>
+                                                <span class="group-hover:text-gray-700 transition-colors">Monto (S/)</span>
+                                                <i class="fas fa-sort text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                                            </div>
+                                        </th>
+                                        <th class="group px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider hover:bg-gray-100 transition-colors duration-200">
+                                            <div class="flex items-center space-x-2">
+                                                <i class="fas fa-credit-card text-indigo-500 group-hover:text-indigo-600 transition-colors"></i>
+                                                <span class="group-hover:text-gray-700 transition-colors">Método</span>
+                                                <i class="fas fa-sort text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                                            </div>
+                                        </th>
+                                        <th class="group px-6 py-4 text-center text-xs font-bold text-gray-600 uppercase tracking-wider hover:bg-gray-100 transition-colors duration-200">
+                                            <div class="flex items-center justify-center space-x-2">
+                                                <i class="fas fa-cogs text-orange-500 group-hover:text-orange-600 transition-colors"></i>
+                                                <span class="group-hover:text-gray-700 transition-colors">Acciones</span>
+                                            </div>
+                                        </th>
                                     </tr>
                                 </thead>
-                                <tbody id="recent-transactions" class="bg-white divide-y divide-gray-200">
-                                    <!-- Transactions will be loaded here -->
+                                
+                                <!-- Body Premium con animaciones -->
+                                <tbody id="recent-transactions" class="bg-white divide-y divide-gray-100">
+                                    <!-- Loading skeleton mejorado -->
+                                    <tr id="transactions-loading" class="animate-pulse">
+                                        <td colspan="6" class="px-6 py-12 text-center">
+                                            <div class="flex flex-col items-center justify-center space-y-4">
+                                                <div class="w-16 h-16 bg-gradient-to-r from-indigo-400 to-purple-500 rounded-full flex items-center justify-center shadow-lg">
+                                                    <i class="fas fa-spinner animate-spin text-white text-2xl"></i>
+                                                </div>
+                                                <div class="space-y-2">
+                                                    <div class="text-gray-600 font-semibold">Cargando transacciones...</div>
+                                                    <div class="text-sm text-gray-500">Sincronizando con base de datos</div>
+                                                </div>
+                                                <div class="flex space-x-1">
+                                                    <div class="w-2 h-2 bg-indigo-400 rounded-full animate-bounce"></div>
+                                                    <div class="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+                                                    <div class="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
                                 </tbody>
                             </table>
+                        </div>
+                        
+                        <!-- Empty state Premium -->
+                        <div id="empty-transactions" class="hidden p-16 text-center">
+                            <div class="max-w-md mx-auto">
+                                <!-- Icono animado con gradiente -->
+                                <div class="w-24 h-24 mx-auto mb-6 bg-gradient-to-r from-indigo-100 to-purple-100 rounded-full flex items-center justify-center relative overflow-hidden">
+                                    <div class="absolute inset-0 bg-gradient-to-r from-indigo-200/50 to-purple-200/50 animate-pulse"></div>
+                                    <i class="fas fa-inbox text-4xl text-indigo-400 relative z-10"></i>
+                                </div>
+                                
+                                <h3 class="text-xl font-bold text-gray-900 mb-3">No hay transacciones registradas</h3>
+                                <p class="text-gray-600 mb-8 leading-relaxed">
+                                    Comienza tu gestión financiera agregando tus primeros ingresos y gastos.
+                                    <br>¡Es fácil y rápido!
+                                </p>
+                                
+                                <!-- Botones de acción mejorados -->
+                                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                                    <button onclick="showSection('ingresos')" class="group inline-flex items-center px-6 py-3 border border-transparent rounded-xl shadow-lg text-sm font-semibold text-white bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 focus:outline-none focus:ring-4 focus:ring-green-500/30 transform hover:scale-105 transition-all duration-200">
+                                        <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center mr-3">
+                                            <i class="fas fa-plus text-white group-hover:rotate-90 transition-transform duration-200"></i>
+                                        </div>
+                                        Agregar Ingreso
+                                        <div class="absolute inset-0 rounded-xl bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
+                                    </button>
+                                    
+                                    <button onclick="showSection('gastos')" class="group inline-flex items-center px-6 py-3 border border-transparent rounded-xl shadow-lg text-sm font-semibold text-white bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 focus:outline-none focus:ring-4 focus:ring-red-500/30 transform hover:scale-105 transition-all duration-200">
+                                        <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center mr-3">
+                                            <i class="fas fa-plus text-white group-hover:rotate-90 transition-transform duration-200"></i>
+                                        </div>
+                                        Agregar Gasto
+                                        <div class="absolute inset-0 rounded-xl bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
+                                    </button>
+                                </div>
+                                
+                                <!-- Tips adicionales -->
+                                <div class="mt-8 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200">
+                                    <div class="flex items-center justify-center text-blue-600 mb-2">
+                                        <i class="fas fa-lightbulb mr-2"></i>
+                                        <span class="font-semibold">Consejo Pro</span>
+                                    </div>
+                                    <p class="text-sm text-blue-700">
+                                        Registra tus transacciones diariamente para mantener un control preciso de tus finanzas.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Footer con estadísticas rápidas -->
+                        <div class="px-6 py-3 bg-gradient-to-r from-gray-50 to-slate-50 border-t border-gray-200 rounded-b-2xl">
+                            <div class="flex items-center justify-between text-sm">
+                                <div class="flex items-center space-x-4 text-gray-600">
+                                    <span class="flex items-center">
+                                        <i class="fas fa-database mr-1 text-indigo-500"></i>
+                                        <span id="total-transactions-count">0</span> transacciones
+                                    </span>
+                                    <span class="flex items-center">
+                                        <i class="fas fa-calendar mr-1 text-green-500"></i>
+                                        Este mes: <span id="month-transactions-count" class="font-semibold ml-1">0</span>
+                                    </span>
+                                </div>
+                                <div class="flex items-center space-x-2 text-gray-500">
+                                    <i class="fas fa-sync-alt text-xs"></i>
+                                    <span class="text-xs">Actualizado automáticamente</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -680,22 +1051,17 @@
             </div>
 
             <div id="section-creditos" class="section-content hidden">
-                <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                    <div class="bg-white rounded-lg shadow-lg border border-gray-200 p-8">
-                        <h2 class="text-2xl font-bold text-gray-900 mb-6">Gestión de Créditos</h2>
-                        <p class="text-gray-600">Módulo de créditos en desarrollo...</p>
+                <!-- Contenido del módulo de créditos se cargará aquí dinámicamente -->
+                <div id="creditos-module-container" class="loading">
+                    <!-- Loader mientras carga el módulo -->
+                    <div class="flex items-center justify-center h-64">
+                        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+                        <span class="ml-3 text-gray-600">Cargando módulo de créditos...</span>
                     </div>
                 </div>
             </div>
 
-            <div id="section-reportes" class="section-content hidden">
-                <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                    <div class="bg-white rounded-lg shadow-lg border border-gray-200 p-8">
-                        <h2 class="text-2xl font-bold text-gray-900 mb-6">Reportes Financieros</h2>
-                        <p class="text-gray-600">Módulo de reportes en desarrollo...</p>
-                    </div>
-                </div>
-            </div>
+
 
             <div id="section-sunat" class="section-content hidden">
                 <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -743,13 +1109,8 @@
                 <!-- El módulo de sugerencias se cargará dinámicamente aquí -->
             </div>
 
-            <div id="section-tributario" class="section-content hidden">
-                <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                    <div class="bg-white rounded-lg shadow-lg border border-gray-200 p-8">
-                        <h2 class="text-2xl font-bold text-gray-900 mb-6">Gestión Tributaria</h2>
-                        <p class="text-gray-600">Módulo tributario en desarrollo...</p>
-                    </div>
-                </div>
+            <div id="section-sunat" class="section-content hidden">
+                <!-- El módulo de SUNAT se cargará dinámicamente aquí -->
             </div>
 
             <div id="section-asistente" class="section-content hidden">
@@ -805,6 +1166,9 @@
 
             // 🎯 Efectos premium para navegación
             initSidebarPremiumEffects();
+            
+            // 🔥 Inicializar efectos premium del dashboard
+            initDashboardPremiumEffects();
             
             // 🔄 Auto-refresh de indicadores
             updateSidebarIndicators();
@@ -982,7 +1346,7 @@
             const indicators = {
                 'ingresos': { icon: 'fa-plus-circle', color: 'text-green-400' },
                 'gastos': { icon: 'fa-minus-circle', color: 'text-red-400' },
-                'reportes': { icon: 'fa-download', color: 'text-amber-400' },
+
                 'sugerencias': { icon: 'fa-magic', color: 'text-cyan-400' }
             };
             
@@ -1085,6 +1449,219 @@
                 }
             }, 350);
         }
+
+        // 🔥 Inicializar efectos premium del dashboard
+        function initDashboardPremiumEffects() {
+            // Inicializar CountUp.js para animaciones de números
+            if (typeof CountUp !== 'undefined') {
+                initCountUpAnimations();
+            }
+            
+            // Inicializar efectos de hover premium
+            initPremiumHoverEffects();
+            
+            // Inicializar loader de datos con efectos
+            loadDashboardDataWithEffects();
+            
+            // Inicializar efectos de partículas en hover
+            initParticleEffects();
+        }
+
+        // 📊 Animaciones CountUp para números
+        function initCountUpAnimations() {
+            const statsElements = [
+                { id: 'total-ingresos', value: 0, prefix: 'S/ ' },
+                { id: 'total-gastos', value: 0, prefix: 'S/ ' },
+                { id: 'balance-total', value: 0, prefix: 'S/ ' },
+                { id: 'total-creditos', value: 3, prefix: '' }
+            ];
+
+            statsElements.forEach(stat => {
+                const element = document.getElementById(stat.id);
+                if (element) {
+                    const countUp = new CountUp(stat.id, stat.value, {
+                        duration: 2,
+                        prefix: stat.prefix,
+                        separator: ',',
+                        decimal: '.',
+                        decimalPlaces: 2
+                    });
+                    
+                    // Iniciar animación cuando el elemento esté visible
+                    const observer = new IntersectionObserver((entries) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                countUp.start();
+                                observer.unobserve(entry.target);
+                            }
+                        });
+                    });
+                    observer.observe(element);
+                }
+            });
+        }
+
+        // ✨ Efectos de hover premium
+        function initPremiumHoverEffects() {
+            // Efectos para cards de estadísticas
+            const statCards = document.querySelectorAll('[data-aos]');
+            statCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-8px) scale(1.02)';
+                    this.style.boxShadow = '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = '';
+                    this.style.boxShadow = '';
+                });
+            });
+
+            // Efectos para botones de acción
+            const actionButtons = document.querySelectorAll('.group');
+            actionButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Efecto ripple
+                    const ripple = document.createElement('span');
+                    ripple.classList.add('ripple-effect');
+                    this.appendChild(ripple);
+                    
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 600);
+                });
+            });
+        }
+
+        // 📈 Cargar datos del dashboard con efectos
+        async function loadDashboardDataWithEffects() {
+            try {
+                // Simular carga de datos (reemplazar con API real)
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                // Actualizar valores con animación
+                updateStatsWithAnimation({
+                    ingresos: 15750.00,
+                    gastos: 8420.50,
+                    balance: 7329.50,
+                    creditos: 3
+                });
+                
+                // Las transacciones se cargan automáticamente desde dashboard-handler.js
+                
+            } catch (error) {
+                console.error('Error cargando datos del dashboard:', error);
+            }
+        }
+
+        // 🔄 Actualizar estadísticas con animación
+        function updateStatsWithAnimation(data) {
+            const updates = [
+                { id: 'total-ingresos', value: data.ingresos, prefix: 'S/ ' },
+                { id: 'total-gastos', value: data.gastos, prefix: 'S/ ' },
+                { id: 'balance-total', value: data.balance, prefix: 'S/ ' },
+                { id: 'total-creditos', value: data.creditos, prefix: '' }
+            ];
+
+            updates.forEach(update => {
+                const element = document.getElementById(update.id);
+                if (element && typeof CountUp !== 'undefined') {
+                    const countUp = new CountUp(update.id, update.value, {
+                        duration: 2.5,
+                        prefix: update.prefix,
+                        separator: ',',
+                        decimal: '.',
+                        decimalPlaces: update.prefix ? 2 : 0
+                    });
+                    countUp.start();
+                }
+            });
+        }
+
+        // � Funciones de exportar mejoradas
+        function toggleExportDropdown() {
+            const dropdown = document.getElementById('export-dropdown');
+            dropdown.classList.toggle('hidden');
+            
+            // Cerrar dropdown al hacer click fuera
+            if (!dropdown.classList.contains('hidden')) {
+                document.addEventListener('click', function closeDropdown(e) {
+                    if (!e.target.closest('#export-dropdown-button') && !e.target.closest('#export-dropdown')) {
+                        dropdown.classList.add('hidden');
+                        document.removeEventListener('click', closeDropdown);
+                    }
+                });
+            }
+        }
+
+        function exportToPDF() {
+            console.log('📄 Exportando a PDF...');
+            window.print();
+            document.getElementById('export-dropdown').classList.add('hidden');
+            
+            // Mostrar notificación
+            if (window.globalNotyf) {
+                window.globalNotyf.success('📄 Vista previa de PDF abierta');
+            }
+        }
+
+        function exportToExcel() {
+            console.log('📊 Exportando a Excel...');
+            
+            // Crear datos de ejemplo para Excel
+            const data = [
+                ['Fecha', 'Tipo', 'Descripción', 'Categoría', 'Monto'],
+                ['2025-09-10', 'Ingreso', 'Venta de servicios', 'Servicios', '1500.00'],
+                ['2025-09-09', 'Gasto', 'Compra de oficina', 'Gastos Operativos', '-350.00'],
+                ['2025-09-08', 'Ingreso', 'Consultoría', 'Servicios', '2200.00']
+            ];
+            
+            // Crear CSV content
+            const csvContent = data.map(row => row.join(',')).join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `dashboard_financiero_${new Date().getTime()}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            document.getElementById('export-dropdown').classList.add('hidden');
+            
+            // Mostrar notificación
+            if (window.globalNotyf) {
+                window.globalNotyf.success('📊 Datos exportados a Excel/CSV');
+            }
+        }
+
+        function exportToCSV() {
+            console.log('📋 Exportando a CSV...');
+            exportToExcel(); // Usar la misma función ya que genera CSV
+        }
+
+        // 💳 Función auxiliar para iconos de métodos de pago
+        function getPaymentIcon(metodo) {
+            const iconMap = {
+                'Transferencia': 'fa-exchange-alt',
+                'Tarjeta': 'fa-credit-card',
+                'Depósito': 'fa-university',
+                'Débito': 'fa-money-check',
+                'PayPal': 'fa-paypal',
+                'Efectivo': 'fa-money-bill-wave'
+            };
+            return iconMap[metodo] || 'fa-money-bill-wave';
+        }
+
+        // 🎆 Efectos de partículas (opcional)
+        function initParticleEffects() {
+            // Implementar efectos de partículas si particles.js está disponible
+            if (typeof particlesJS !== 'undefined') {
+                // Configuración de partículas sutil para el fondo
+                console.log('Particles.js está disponible para efectos futuros');
+            }
+        }
     </script>
 
     <!-- Scripts -->
@@ -1115,6 +1692,11 @@
     <script src="js/dashboard-handler.js"></script>
     <script src="js/ingresos-module-handler.js"></script>
     <script src="js/gastos-module-handler.js"></script>
+    <!-- 💳 Módulo de Créditos -->
+    <script src="js/creditos-handler.js"></script>
+    <!-- 🧾 Módulo de SUNAT -->
+    <script src="js/sunat-handler.js"></script>
+
     <!-- Dashboard Core JavaScript - Optimizado -->
     <script src="js/dashboard-core.js"></script>
     <!-- Global Functions - Compatibility Layer -->

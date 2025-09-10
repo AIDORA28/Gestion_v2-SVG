@@ -85,6 +85,7 @@ class ModuleLoader {
         const icons = {
             'ingresos': '💰',
             'gastos': '💸',
+            'creditos': '💳',
             'reportes': '📊',
             'presupuesto': '📋',
             'configuracion': '⚙️',
