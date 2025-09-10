@@ -999,7 +999,7 @@ const server = http.createServer(async (req, res) => {
     
     // Ruta raíz
     if (pathname === '/') {
-        serveStaticFile(res, 'index.html');
+        serveStaticFile(res, 'landing.html');
         return;
     }
     

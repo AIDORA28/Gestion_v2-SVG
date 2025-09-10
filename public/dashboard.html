@@ -2,7 +2,8 @@
 <html lang="es" class="h-full bg-gray-50">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, ini                <!-- Balance Total - Enhanced -->
+                <div data-aos="fade-up" data-aos-delay="100" class="group relative bg-gradient-to-br from-emerald-50 to-green-50 overflow-hidden shadow-lg rounded-xl border border-emerald-100 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">al-scale=1.0">
     <title>Dashboard - PLANIFICAPRO</title>
     
     <!-- Tailwind CSS -->
@@ -18,8 +19,13 @@
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     
+    <!-- AOS - Animate On Scroll -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
     <!-- CSS Personalizado -->
     <link rel="stylesheet" href="css/dashboard-new.css">
+    <link rel="stylesheet" href="css/dashboard-enhanced.css">
 </head>
 
 <body class="h-full">
@@ -39,23 +45,8 @@
         <!-- Logo -->
         <div class="flex items-center justify-center h-16 px-6 bg-gradient-to-r from-blue-600 to-purple-600">
             <div class="flex items-center space-x-3">
-                <div class="bg-white rounded-lg p-2">
-                    <i data-lucide="trending-up" class="h-6 w-6 text-blue-600"></i>
-                </div>
+                <img src="src/logo2.jpg" alt="PLANIFICAPRO Logo" class="h-12 w-auto rounded-lg border border-white/20">
                 <span class="text-white text-lg font-bold">PLANIFICAPRO</span>
-            </div>
-        </div>
-
-        <!-- User Info -->
-        <div class="p-6 border-b border-gray-200">
-            <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-                    <span id="user-avatar" class="text-white font-semibold">U</span>
-                </div>
-                <div>
-                    <p id="user-name" class="text-sm font-medium text-gray-900">Usuario</p>
-                    <p id="user-email" class="text-xs text-gray-500">usuario@email.com</p>
-                </div>
             </div>
         </div>
 
@@ -113,7 +104,7 @@
     <!-- Main Content -->
     <div class="lg:pl-64">
         <!-- Top Bar -->
-        <div class="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
+        <div class="fixed top-0 right-0 left-0 lg:left-64 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 sm:gap-x-6 sm:px-6 lg:px-8">
             <button id="sidebar-toggle" onclick="toggleMobileMenu()" class="lg:hidden p-2.5 text-gray-700 hover:text-gray-900 transition-colors">
                 <i data-lucide="menu" class="h-6 w-6"></i>
             </button>
@@ -125,97 +116,140 @@
                     <h1 id="page-title" class="text-lg font-semibold text-gray-900">Dashboard</h1>
                 </div>
                 <div class="flex flex-1 justify-end items-center gap-x-4 lg:gap-x-6">
-                    <!-- Quick Actions -->
-                    <button onclick="showQuickAddModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                        <i data-lucide="plus" class="inline h-4 w-4 mr-1"></i>
-                        Agregar
+                    <!-- Notifications -->
+                    <button class="relative p-2 text-gray-400 hover:text-gray-500 hover:bg-gray-100 rounded-lg transition-colors">
+                        <i data-lucide="bell" class="h-6 w-6"></i>
+                        <span class="absolute -top-1 -right-1 h-4 w-4 bg-red-500 rounded-full text-xs text-white flex items-center justify-center animate-pulse">3</span>
                     </button>
                     
-                    <!-- Notifications -->
-                    <button class="relative p-2 text-gray-400 hover:text-gray-500">
-                        <i data-lucide="bell" class="h-6 w-6"></i>
-                        <span class="absolute -top-1 -right-1 h-4 w-4 bg-red-400 rounded-full text-xs text-white flex items-center justify-center">3</span>
-                    </button>
+                    <!-- User Profile -->
+                    <div class="relative">
+                        <button class="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 transition-colors">
+                            <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                                <span class="text-white font-semibold text-sm" id="user-initials">U</span>
+                            </div>
+                            <div class="hidden md:block text-left">
+                                <p id="navbar-user-name" class="text-sm font-medium text-gray-900">Usuario</p>
+                                <p id="navbar-user-email" class="text-xs text-gray-500">usuario@email.com</p>
+                            </div>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Page Content -->
-        <main class="py-8">
+        <main class="pt-24 pb-8">
             <!-- Stats Cards - Siempre visibles -->
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mb-8">
                 <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-                    <!-- Balance Total -->
-                    <div class="bg-white overflow-hidden shadow-lg rounded-lg border border-gray-200 hover:shadow-xl transition-shadow">
-                        <div class="p-5">
-                            <div class="flex items-center">
-                                <div class="flex-shrink-0">
-                                    <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                                        <i data-lucide="wallet" class="h-5 w-5 text-white"></i>
-                                    </div>
+                    <!-- Balance Total - Enhanced -->
+                    <div class="group relative bg-gradient-to-br from-emerald-50 to-green-50 overflow-hidden shadow-lg rounded-xl border border-emerald-100 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+                        <div class="absolute inset-0 bg-gradient-to-r from-emerald-500/5 to-green-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <div class="relative p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-12 h-12 bg-gradient-to-r from-emerald-500 to-green-500 rounded-xl flex items-center justify-center shadow-lg">
+                                    <i data-lucide="wallet" class="h-6 w-6 text-white"></i>
                                 </div>
-                                <div class="ml-5 w-0 flex-1">
-                                    <dl>
-                                        <dt class="text-sm font-medium text-gray-500 truncate">Balance Total</dt>
-                                        <dd class="text-2xl font-bold text-gray-900" id="balance-total">$0.00</dd>
-                                    </dl>
+                                <div class="flex items-center space-x-1 text-emerald-600 bg-emerald-100 px-2 py-1 rounded-full text-xs font-medium">
+                                    <i data-lucide="activity" class="h-3 w-3"></i>
+                                    <span id="balance-status">Saludable</span>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-600 mb-1">Balance Total</p>
+                                <p class="text-3xl font-bold text-gray-900" id="balance-total">$0.00</p>
+                                <p class="text-xs text-gray-500 mt-2">Patrimonio actual</p>
+                            </div>
+                            <!-- Progress Indicator -->
+                            <div class="mt-4">
+                                <div class="flex justify-between text-xs text-gray-500 mb-1">
+                                    <span>Meta anual</span>
+                                    <span id="balance-percentage">0%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div id="balance-progress-bar" class="bg-gradient-to-r from-emerald-500 to-green-500 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Ingresos del Mes -->
-                    <div class="bg-white overflow-hidden shadow-lg rounded-lg border border-gray-200 hover:shadow-xl transition-shadow">
-                        <div class="p-5">
-                            <div class="flex items-center">
-                                <div class="flex-shrink-0">
-                                    <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                                        <i data-lucide="trending-up" class="h-5 w-5 text-white"></i>
-                                    </div>
+                    <!-- Ingresos del Mes - Enhanced -->
+                    <div data-aos="fade-up" data-aos-delay="200" class="group relative bg-gradient-to-br from-blue-50 to-cyan-50 overflow-hidden shadow-lg rounded-xl border border-blue-100 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+                        <div class="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <div class="relative p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg">
+                                    <i data-lucide="trending-up" class="h-6 w-6 text-white"></i>
                                 </div>
-                                <div class="ml-5 w-0 flex-1">
-                                    <dl>
-                                        <dt class="text-sm font-medium text-gray-500 truncate">Ingresos del Mes</dt>
-                                        <dd class="text-2xl font-bold text-blue-600" id="ingresos-mes">$0.00</dd>
-                                    </dl>
+                                <div class="flex items-center space-x-1 text-blue-600 bg-blue-100 px-2 py-1 rounded-full text-xs font-medium">
+                                    <i data-lucide="arrow-up" class="h-3 w-3"></i>
+                                    <span id="ingresos-trend">+0%</span>
                                 </div>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-600 mb-1">Ingresos del Mes</p>
+                                <p class="text-3xl font-bold text-gray-900" id="ingresos-mes">$0.00</p>
+                                <p class="text-xs text-gray-500 mt-2">vs mes anterior</p>
+                            </div>
+                            <!-- Mini Sparkline Chart -->
+                            <div class="mt-4 h-8">
+                                <canvas id="ingresos-sparkline" class="w-full h-full"></canvas>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Gastos del Mes -->
-                    <div class="bg-white overflow-hidden shadow-lg rounded-lg border border-gray-200 hover:shadow-xl transition-shadow">
-                        <div class="p-5">
-                            <div class="flex items-center">
-                                <div class="flex-shrink-0">
-                                    <div class="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
-                                        <i data-lucide="trending-down" class="h-5 w-5 text-white"></i>
-                                    </div>
+                    <!-- Gastos del Mes - Enhanced -->
+                    <div data-aos="fade-up" data-aos-delay="300" class="group relative bg-gradient-to-br from-red-50 to-rose-50 overflow-hidden shadow-lg rounded-xl border border-red-100 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+                        <div class="absolute inset-0 bg-gradient-to-r from-red-500/5 to-rose-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <div class="relative p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-12 h-12 bg-gradient-to-r from-red-500 to-rose-500 rounded-xl flex items-center justify-center shadow-lg">
+                                    <i data-lucide="trending-down" class="h-6 w-6 text-white"></i>
                                 </div>
-                                <div class="ml-5 w-0 flex-1">
-                                    <dl>
-                                        <dt class="text-sm font-medium text-gray-500 truncate">Gastos del Mes</dt>
-                                        <dd class="text-2xl font-bold text-red-600" id="gastos-mes">$0.00</dd>
-                                    </dl>
+                                <div class="flex items-center space-x-1 text-red-600 bg-red-100 px-2 py-1 rounded-full text-xs font-medium">
+                                    <i data-lucide="arrow-down" class="h-3 w-3"></i>
+                                    <span id="gastos-trend">-0%</span>
                                 </div>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-600 mb-1">Gastos del Mes</p>
+                                <p class="text-3xl font-bold text-gray-900" id="gastos-mes">$0.00</p>
+                                <p class="text-xs text-gray-500 mt-2">vs mes anterior</p>
+                            </div>
+                            <!-- Mini Sparkline Chart -->
+                            <div class="mt-4 h-8">
+                                <canvas id="gastos-sparkline" class="w-full h-full"></canvas>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Ahorro Proyectado -->
-                    <div class="bg-white overflow-hidden shadow-lg rounded-lg border border-gray-200 hover:shadow-xl transition-shadow">
-                        <div class="p-5">
-                            <div class="flex items-center">
-                                <div class="flex-shrink-0">
-                                    <div class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
-                                        <i data-lucide="piggy-bank" class="h-5 w-5 text-white"></i>
-                                    </div>
+                    <!-- Ahorro Proyectado - Enhanced -->
+                    <div data-aos="fade-up" data-aos-delay="400" class="group relative bg-gradient-to-br from-purple-50 to-indigo-50 overflow-hidden shadow-lg rounded-xl border border-purple-100 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+                        <div class="absolute inset-0 bg-gradient-to-r from-purple-500/5 to-indigo-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <div class="relative p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-xl flex items-center justify-center shadow-lg">
+                                    <i data-lucide="piggy-bank" class="h-6 w-6 text-white"></i>
                                 </div>
-                                <div class="ml-5 w-0 flex-1">
-                                    <dl>
-                                        <dt class="text-sm font-medium text-gray-500 truncate">Ahorro Proyectado</dt>
-                                        <dd class="text-2xl font-bold text-purple-600" id="ahorro-proyectado">$0.00</dd>
-                                    </dl>
+                                <div class="flex items-center space-x-1 text-purple-600 bg-purple-100 px-2 py-1 rounded-full text-xs font-medium">
+                                    <i data-lucide="target" class="h-3 w-3"></i>
+                                    <span id="ahorro-status">En progreso</span>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-600 mb-1">Ahorro Proyectado</p>
+                                <p class="text-3xl font-bold text-gray-900" id="ahorro-proyectado">$0.00</p>
+                                <p class="text-xs text-gray-500 mt-2">Este mes</p>
+                            </div>
+                            <!-- Savings Goal Progress -->
+                            <div class="mt-4">
+                                <div class="flex justify-between text-xs text-gray-500 mb-1">
+                                    <span>Meta mensual</span>
+                                    <span id="ahorro-percentage">0%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div id="ahorro-progress-bar" class="bg-gradient-to-r from-purple-500 to-indigo-500 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
                                 </div>
                             </div>
                         </div>
@@ -680,6 +714,9 @@
             </div>
         </div>
     </div>
+
+    <!-- Dashboard Enhanced JavaScript -->
+    <script src="js/dashboard-enhanced.js"></script>
 
 </body>
 </html>
