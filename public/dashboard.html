@@ -2,8 +2,7 @@
 <html lang="es" class="h-full bg-gray-50">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, ini                <!-- Balance Total - Enhanced -->
-                <div data-aos="fade-up" data-aos-delay="100" class="group relative bg-gradient-to-br from-emerald-50 to-green-50 overflow-hidden shadow-lg rounded-xl border border-emerald-100 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">al-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - PLANIFICAPRO</title>
     
     <!-- Tailwind CSS -->
@@ -23,9 +22,8 @@
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     
-    <!-- CSS Personalizado -->
-    <link rel="stylesheet" href="css/dashboard-new.css">
-    <link rel="stylesheet" href="css/dashboard-enhanced.css">
+    <!-- CSS Optimizado -->
+    <link rel="stylesheet" href="css/dashboard-optimized.css">
 </head>
 
 <body class="h-full">
@@ -464,119 +462,10 @@
     <script src="js/dashboard-handler.js"></script>
     <script src="js/ingresos-module-handler.js"></script>
     <script src="js/gastos-module-handler.js"></script>
-    <script>
-        // Inicializar iconos de Lucide cuando el DOM esté listo
-        document.addEventListener('DOMContentLoaded', function() {
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
-            }
-        });
-
-        // Función de debugging simple para el sidebar móvil
-        function debugToggleSidebar() {
-            console.log('🔧 Debugging sidebar toggle');
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('sidebar-overlay');
-            
-            console.log('📱 Sidebar element:', sidebar);
-            console.log('🌫️ Overlay element:', overlay);
-            
-            if (sidebar && overlay) {
-                // Forzar el toggle usando style directo para asegurar que funcione
-                const currentTransform = window.getComputedStyle(sidebar).transform;
-                console.log('🔍 Current transform:', currentTransform);
-                
-                // Comprobar si está oculto usando transform
-                const isHidden = currentTransform.includes('matrix(1, 0, 0, 1, -256, 0)') || 
-                                sidebar.classList.contains('-translate-x-full');
-                
-                console.log('📍 Current state - hidden:', isHidden);
-                
-                if (isHidden) {
-                    console.log('✅ Showing sidebar');
-                    sidebar.style.transform = 'translateX(0)';
-                    sidebar.classList.remove('-translate-x-full');
-                    overlay.style.display = 'block';
-                    overlay.classList.remove('hidden');
-                    document.body.style.overflow = 'hidden';
-                } else {
-                    console.log('❌ Hiding sidebar');
-                    sidebar.style.transform = 'translateX(-100%)';
-                    sidebar.classList.add('-translate-x-full');
-                    overlay.style.display = 'none';
-                    overlay.classList.add('hidden');
-                    document.body.style.overflow = '';
-                }
-            } else {
-                console.error('❌ Elements not found');
-                // Listar todos los elementos para debug
-                console.log('All elements with sidebar in ID:', document.querySelectorAll('[id*="sidebar"]'));
-            }
-        }
-
-        // Override la función toggleMobileMenu con la versión de debugging
-        window.toggleMobileMenu = debugToggleSidebar;
-
-        // Añadir event listener directo al botón después de que el DOM esté listo
-        document.addEventListener('DOMContentLoaded', function() {
-            const sidebarToggle = document.getElementById('sidebar-toggle');
-            if (sidebarToggle) {
-                console.log('🎯 Sidebar toggle button found, adding event listener');
-                sidebarToggle.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    console.log('🔄 Sidebar toggle clicked via event listener');
-                    debugToggleSidebar();
-                });
-            } else {
-                console.error('❌ Sidebar toggle button not found');
-            }
-
-            // También añadir listener al overlay para cerrarlo
-            const overlay = document.getElementById('sidebar-overlay');
-            if (overlay) {
-                overlay.addEventListener('click', function() {
-                    console.log('🌫️ Overlay clicked - closing sidebar');
-                    const sidebar = document.getElementById('sidebar');
-                    if (sidebar) {
-                        sidebar.style.transform = 'translateX(-100%)';
-                        sidebar.classList.add('-translate-x-full');
-                        overlay.style.display = 'none';
-                        overlay.classList.add('hidden');
-                        document.body.style.overflow = '';
-                    }
-                });
-            }
-
-            // Event listener para manejar cambios de tamaño de ventana
-            window.addEventListener('resize', function() {
-                const sidebar = document.getElementById('sidebar');
-                const overlay = document.getElementById('sidebar-overlay');
-                
-                // Si cambiamos a desktop (lg breakpoint = 1024px)
-                if (window.innerWidth >= 1024) {
-                    console.log('📱 → 🖥️ Cambiando a modo desktop');
-                    if (sidebar && overlay) {
-                        // Mostrar sidebar en desktop y ocultar overlay
-                        sidebar.style.transform = '';
-                        sidebar.classList.remove('-translate-x-full');
-                        overlay.style.display = 'none';
-                        overlay.classList.add('hidden');
-                        document.body.style.overflow = '';
-                    }
-                } else {
-                    console.log('🖥️ → 📱 Cambiando a modo móvil');
-                    if (sidebar && overlay) {
-                        // Ocultar sidebar en móvil
-                        sidebar.style.transform = 'translateX(-100%)';
-                        sidebar.classList.add('-translate-x-full');
-                        overlay.style.display = 'none';
-                        overlay.classList.add('hidden');
-                        document.body.style.overflow = '';
-                    }
-                }
-            });
-        });
-    </script>
+    <!-- Dashboard Core JavaScript - Optimizado -->
+    <script src="js/dashboard-core.js"></script>
+    <!-- Global Functions - Compatibility Layer -->
+    <script src="js/global-functions.js"></script>
 
     <!-- Modal para Agregar/Editar Ingreso -->
     <div id="ingreso-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
