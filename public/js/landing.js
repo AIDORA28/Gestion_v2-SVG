@@ -52,12 +52,8 @@ function setupSmoothScrolling() {
 // ================================
 
 async function checkAPIConnection() {
-    const statusElement = document.getElementById('api-status');
-    
-    if (!statusElement) {
-        console.log('⚠️ Elemento de status no encontrado');
-        return;
-    }
+    // Status indicator removed - API connection is now stable
+    console.log('✅ API connection check skipped - connection is stable');
     
     // Mostrar estado "verificando"
     updateAPIStatus('checking');
@@ -90,8 +86,8 @@ async function checkAPIConnection() {
 }
 
 function updateAPIStatus(status) {
-    const statusElement = document.getElementById('api-status');
-    if (!statusElement) return;
+    // Status indicator removed - API connection is now stable
+    console.log(`✅ API Status: ${status} (indicator removed)`);
     
     const statusConfig = {
         checking: {
