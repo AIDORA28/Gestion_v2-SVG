@@ -30,6 +30,14 @@
     {
       "source": "/admin",
       "destination": "/public/index.html"
+    },
+    {
+      "source": "/health",
+      "destination": "/api/backend.js"
+    },
+    {
+      "source": "/(.*\\.(html|css|js|png|jpg|svg|ico|json))",
+      "destination": "/public/$1"
     }
   ],
   "headers": [
