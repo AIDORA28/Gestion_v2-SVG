@@ -1,15 +1,16 @@
 {
   "version": 2,
   "name": "planificapro-dashboard",
-  "framework": null,
-  "cleanUrls": true,
-  "trailingSlash": false,
   "functions": {
     "api/backend.js": {
-      "runtime": "@vercel/node@3.2.0"
+      "runtime": "@vercel/node@20.x"
     }
   },
   "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/backend.js"
+    },
     {
       "source": "/",
       "destination": "/public/landing.html"
@@ -19,7 +20,7 @@
       "destination": "/public/dashboard.html"
     },
     {
-      "source": "/login", 
+      "source": "/login",
       "destination": "/public/login.html"
     },
     {
@@ -29,15 +30,11 @@
     {
       "source": "/admin",
       "destination": "/public/index.html"
-    },
-    {
-      "source": "/api/(.*)",
-      "destination": "/api/backend.js"
     }
   ],
   "headers": [
     {
-      "source": "/public/(.*)",
+      "source": "/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
@@ -46,7 +43,7 @@
       ]
     },
     {
-      "source": "/public/js/(.*)",
+      "source": "/js/(.*)",
       "headers": [
         {
           "key": "Content-Type",
@@ -55,7 +52,7 @@
       ]
     },
     {
-      "source": "/public/css/(.*)",
+      "source": "/css/(.*)",
       "headers": [
         {
           "key": "Content-Type",
