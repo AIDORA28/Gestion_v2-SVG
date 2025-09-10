@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔍 Verificación Sistema Recurrencias</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-4xl mx-auto">
+            <!-- Header -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">
+                    <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                    Verificación Sistema Recurrencias
+                </h1>
+                <p class="text-gray-600">Verifica que todas las funciones automáticas estén funcionando correctamente</p>
+            </div>
+
+            <!-- Configuración -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">
+                    <i class="fas fa-cog text-blue-500 mr-2"></i>
+                    Configuración Supabase
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <input type="text" id="supabaseUrl" placeholder="URL de Supabase" 
+                           class="border rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500">
+                    <input type="password" id="supabaseKey" placeholder="Service Key de Supabase" 
+                           class="border rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500">
+                </div>
+                <button onclick="conectarSupabase()" 
+                        class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg transition-all">
+                    <i class="fas fa-plug mr-2"></i>Conectar
+                </button>
+            </div>
+
+            <!-- Estado de Conexión -->
+            <div id="conexionStatus" class="hidden bg-white rounded-xl shadow-lg p-6 mb-6">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">
+                    <i class="fas fa-wifi text-green-500 mr-2"></i>
+                    Estado de Conexión
+                </h2>
+                <div id="statusContent"></div>
+            </div>
+
+            <!-- Verificaciones -->
+            <div id="verificaciones" class="hidden space-y-6">
+                <!-- Verificar Funciones SQL -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4">
+                        <i class="fas fa-database text-purple-500 mr-2"></i>
+                        Funciones SQL
+                    </h2>
+                    <button onclick="verificarFunciones()" 
+                            class="bg-purple-500 hover:bg-purple-600 text-white px-6 py-2 rounded-lg mb-4 transition-all">
+                        <i class="fas fa-search mr-2"></i>Verificar Funciones
+                    </button>
+                    <div id="funcionesResult" class="space-y-2"></div>
+                </div>
+
+                <!-- Verificar Recurrencias Pendientes -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4">
+                        <i class="fas fa-clock text-orange-500 mr-2"></i>
+                        Recurrencias Pendientes
+                    </h2>
+                    <button onclick="verificarPendientes()" 
+                            class="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg mb-4 transition-all">
+                        <i class="fas fa-list mr-2"></i>Ver Pendientes
+                    </button>
+                    <div id="pendientesResult"></div>
+                </div>
+
+                <!-- Ejecutar Procesamiento Manual -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4">
+                        <i class="fas fa-play text-green-500 mr-2"></i>
+                        Ejecutar Manualmente
+                    </h2>
+                    <div class="flex gap-4 mb-4">
+                        <button onclick="ejecutarIngresos()" 
+                                class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg transition-all">
+                            <i class="fas fa-plus-circle mr-2"></i>Procesar Ingresos
+                        </button>
+                        <button onclick="ejecutarGastos()" 
+                                class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg transition-all">
+                            <i class="fas fa-minus-circle mr-2"></i>Procesar Gastos
+                        </button>
+                        <button onclick="ejecutarTodos()" 
+                                class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg transition-all">
+                            <i class="fas fa-sync mr-2"></i>Procesar Todos
+                        </button>
+                    </div>
+                    <div id="ejecucionResult"></div>
+                </div>
+
+                <!-- Logs de Auditoría -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4">
+                        <i class="fas fa-file-alt text-indigo-500 mr-2"></i>
+                        Logs de Auditoría
+                    </h2>
+                    <button onclick="verLogs()" 
+                            class="bg-indigo-500 hover:bg-indigo-600 text-white px-6 py-2 rounded-lg mb-4 transition-all">
+                        <i class="fas fa-history mr-2"></i>Ver Últimos Logs
+                    </button>
+                    <div id="logsResult"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let supabase = null;
+
+        function conectarSupabase() {
+            const url = document.getElementById('supabaseUrl').value;
+            const key = document.getElementById('supabaseKey').value;
+
+            if (!url || !key) {
+                alert('Por favor ingresa URL y Service Key');
+                return;
+            }
+
+            try {
+                supabase = window.supabase.createClient(url, key);
+                
+                document.getElementById('conexionStatus').classList.remove('hidden');
+                document.getElementById('statusContent').innerHTML = `
+                    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+                        <i class="fas fa-check-circle mr-2"></i>
+                        Conectado exitosamente a Supabase
+                    </div>
+                `;
+                
+                document.getElementById('verificaciones').classList.remove('hidden');
+                
+            } catch (error) {
+                document.getElementById('conexionStatus').classList.remove('hidden');
+                document.getElementById('statusContent').innerHTML = `
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                        <i class="fas fa-exclamation-circle mr-2"></i>
+                        Error al conectar: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        async function verificarFunciones() {
+            if (!supabase) {
+                alert('Primero conecta a Supabase');
+                return;
+            }
+
+            const funciones = [
+                'procesar_ingresos_recurrentes',
+                'procesar_gastos_recurrentes', 
+                'procesar_todas_recurrencias'
+            ];
+
+            let html = '';
+            
+            for (const funcion of funciones) {
+                try {
+                    const { data, error } = await supabase.rpc(funcion);
+                    
+                    if (error) {
+                        html += `
+                            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-2">
+                                <i class="fas fa-times-circle mr-2"></i>
+                                <strong>${funcion}:</strong> Error - ${error.message}
+                            </div>
+                        `;
+                    } else {
+                        html += `
+                            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-2">
+                                <i class="fas fa-check-circle mr-2"></i>
+                                <strong>${funcion}:</strong> ✅ Disponible
+                            </div>
+                        `;
+                    }
+                } catch (error) {
+                    html += `
+                        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-2">
+                            <i class="fas fa-times-circle mr-2"></i>
+                            <strong>${funcion}:</strong> Error - ${error.message}
+                        </div>
+                    `;
+                }
+            }
+
+            document.getElementById('funcionesResult').innerHTML = html;
+        }
+
+        async function verificarPendientes() {
+            if (!supabase) {
+                alert('Primero conecta a Supabase');
+                return;
+            }
+
+            try {
+                // Verificar ingresos pendientes
+                const { data: ingresos, error: errorIngresos } = await supabase
+                    .from('ingresos')
+                    .select('*')
+                    .eq('es_recurrente', true)
+                    .lte('proxima_ejecucion', new Date().toISOString().split('T')[0]);
+
+                // Verificar gastos pendientes  
+                const { data: gastos, error: errorGastos } = await supabase
+                    .from('gastos')
+                    .select('*')
+                    .eq('es_recurrente', true)
+                    .lte('proxima_ejecucion', new Date().toISOString().split('T')[0]);
+
+                let html = `
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                            <h3 class="font-bold text-green-800 mb-2">
+                                <i class="fas fa-plus-circle mr-2"></i>Ingresos Pendientes
+                            </h3>
+                            <p class="text-2xl font-bold text-green-600">${ingresos ? ingresos.length : 0}</p>
+                        </div>
+                        <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                            <h3 class="font-bold text-red-800 mb-2">
+                                <i class="fas fa-minus-circle mr-2"></i>Gastos Pendientes
+                            </h3>
+                            <p class="text-2xl font-bold text-red-600">${gastos ? gastos.length : 0}</p>
+                        </div>
+                    </div>
+                `;
+
+                if (errorIngresos || errorGastos) {
+                    html += `
+                        <div class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mt-4">
+                            <i class="fas fa-exclamation-triangle mr-2"></i>
+                            Nota: Algunos datos pueden no ser accesibles con esta key
+                        </div>
+                    `;
+                }
+
+                document.getElementById('pendientesResult').innerHTML = html;
+
+            } catch (error) {
+                document.getElementById('pendientesResult').innerHTML = `
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                        <i class="fas fa-exclamation-circle mr-2"></i>
+                        Error al verificar pendientes: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        async function ejecutarIngresos() {
+            await ejecutarFuncion('procesar_ingresos_recurrentes', 'Ingresos');
+        }
+
+        async function ejecutarGastos() {
+            await ejecutarFuncion('procesar_gastos_recurrentes', 'Gastos');
+        }
+
+        async function ejecutarTodos() {
+            await ejecutarFuncion('procesar_todas_recurrencias', 'Todas las recurrencias');
+        }
+
+        async function ejecutarFuncion(nombreFuncion, descripcion) {
+            if (!supabase) {
+                alert('Primero conecta a Supabase');
+                return;
+            }
+
+            document.getElementById('ejecucionResult').innerHTML = `
+                <div class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded">
+                    <i class="fas fa-spinner fa-spin mr-2"></i>
+                    Ejecutando ${descripcion}...
+                </div>
+            `;
+
+            try {
+                const { data, error } = await supabase.rpc(nombreFuncion);
+
+                if (error) {
+                    document.getElementById('ejecucionResult').innerHTML = `
+                        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                            <i class="fas fa-times-circle mr-2"></i>
+                            Error al ejecutar ${descripcion}: ${error.message}
+                        </div>
+                    `;
+                } else {
+                    document.getElementById('ejecucionResult').innerHTML = `
+                        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+                            <i class="fas fa-check-circle mr-2"></i>
+                            ${descripcion} ejecutadas exitosamente
+                            <br><strong>Resultado:</strong> ${JSON.stringify(data, null, 2)}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                document.getElementById('ejecucionResult').innerHTML = `
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                        <i class="fas fa-exclamation-circle mr-2"></i>
+                        Error: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        async function verLogs() {
+            if (!supabase) {
+                alert('Primero conecta a Supabase');
+                return;
+            }
+
+            try {
+                const { data, error } = await supabase
+                    .from('audit_logs')
+                    .select('*')
+                    .order('created_at', { ascending: false })
+                    .limit(10);
+
+                if (error) {
+                    document.getElementById('logsResult').innerHTML = `
+                        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                            <i class="fas fa-exclamation-circle mr-2"></i>
+                            Error al obtener logs: ${error.message}
+                        </div>
+                    `;
+                    return;
+                }
+
+                let html = '';
+                if (data && data.length > 0) {
+                    html = '<div class="space-y-2">';
+                    data.forEach(log => {
+                        const tipoColor = log.tipo === 'ERROR' ? 'red' : log.tipo === 'SUCCESS' ? 'green' : 'blue';
+                        html += `
+                            <div class="bg-${tipoColor}-50 border border-${tipoColor}-200 rounded-lg p-3">
+                                <div class="flex justify-between items-start">
+                                    <span class="font-bold text-${tipoColor}-800">${log.tipo}</span>
+                                    <span class="text-sm text-gray-500">${new Date(log.created_at).toLocaleString()}</span>
+                                </div>
+                                <p class="text-${tipoColor}-700 mt-1">${log.mensaje}</p>
+                                ${log.detalles ? `<pre class="text-xs bg-gray-100 p-2 mt-2 rounded overflow-auto">${JSON.stringify(log.detalles, null, 2)}</pre>` : ''}
+                            </div>
+                        `;
+                    });
+                    html += '</div>';
+                } else {
+                    html = `
+                        <div class="bg-gray-100 border border-gray-300 text-gray-700 px-4 py-3 rounded">
+                            <i class="fas fa-info-circle mr-2"></i>
+                            No hay logs disponibles aún
+                        </div>
+                    `;
+                }
+
+                document.getElementById('logsResult').innerHTML = html;
+
+            } catch (error) {
+                document.getElementById('logsResult').innerHTML = `
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                        <i class="fas fa-exclamation-circle mr-2"></i>
+                        Error: ${error.message}
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

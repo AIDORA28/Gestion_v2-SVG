@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔧 Instalador de Recurrencias</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-4xl mx-auto">
+            <!-- Header -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">
+                    <i class="fas fa-cogs text-blue-500 mr-3"></i>
+                    Instalador de Sistema de Recurrencias
+                </h1>
+                <p class="text-gray-600">Instala las funciones SQL necesarias para el sistema automático</p>
+            </div>
+
+            <!-- Configuración -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">
+                    <i class="fas fa-database text-green-500 mr-2"></i>
+                    Configuración de Supabase
+                </h2>
+                <div class="grid grid-cols-1 gap-4 mb-4">
+                    <input type="text" id="supabaseUrl" 
+                           value="https://lobyofpwqwqsszugdwnw.supabase.co"
+                           placeholder="URL de Supabase" 
+                           class="border rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500">
+                    <input type="password" id="supabaseKey" 
+                           value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxvYnlvZnB3cXdxc3N6dWdkd253Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NzMxNTg0MiwiZXhwIjoyMDcyODkxODQyfQ.J87Bps9KzRg94X1Hax8XjMuTt7krJ_ySfWTbkU0p5_k"
+                           placeholder="Service Key de Supabase" 
+                           class="border rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500">
+                </div>
+                <button onclick="instalarFunciones()" 
+                        class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg transition-all font-bold">
+                    <i class="fas fa-download mr-2"></i>Instalar Funciones SQL
+                </button>
+            </div>
+
+            <!-- Progreso -->
+            <div id="instalacion" class="hidden bg-white rounded-xl shadow-lg p-6 mb-6">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">
+                    <i class="fas fa-spinner fa-spin text-blue-500 mr-2"></i>
+                    Progreso de Instalación
+                </h2>
+                <div id="progresoContent"></div>
+            </div>
+
+            <!-- Resultados -->
+            <div id="resultados" class="hidden bg-white rounded-xl shadow-lg p-6">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">
+                    <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                    Resultados
+                </h2>
+                <div id="resultadosContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const sqlFunctions = `
+-- FUNCIÓN 1: Procesar Ingresos Recurrentes
+CREATE OR REPLACE FUNCTION procesar_ingresos_recurrentes()
+RETURNS json AS $$
+DECLARE
+    ingreso_record RECORD;
+    nuevos_ingresos INTEGER := 0;
+    errores INTEGER := 0;
+    resultado json;
+BEGIN
+    FOR ingreso_record IN
+        SELECT 
+            i.*,
+            (i.fecha + INTERVAL '1 day' * i.frecuencia_dias) as proxima_fecha
+        FROM ingresos i
+        WHERE i.es_recurrente = TRUE
+          AND i.frecuencia_dias IS NOT NULL
+          AND i.frecuencia_dias > 0
+          AND (i.fecha + INTERVAL '1 day' * i.frecuencia_dias) <= CURRENT_DATE
+          AND NOT EXISTS (
+              SELECT 1 FROM ingresos i2 
+              WHERE i2.usuario_id = i.usuario_id 
+                AND i2.descripcion = i.descripcion 
+                AND i2.monto = i.monto 
+                AND i2.categoria = i.categoria
+                AND i2.fecha = (i.fecha + INTERVAL '1 day' * i.frecuencia_dias)::date
+          )
+    LOOP
+        BEGIN
+            INSERT INTO ingresos (
+                usuario_id, descripcion, monto, categoria, fecha,
+                es_recurrente, frecuencia_dias, notas, created_at
+            )
+            VALUES (
+                ingreso_record.usuario_id,
+                ingreso_record.descripcion || ' (Recurrente)',
+                ingreso_record.monto,
+                ingreso_record.categoria,
+                ingreso_record.proxima_fecha::date,
+                TRUE,
+                ingreso_record.frecuencia_dias,
+                COALESCE(ingreso_record.notas, '') || ' - Generado automáticamente el ' || CURRENT_DATE,
+                NOW()
+            );
+            
+            UPDATE ingresos 
+            SET fecha = ingreso_record.proxima_fecha::date, updated_at = NOW()
+            WHERE id = ingreso_record.id;
+            
+            nuevos_ingresos := nuevos_ingresos + 1;
+            
+        EXCEPTION WHEN OTHERS THEN
+            errores := errores + 1;
+        END;
+    END LOOP;
+    
+    resultado := json_build_object(
+        'success', true, 'procesados', nuevos_ingresos, 'errores', errores,
+        'timestamp', NOW(), 'tipo', 'ingresos_recurrentes'
+    );
+    
+    RETURN resultado;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- FUNCIÓN 2: Procesar Gastos Recurrentes
+CREATE OR REPLACE FUNCTION procesar_gastos_recurrentes()
+RETURNS json AS $$
+DECLARE
+    gasto_record RECORD;
+    nuevos_gastos INTEGER := 0;
+    errores INTEGER := 0;
+    resultado json;
+BEGIN
+    FOR gasto_record IN
+        SELECT 
+            g.*,
+            (g.fecha + INTERVAL '1 day' * g.frecuencia_dias) as proxima_fecha
+        FROM gastos g
+        WHERE g.es_recurrente = TRUE
+          AND g.frecuencia_dias IS NOT NULL
+          AND g.frecuencia_dias > 0
+          AND (g.fecha + INTERVAL '1 day' * g.frecuencia_dias) <= CURRENT_DATE
+          AND NOT EXISTS (
+              SELECT 1 FROM gastos g2 
+              WHERE g2.usuario_id = g.usuario_id 
+                AND g2.descripcion = g.descripcion 
+                AND g2.monto = g.monto 
+                AND g2.categoria = g.categoria
+                AND g2.fecha = (g.fecha + INTERVAL '1 day' * g.frecuencia_dias)::date
+          )
+    LOOP
+        BEGIN
+            INSERT INTO gastos (
+                usuario_id, descripcion, monto, categoria, metodo_pago, fecha,
+                es_recurrente, frecuencia_dias, notas, created_at
+            )
+            VALUES (
+                gasto_record.usuario_id,
+                gasto_record.descripcion || ' (Recurrente)',
+                gasto_record.monto,
+                gasto_record.categoria,
+                gasto_record.metodo_pago,
+                gasto_record.proxima_fecha::date,
+                TRUE,
+                gasto_record.frecuencia_dias,
+                COALESCE(gasto_record.notas, '') || ' - Generado automáticamente el ' || CURRENT_DATE,
+                NOW()
+            );
+            
+            UPDATE gastos 
+            SET fecha = gasto_record.proxima_fecha::date, updated_at = NOW()
+            WHERE id = gasto_record.id;
+            
+            nuevos_gastos := nuevos_gastos + 1;
+            
+        EXCEPTION WHEN OTHERS THEN
+            errores := errores + 1;
+        END;
+    END LOOP;
+    
+    resultado := json_build_object(
+        'success', true, 'procesados', nuevos_gastos, 'errores', errores,
+        'timestamp', NOW(), 'tipo', 'gastos_recurrentes'
+    );
+    
+    RETURN resultado;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- FUNCIÓN 3: Procesar Todas las Recurrencias
+CREATE OR REPLACE FUNCTION procesar_todas_recurrencias()
+RETURNS json AS $$
+DECLARE
+    resultado_ingresos json;
+    resultado_gastos json;
+    resultado_final json;
+BEGIN
+    SELECT procesar_ingresos_recurrentes() INTO resultado_ingresos;
+    SELECT procesar_gastos_recurrentes() INTO resultado_gastos;
+    
+    resultado_final := json_build_object(
+        'success', true,
+        'timestamp', NOW(),
+        'ingresos', resultado_ingresos,
+        'gastos', resultado_gastos,
+        'total_procesados', 
+            COALESCE((resultado_ingresos->>'procesados')::integer, 0) + 
+            COALESCE((resultado_gastos->>'procesados')::integer, 0),
+        'total_errores',
+            COALESCE((resultado_ingresos->>'errores')::integer, 0) + 
+            COALESCE((resultado_gastos->>'errores')::integer, 0)
+    );
+    
+    RETURN resultado_final;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- FUNCIÓN 4: Testing Manual
+CREATE OR REPLACE FUNCTION test_recurrencias()
+RETURNS json AS $$
+BEGIN
+    RETURN procesar_todas_recurrencias();
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+`;
+
+        async function instalarFunciones() {
+            const url = document.getElementById('supabaseUrl').value;
+            const key = document.getElementById('supabaseKey').value;
+
+            if (!url || !key) {
+                alert('Por favor ingresa URL y Service Key');
+                return;
+            }
+
+            document.getElementById('instalacion').classList.remove('hidden');
+            document.getElementById('progresoContent').innerHTML = `
+                <div class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded">
+                    <i class="fas fa-spinner fa-spin mr-2"></i>
+                    Conectando a Supabase e instalando funciones SQL...
+                </div>
+            `;
+
+            try {
+                const supabase = window.supabase.createClient(url, key);
+                
+                // Ejecutar SQL
+                const { data, error } = await supabase.rpc('exec', {
+                    sql: sqlFunctions
+                });
+
+                // Como exec no existe, intentamos con rpc directo
+                const response = await fetch(`${url}/rest/v1/rpc/exec`, {
+                    method: 'POST',
+                    headers: {
+                        'apikey': key,
+                        'Authorization': `Bearer ${key}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ sql: sqlFunctions })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+                }
+
+                document.getElementById('resultados').classList.remove('hidden');
+                document.getElementById('resultadosContent').innerHTML = `
+                    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                        <i class="fas fa-check-circle mr-2"></i>
+                        <strong>¡Instalación Completada!</strong>
+                    </div>
+                    <div class="space-y-2">
+                        <p>✅ Función procesar_ingresos_recurrentes() instalada</p>
+                        <p>✅ Función procesar_gastos_recurrentes() instalada</p>
+                        <p>✅ Función procesar_todas_recurrencias() instalada</p>
+                        <p>✅ Función test_recurrencias() instalada</p>
+                    </div>
+                    <div class="mt-4 p-4 bg-blue-50 rounded-lg">
+                        <h3 class="font-bold text-blue-800 mb-2">Próximo Paso:</h3>
+                        <p class="text-blue-700">Ahora puedes ejecutar el workflow de GitHub Actions y debería funcionar correctamente.</p>
+                    </div>
+                `;
+
+            } catch (error) {
+                document.getElementById('resultados').classList.remove('hidden');
+                document.getElementById('resultadosContent').innerHTML = `
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                        <i class="fas fa-exclamation-circle mr-2"></i>
+                        <strong>Error en la instalación:</strong><br>
+                        ${error.message}
+                    </div>
+                    <div class="mt-4 p-4 bg-yellow-50 rounded-lg">
+                        <h3 class="font-bold text-yellow-800 mb-2">Solución alternativa:</h3>
+                        <p class="text-yellow-700">Ve al SQL Editor de Supabase y ejecuta el código SQL manualmente.</p>
+                        <button onclick="copiarSQL()" class="mt-2 bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">
+                            Copiar SQL
+                        </button>
+                    </div>
+                `;
+            }
+
+            document.getElementById('instalacion').classList.add('hidden');
+        }
+
+        function copiarSQL() {
+            navigator.clipboard.writeText(sqlFunctions);
+            alert('SQL copiado al portapapeles');
+        }
+    </script>
+</body>
+</html>

@@ -74,22 +74,8 @@ BEGIN
             
         EXCEPTION WHEN OTHERS THEN
             errores := errores + 1;
-            -- Log del error (opcional)
-            INSERT INTO audit_logs (
-                tabla_afectada,
-                operacion,
-                usuario_id,
-                datos_anteriores,
-                datos_nuevos,
-                timestamp_operacion
-            ) VALUES (
-                'ingresos_recurrentes',
-                'ERROR_PROCESAMIENTO',
-                ingreso_record.usuario_id,
-                jsonb_build_object('error', SQLERRM),
-                jsonb_build_object('ingreso_id', ingreso_record.id),
-                NOW()
-            );
+            -- Log del error simplificado (sin tabla audit_logs)
+            -- Solo incrementamos contador de errores
         END;
     END LOOP;
     
@@ -176,22 +162,8 @@ BEGIN
             
         EXCEPTION WHEN OTHERS THEN
             errores := errores + 1;
-            -- Log del error
-            INSERT INTO audit_logs (
-                tabla_afectada,
-                operacion,
-                usuario_id,
-                datos_anteriores,
-                datos_nuevos,
-                timestamp_operacion
-            ) VALUES (
-                'gastos_recurrentes',
-                'ERROR_PROCESAMIENTO',
-                gasto_record.usuario_id,
-                jsonb_build_object('error', SQLERRM),
-                jsonb_build_object('gasto_id', gasto_record.id),
-                NOW()
-            );
+            -- Log del error simplificado (sin tabla audit_logs)
+            -- Solo incrementamos contador de errores
         END;
     END LOOP;
     
@@ -239,22 +211,8 @@ BEGIN
             COALESCE((resultado_gastos->>'errores')::integer, 0)
     );
     
-    -- Log de la ejecución
-    INSERT INTO audit_logs (
-        tabla_afectada,
-        operacion,
-        usuario_id,
-        datos_anteriores,
-        datos_nuevos,
-        timestamp_operacion
-    ) VALUES (
-        'sistema_recurrencias',
-        'PROCESAMIENTO_AUTOMATICO',
-        NULL, -- Sistema
-        NULL,
-        resultado_final::jsonb,
-        NOW()
-    );
+    -- Log de la ejecución (sin tabla audit_logs)
+    -- El resultado se devuelve directamente
     
     RETURN resultado_final;
 END;
@@ -360,4 +318,4 @@ COMMENT ON VIEW vista_recurrencias_pendientes IS 'Vista que muestra todas las tr
 -- SELECT * FROM vista_recurrencias_pendientes WHERE estado = 'PENDIENTE';
 
 -- Para ver el historial de procesamiento:
--- SELECT * FROM audit_logs WHERE tabla_afectada = 'sistema_recurrencias' ORDER BY timestamp_operacion DESC LIMIT 10;
+-- Los resultados se muestran directamente en la respuesta JSON de las funciones
