@@ -1,43 +1,40 @@
 {
   "version": 2,
   "name": "planificapro-dashboard",
-  "functions": {
-    "api/backend.js": {
-      "runtime": "@vercel/node@20.x"
+  "builds": [
+    {
+      "src": "public/**/*",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "api/**/*.js",
+      "use": "@vercel/node"
     }
-  },
-  "rewrites": [
+  ],
+  "routes": [
     {
-      "source": "/api/(.*)",
-      "destination": "/api/backend.js"
+      "src": "/api/(.*)",
+      "dest": "/api/backend.js"
     },
     {
-      "source": "/",
-      "destination": "/public/landing.html"
+      "src": "/",
+      "dest": "/public/landing.html"
     },
     {
-      "source": "/dashboard",
-      "destination": "/public/dashboard.html"
+      "src": "/login",
+      "dest": "/public/login.html"
     },
     {
-      "source": "/login",
-      "destination": "/public/login.html"
+      "src": "/register",
+      "dest": "/public/register.html"
     },
     {
-      "source": "/register",
-      "destination": "/public/register.html"
+      "src": "/dashboard",
+      "dest": "/public/dashboard.html"
     },
     {
-      "source": "/admin",
-      "destination": "/public/index.html"
-    },
-    {
-      "source": "/health",
-      "destination": "/api/backend.js"
-    },
-    {
-      "source": "/(.*\\.(html|css|js|png|jpg|svg|ico|json))",
-      "destination": "/public/$1"
+      "src": "/(.*)",
+      "dest": "/public/$1"
     }
   ],
   "headers": [
