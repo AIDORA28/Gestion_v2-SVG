@@ -5,18 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PLANIFICAPRO - Tu Gestión Financiera Personal</title>
     
-    <!-- Tailwind CSS -->
+    <!-- CDN Scripts - Friendly Design Enhanced -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Notyf -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
     <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
-    
-    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     
-    <!-- CSS Personalizado -->
+    <!-- Animaciones y efectos friendly -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    
+    <!-- CSS Personalizado Friendly -->
     <link rel="stylesheet" href="css/landing.css">
+    
+    <!-- Configuración Tailwind personalizada -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'success-green': '#10B981',
+                        'warm-blue': '#3B82F6',
+                        'friendly-purple': '#8B5CF6',
+                        'sunshine-yellow': '#F59E0B'
+                    },
+                    animation: {
+                        'bounce-gentle': 'bounce 2s infinite',
+                        'pulse-friendly': 'pulse 3s infinite',
+                        'float': 'float 3s ease-in-out infinite'
+                    }
+                }
+            }
+        }
+    </script>
 </head>
 
 <body class="bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900 min-h-screen">
@@ -55,225 +77,478 @@
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section id="inicio" class="pt-24 pb-12 px-4 sm:px-6 lg:px-8">
+    <!-- Hero Section - Friendly & Motivacional -->
+    <section id="inicio" class="pt-16 pb-0 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+        <!-- Burbujas animadas bonitas -->
+        <div class="absolute top-20 left-10 w-16 h-16 bg-success-green/20 rounded-full animate-float hidden lg:block"></div>
+        <div class="absolute top-32 right-20 w-12 h-12 bg-sunshine-yellow/30 rounded-full animate-bounce-gentle hidden lg:block"></div>
+        <div class="absolute bottom-20 left-20 w-8 h-8 bg-friendly-purple/25 rounded-full animate-pulse-friendly hidden lg:block"></div>
+        <div class="absolute top-40 right-10 w-6 h-6 bg-warm-blue/25 rounded-full animate-float hidden lg:block" style="animation-delay: 1s;"></div>
+        <div class="absolute bottom-40 right-32 w-10 h-10 bg-success-green/15 rounded-full animate-bounce-gentle hidden lg:block" style="animation-delay: 2s;"></div>
+        <div class="absolute top-60 left-32 w-14 h-14 bg-friendly-purple/20 rounded-full animate-pulse-friendly hidden lg:block" style="animation-delay: 1.5s;"></div>
+        <div class="absolute bottom-32 left-40 w-4 h-4 bg-sunshine-yellow/35 rounded-full animate-float hidden lg:block" style="animation-delay: 3s;"></div>
+        
         <div class="max-w-7xl mx-auto">
             <div class="text-center">
-                <!-- Logo Principal -->
-                <div class="mb-8 flex flex-col items-center">
-                    <img src="src/logo.jpg" alt="PLANIFICAPRO - Finanzas para Todos" class="h-56 md:h-64 lg:h-72 w-auto mb-4 drop-shadow-2xl border-4 border-white/20 rounded-2xl p-2 bg-white/10 backdrop-blur-sm">
+                <!-- Mensaje motivacional superior -->
+                <div class="mb-6" data-aos="fade-down" data-aos-delay="100">
+                    <span class="inline-flex items-center px-4 py-2 bg-success-green/20 text-success-green rounded-full text-sm font-medium border border-success-green/30">
+                        <i data-lucide="sparkles" class="h-4 w-4 mr-2"></i>
+                        ¡Tu mejor decisión financiera empieza aquí!
+                    </span>
                 </div>
                 
-                <h1 class="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
-                    Controla tu
-                    <span class="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                        Futuro Financiero
+                <!-- Logo Principal con animación -->
+                <div class="mb-8 flex flex-col items-center" data-aos="zoom-in" data-aos-delay="200">
+                    <div class="relative">
+                        <img src="src/logo.jpg" alt="PLANIFICAPRO - Finanzas para Todos" class="h-56 md:h-64 lg:h-72 w-auto mb-4 drop-shadow-2xl border-4 border-white/20 rounded-2xl p-2 bg-white/10 backdrop-blur-sm transform hover:scale-105 transition-all duration-500">
+                        <!-- Elementos decorativos alrededor del logo -->
+                        <div class="absolute -top-2 -right-2 w-6 h-6 bg-sunshine-yellow rounded-full animate-ping"></div>
+                        <div class="absolute -bottom-2 -left-2 w-4 h-4 bg-success-green rounded-full animate-pulse"></div>
+                    </div>
+                </div>
+                
+                <h1 class="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight" data-aos="fade-up" data-aos-delay="300">
+                    <span class="inline-block animate__animated animate__fadeInLeft">Transforma</span> tu
+                    <span class="bg-gradient-to-r from-success-green via-warm-blue to-friendly-purple bg-clip-text text-transparent block md:inline animate__animated animate__fadeInRight animate__delay-1s">
+                        Vida Financiera
                     </span>
                 </h1>
-                <p class="text-xl md:text-2xl text-blue-200 mb-8 max-w-3xl mx-auto">
-                    La plataforma todo-en-uno para gestionar tus finanzas personales, 
-                    planificar tu presupuesto y alcanzar tus metas económicas.
+                
+                <p class="text-xl md:text-2xl text-blue-200 mb-8 max-w-3xl mx-auto leading-relaxed" data-aos="fade-up" data-aos-delay="400">
+                    🌟 La plataforma más <strong class="text-white">intuitiva y amigable</strong> para gestionar tus finanzas, 
+                    <span class="text-success-green font-semibold">alcanzar tus sueños</span> y construir el futuro que mereces.
                 </p>
                 
-                <!-- CTA Buttons -->
-                <div class="space-y-4 sm:space-y-0 sm:space-x-4 sm:flex justify-center">
+                <!-- Beneficios rápidos -->
+                <div class="flex flex-wrap justify-center gap-4 mb-8" data-aos="fade-up" data-aos-delay="500">
+                    <div class="flex items-center bg-white/10 px-3 py-2 rounded-full text-sm text-white">
+                        <i data-lucide="check-circle" class="h-4 w-4 mr-2 text-success-green"></i>
+                        100% Gratis
+                    </div>
+                    <div class="flex items-center bg-white/10 px-3 py-2 rounded-full text-sm text-white">
+                        <i data-lucide="check-circle" class="h-4 w-4 mr-2 text-success-green"></i>
+                        Sin tarjeta de crédito
+                    </div>
+                    <div class="flex items-center bg-white/10 px-3 py-2 rounded-full text-sm text-white">
+                        <i data-lucide="check-circle" class="h-4 w-4 mr-2 text-success-green"></i>
+                        Resultados inmediatos
+                    </div>
+                </div>
+                
+                <!-- CTA Buttons mejorados -->
+                <div class="space-y-4 sm:space-y-0 sm:space-x-4 sm:flex justify-center" data-aos="zoom-in" data-aos-delay="600">
                     <a 
                         href="register.html"
-                        class="inline-block w-full sm:w-auto bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-lg"
+                        class="group inline-block w-full sm:w-auto bg-gradient-to-r from-success-green to-warm-blue text-white px-10 py-5 rounded-xl font-bold hover:from-success-green/90 hover:to-warm-blue/90 transition-all duration-300 transform hover:scale-105 shadow-2xl text-lg relative overflow-hidden"
                     >
-                        <i data-lucide="rocket" class="inline h-5 w-5 mr-2"></i>
-                        Comenzar Gratis
+                        <span class="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+                        <i data-lucide="rocket" class="inline h-6 w-6 mr-2 animate-bounce-gentle"></i>
+                        <span class="relative">¡Empezar mi Transformación!</span>
                     </a>
                     <a 
-                        href="#funcionalidades"
-                        class="inline-block w-full sm:w-auto bg-transparent border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-all duration-300 transform hover:scale-105"
+                        href="#beneficios"
+                        class="inline-block w-full sm:w-auto bg-white/10 backdrop-blur-md border-2 border-white/30 text-white px-8 py-5 rounded-xl font-semibold hover:bg-white hover:text-warm-blue transition-all duration-300 transform hover:scale-105 text-lg"
                     >
-                        <i data-lucide="play-circle" class="inline h-5 w-5 mr-2"></i>
-                        Ver Funcionalidades
+                        <i data-lucide="heart" class="inline h-5 w-5 mr-2 text-red-400"></i>
+                        Ver por qué nos aman
                     </a>
+                </div>
+                
+                <!-- Estadísticas motivacionales -->
+                <div class="mt-12 grid grid-cols-3 gap-4 max-w-md mx-auto" data-aos="fade-up" data-aos-delay="700">
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-success-green">98%</div>
+                        <div class="text-sm text-blue-200">Mejoran sus finanzas</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-sunshine-yellow">5K+</div>
+                        <div class="text-sm text-blue-200">Usuarios felices</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-friendly-purple">30 días</div>
+                        <div class="text-sm text-blue-200">Para ver resultados</div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Características -->
-    <section id="caracteristicas" class="py-20 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-7xl mx-auto">
-            <div class="text-center mb-16">
+    <!-- Sección de Beneficios Motivacionales -->
+    <section id="beneficios" class="pt-16 pb-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-success-green/10 to-warm-blue/10 relative overflow-hidden">
+        <!-- Burbujas animadas bonitas -->
+        <div class="absolute top-16 left-8 w-12 h-12 bg-success-green/15 rounded-full animate-float hidden lg:block" style="animation-delay: 0.5s;"></div>
+        <div class="absolute top-32 right-16 w-8 h-8 bg-warm-blue/20 rounded-full animate-bounce-gentle hidden lg:block" style="animation-delay: 1.5s;"></div>
+        <div class="absolute bottom-20 left-16 w-6 h-6 bg-sunshine-yellow/25 rounded-full animate-pulse-friendly hidden lg:block" style="animation-delay: 2s;"></div>
+        <div class="absolute bottom-40 right-8 w-10 h-10 bg-friendly-purple/18 rounded-full animate-float hidden lg:block" style="animation-delay: 2.5s;"></div>
+        
+        <div class="max-w-7xl mx-auto relative z-10">
+            <div class="text-center mb-12" data-aos="fade-up">
+                <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
+                    💎 Lo que lograrás con nosotros
+                </h2>
+                <p class="text-lg text-blue-200 max-w-2xl mx-auto">
+                    Historias reales de personas que transformaron sus finanzas (¡y tú puedes ser el siguiente!)
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- Beneficio 1 -->
+                <div class="bg-gradient-to-br from-success-green/20 to-success-green/5 backdrop-blur-lg rounded-2xl p-6 border border-success-green/30 text-center transform hover:scale-105 transition-all duration-300" data-aos="fade-up" data-aos-delay="100">
+                    <div class="w-16 h-16 bg-success-green/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="trending-up" class="h-8 w-8 text-success-green"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">Ahorras Más Dinero</h3>
+                    <p class="text-success-green/90 mb-4">
+                        "En 3 meses ahorré $2,500 que antes gastaba sin darme cuenta"
+                    </p>
+                    <div class="text-xs text-white/70">- María, usuaria desde 2024</div>
+                </div>
+                
+                <!-- Beneficio 2 -->
+                <div class="bg-gradient-to-br from-warm-blue/20 to-warm-blue/5 backdrop-blur-lg rounded-2xl p-6 border border-warm-blue/30 text-center transform hover:scale-105 transition-all duration-300" data-aos="fade-up" data-aos-delay="200">
+                    <div class="w-16 h-16 bg-warm-blue/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="smile" class="h-8 w-8 text-warm-blue"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">Reduces el Estrés</h3>
+                    <p class="text-warm-blue/90 mb-4">
+                        "Ya no me desvelo pensando en mis deudas. Todo está organizado y bajo control"
+                    </p>
+                    <div class="text-xs text-white/70">- Carlos, usuario desde 2023</div>
+                </div>
+                
+                <!-- Beneficio 3 -->
+                <div class="bg-gradient-to-br from-friendly-purple/20 to-friendly-purple/5 backdrop-blur-lg rounded-2xl p-6 border border-friendly-purple/30 text-center transform hover:scale-105 transition-all duration-300" data-aos="fade-up" data-aos-delay="300">
+                    <div class="w-16 h-16 bg-friendly-purple/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="target" class="h-8 w-8 text-friendly-purple"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">Alcanzas tus Metas</h3>
+                    <p class="text-friendly-purple/90 mb-4">
+                        "Logré comprar mi auto soñado siguiendo el plan que me sugirió la app"
+                    </p>
+                    <div class="text-xs text-white/70">- Ana, usuaria desde 2024</div>
+                </div>
+            </div>
+            
+            <!-- CTA en esta sección -->
+            <div class="text-center mt-12" data-aos="zoom-in" data-aos-delay="400">
+                <p class="text-white mb-4 text-lg">¿Listo para escribir tu propia historia de éxito?</p>
+                <a 
+                    href="register.html"
+                    class="inline-flex items-center bg-gradient-to-r from-sunshine-yellow to-success-green text-white px-8 py-4 rounded-xl font-bold hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
+                >
+                    <i data-lucide="star" class="h-5 w-5 mr-2 animate-pulse"></i>
+                    ¡Quiero mi transformación ahora!
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Características - Diseño Friendly -->
+    <section id="caracteristicas" class="py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+        <!-- Burbujas animadas bonitas -->
+        <div class="absolute top-24 right-12 w-14 h-14 bg-friendly-purple/12 rounded-full animate-float hidden lg:block" style="animation-delay: 1s;"></div>
+        <div class="absolute top-48 left-12 w-8 h-8 bg-warm-blue/18 rounded-full animate-bounce-gentle hidden lg:block" style="animation-delay: 2s;"></div>
+        <div class="absolute bottom-32 right-20 w-10 h-10 bg-success-green/15 rounded-full animate-pulse-friendly hidden lg:block" style="animation-delay: 3s;"></div>
+        <div class="absolute bottom-16 left-8 w-6 h-6 bg-sunshine-yellow/20 rounded-full animate-float hidden lg:block" style="animation-delay: 1.5s;"></div>
+        
+        <div class="max-w-7xl mx-auto relative z-10">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <div class="inline-flex items-center px-4 py-2 bg-friendly-purple/20 text-friendly-purple rounded-full text-sm font-medium border border-friendly-purple/30 mb-4">
+                    <i data-lucide="magic-wand" class="h-4 w-4 mr-2"></i>
+                    La magia está en la simplicidad
+                </div>
                 <h2 class="text-4xl font-bold text-white mb-4">
-                    ¿Por qué elegir PLANIFICAPRO?
+                    🚀 Por qué somos tu mejor opción
                 </h2>
                 <p class="text-xl text-blue-200 max-w-3xl mx-auto">
-                    Herramientas poderosas y fáciles de usar para transformar tu relación con el dinero
+                    Hemos diseñado cada detalle pensando en hacerte la vida más fácil y tus finanzas más saludables
                 </p>
             </div>
             
             <div class="grid md:grid-cols-3 gap-8">
-                <!-- Característica 1 -->
-                <div class="bg-white/10 backdrop-blur-lg rounded-xl p-8 border border-white/20 hover:bg-white/20 transition-all duration-300">
-                    <div class="bg-blue-600 rounded-lg p-3 w-fit mb-4">
-                        <i data-lucide="bar-chart-3" class="h-8 w-8 text-white"></i>
+                <!-- Característica 1 - Control Total -->
+                <div class="group bg-gradient-to-br from-warm-blue/20 to-warm-blue/5 backdrop-blur-lg rounded-2xl p-8 border border-warm-blue/20 hover:border-warm-blue/40 transition-all duration-500 transform hover:scale-105 hover:-translate-y-2" data-aos="fade-up" data-aos-delay="100">
+                    <div class="bg-gradient-to-r from-warm-blue to-warm-blue/80 rounded-2xl p-4 w-fit mb-6 group-hover:animate-bounce-gentle">
+                        <i data-lucide="bar-chart-3" class="h-10 w-10 text-white"></i>
                     </div>
-                    <h3 class="text-xl font-semibold text-white mb-3">Control Total</h3>
-                    <p class="text-blue-200">
-                        Visualiza todos tus ingresos y gastos en tiempo real con dashboards intuitivos.
+                    <h3 class="text-2xl font-bold text-white mb-4 group-hover:text-warm-blue transition-colors">
+                        🎯 Control Inteligente
+                    </h3>
+                    <p class="text-blue-200 text-lg leading-relaxed mb-4">
+                        Visualiza todos tus ingresos y gastos con dashboards que <strong class="text-white">realmente entiendes</strong>. 
+                        Sin complicaciones, sin tecnicismos.
                     </p>
+                    <div class="text-sm text-warm-blue font-semibold">
+                        ✨ Interface diseñada para humanos, no para contadores
+                    </div>
                 </div>
                 
-                <!-- Característica 2 -->
-                <div class="bg-white/10 backdrop-blur-lg rounded-xl p-8 border border-white/20 hover:bg-white/20 transition-all duration-300">
-                    <div class="bg-purple-600 rounded-lg p-3 w-fit mb-4">
-                        <i data-lucide="target" class="h-8 w-8 text-white"></i>
+                <!-- Característica 2 - Metas Claras -->
+                <div class="group bg-gradient-to-br from-friendly-purple/20 to-friendly-purple/5 backdrop-blur-lg rounded-2xl p-8 border border-friendly-purple/20 hover:border-friendly-purple/40 transition-all duration-500 transform hover:scale-105 hover:-translate-y-2" data-aos="fade-up" data-aos-delay="200">
+                    <div class="bg-gradient-to-r from-friendly-purple to-friendly-purple/80 rounded-2xl p-4 w-fit mb-6 group-hover:animate-bounce-gentle">
+                        <i data-lucide="target" class="h-10 w-10 text-white"></i>
                     </div>
-                    <h3 class="text-xl font-semibold text-white mb-3">Metas Claras</h3>
-                    <p class="text-blue-200">
-                        Define objetivos financieros y haz seguimiento automático de tu progreso.
+                    <h3 class="text-2xl font-bold text-white mb-4 group-hover:text-friendly-purple transition-colors">
+                        🏆 Metas que Inspiran
+                    </h3>
+                    <p class="text-blue-200 text-lg leading-relaxed mb-4">
+                        Convierte tus sueños en planes concretos. Te acompañamos paso a paso hasta que los hagas realidad.
                     </p>
+                    <div class="text-sm text-friendly-purple font-semibold">
+                        ✨ Como tener un coach financiero 24/7
+                    </div>
                 </div>
                 
-                <!-- Característica 3 -->
-                <div class="bg-white/10 backdrop-blur-lg rounded-xl p-8 border border-white/20 hover:bg-white/20 transition-all duration-300">
-                    <div class="bg-green-600 rounded-lg p-3 w-fit mb-4">
-                        <i data-lucide="shield-check" class="h-8 w-8 text-white"></i>
+                <!-- Característica 3 - Seguridad -->
+                <div class="group bg-gradient-to-br from-success-green/20 to-success-green/5 backdrop-blur-lg rounded-2xl p-8 border border-success-green/20 hover:border-success-green/40 transition-all duration-500 transform hover:scale-105 hover:-translate-y-2" data-aos="fade-up" data-aos-delay="300">
+                    <div class="bg-gradient-to-r from-success-green to-success-green/80 rounded-2xl p-4 w-fit mb-6 group-hover:animate-bounce-gentle">
+                        <i data-lucide="shield-check" class="h-10 w-10 text-white"></i>
                     </div>
-                    <h3 class="text-xl font-semibold text-white mb-3">100% Seguro</h3>
-                    <p class="text-blue-200">
-                        Tus datos están protegidos con la más alta seguridad y encriptación.
+                    <h3 class="text-2xl font-bold text-white mb-4 group-hover:text-success-green transition-colors">
+                        🔒 Seguridad Garantizada
+                    </h3>
+                    <p class="text-blue-200 text-lg leading-relaxed mb-4">
+                        Tus datos están más seguros que en el banco. Encriptación de nivel militar y <strong class="text-white">cero acceso de terceros</strong>.
                     </p>
+                    <div class="text-sm text-success-green font-semibold">
+                        ✨ Tu privacidad es sagrada para nosotros
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Llamada a la acción en características -->
+            <div class="text-center mt-16" data-aos="zoom-in" data-aos-delay="400">
+                <div class="bg-gradient-to-r from-sunshine-yellow/20 to-success-green/20 rounded-2xl p-8 border border-sunshine-yellow/30">
+                    <h3 class="text-2xl font-bold text-white mb-4">
+                        🌟 ¿Listo para experimentar la diferencia?
+                    </h3>
+                    <p class="text-blue-200 mb-6 text-lg">
+                        Miles de personas ya están viviendo una vida financiera más tranquila y próspera
+                    </p>
+                    <a 
+                        href="register.html"
+                        class="inline-flex items-center bg-gradient-to-r from-sunshine-yellow to-success-green text-white px-8 py-4 rounded-xl font-bold hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
+                    >
+                        <i data-lucide="arrow-right" class="h-5 w-5 mr-2"></i>
+                        ¡Sí, quiero probarlo gratis!
+                    </a>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Funcionalidades del Sistema -->
-    <section id="funcionalidades" class="py-20 px-4 sm:px-6 lg:px-8 bg-black/20">
-        <div class="max-w-7xl mx-auto">
-            <div class="text-center mb-16">
+    <!-- Funcionalidades del Sistema - Más Amigable -->
+    <section id="funcionalidades" class="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-black/30 to-warm-blue/10 relative overflow-hidden">
+        <!-- Burbujas animadas bonitas -->
+        <div class="absolute top-20 left-16 w-12 h-12 bg-sunshine-yellow/15 rounded-full animate-float hidden lg:block" style="animation-delay: 0.8s;"></div>
+        <div class="absolute top-40 right-24 w-16 h-16 bg-warm-blue/12 rounded-full animate-bounce-gentle hidden lg:block" style="animation-delay: 2.2s;"></div>
+        <div class="absolute bottom-24 left-8 w-8 h-8 bg-friendly-purple/18 rounded-full animate-pulse-friendly hidden lg:block" style="animation-delay: 1.8s;"></div>
+        <div class="absolute bottom-48 right-12 w-10 h-10 bg-success-green/16 rounded-full animate-float hidden lg:block" style="animation-delay: 3.5s;"></div>
+        <div class="absolute top-60 left-40 w-6 h-6 bg-pink-500/20 rounded-full animate-bounce-gentle hidden lg:block" style="animation-delay: 2.8s;"></div>
+        
+        <div class="max-w-7xl mx-auto relative z-10">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <div class="inline-flex items-center px-4 py-2 bg-sunshine-yellow/20 text-sunshine-yellow rounded-full text-sm font-medium border border-sunshine-yellow/30 mb-4">
+                    <i data-lucide="zap" class="h-4 w-4 mr-2"></i>
+                    Tu caja de herramientas financiera
+                </div>
                 <h2 class="text-4xl font-bold text-white mb-4">
-                    Tu Sistema de Gestión Financiera
+                    🛠️ Todo lo que necesitas en un solo lugar
                 </h2>
-                <p class="text-xl text-blue-200">
-                    Todas las herramientas que necesitas para controlar tus finanzas en un solo lugar
+                <p class="text-xl text-blue-200 max-w-3xl mx-auto">
+                    Cada herramienta está diseñada para que tomes el control de tu dinero de forma <strong class="text-white">simple y efectiva</strong>
                 </p>
             </div>
             
             <div class="grid md:grid-cols-3 lg:grid-cols-4 gap-6">
                 <!-- Ingresos -->
-                <div class="bg-green-600/20 backdrop-blur-lg rounded-xl p-6 border border-green-500/30 hover:bg-green-600/30 transition-all duration-300">
-                    <div class="bg-green-600 rounded-lg p-3 w-fit mb-4 mx-auto">
+                <div class="group bg-gradient-to-br from-success-green/25 to-success-green/10 backdrop-blur-lg rounded-2xl p-6 border border-success-green/30 hover:border-success-green/50 transition-all duration-500 transform hover:scale-105 hover:-translate-y-1" data-aos="fade-up" data-aos-delay="100">
+                    <div class="bg-gradient-to-r from-success-green to-success-green/80 rounded-2xl p-3 w-fit mb-4 mx-auto group-hover:animate-bounce-gentle">
                         <i data-lucide="trending-up" class="h-8 w-8 text-white"></i>
                     </div>
-                    <h3 class="text-lg font-semibold text-white mb-2 text-center">Ingresos</h3>
-                    <p class="text-green-200 text-sm text-center">
-                        Registra y categoriza todos tus ingresos mensuales
+                    <h3 class="text-lg font-bold text-white mb-3 text-center group-hover:text-success-green transition-colors">💰 Ingresos</h3>
+                    <p class="text-success-green/90 text-sm text-center leading-relaxed">
+                        <strong>Registra fácil</strong> todos tus ingresos y ve crecer tu patrimonio cada mes
                     </p>
+                    <div class="text-xs text-white/70 text-center mt-2">¡Cada peso cuenta!</div>
                 </div>
                 
                 <!-- Gastos -->
-                <div class="bg-red-600/20 backdrop-blur-lg rounded-xl p-6 border border-red-500/30 hover:bg-red-600/30 transition-all duration-300">
-                    <div class="bg-red-600 rounded-lg p-3 w-fit mb-4 mx-auto">
+                <div class="group bg-gradient-to-br from-red-500/25 to-red-500/10 backdrop-blur-lg rounded-2xl p-6 border border-red-500/30 hover:border-red-500/50 transition-all duration-500 transform hover:scale-105 hover:-translate-y-1" data-aos="fade-up" data-aos-delay="200">
+                    <div class="bg-gradient-to-r from-red-500 to-red-500/80 rounded-2xl p-3 w-fit mb-4 mx-auto group-hover:animate-bounce-gentle">
                         <i data-lucide="trending-down" class="h-8 w-8 text-white"></i>
                     </div>
-                    <h3 class="text-lg font-semibold text-white mb-2 text-center">Gastos</h3>
-                    <p class="text-red-200 text-sm text-center">
-                        Controla y organiza todos tus gastos por categorías
+                    <h3 class="text-lg font-bold text-white mb-3 text-center group-hover:text-red-400 transition-colors">🛒 Gastos Inteligentes</h3>
+                    <p class="text-red-300/90 text-sm text-center leading-relaxed">
+                        <strong>Organiza y controla</strong> tus gastos sin estrés ni complicaciones
                     </p>
+                    <div class="text-xs text-white/70 text-center mt-2">Gasta mejor, vive mejor</div>
                 </div>
                 
                 <!-- Créditos -->
-                <div class="bg-blue-600/20 backdrop-blur-lg rounded-xl p-6 border border-blue-500/30 hover:bg-blue-600/30 transition-all duration-300">
-                    <div class="bg-blue-600 rounded-lg p-3 w-fit mb-4 mx-auto">
+                <div class="group bg-gradient-to-br from-warm-blue/25 to-warm-blue/10 backdrop-blur-lg rounded-2xl p-6 border border-warm-blue/30 hover:border-warm-blue/50 transition-all duration-500 transform hover:scale-105 hover:-translate-y-1" data-aos="fade-up" data-aos-delay="300">
+                    <div class="bg-gradient-to-r from-warm-blue to-warm-blue/80 rounded-2xl p-3 w-fit mb-4 mx-auto group-hover:animate-bounce-gentle">
                         <i data-lucide="credit-card" class="h-8 w-8 text-white"></i>
                     </div>
-                    <h3 class="text-lg font-semibold text-white mb-2 text-center">Créditos</h3>
-                    <p class="text-blue-200 text-sm text-center">
-                        Gestiona tus préstamos y líneas de crédito
+                    <h3 class="text-lg font-bold text-white mb-3 text-center group-hover:text-warm-blue transition-colors">💳 Créditos</h3>
+                    <p class="text-warm-blue/90 text-sm text-center leading-relaxed">
+                        <strong>Maneja tus deudas</strong> como un pro y sal de ellas más rápido
                     </p>
+                    <div class="text-xs text-white/70 text-center mt-2">Libertad financiera</div>
                 </div>
                 
                 <!-- Reportes -->
-                <div class="bg-purple-600/20 backdrop-blur-lg rounded-xl p-6 border border-purple-500/30 hover:bg-purple-600/30 transition-all duration-300">
-                    <div class="bg-purple-600 rounded-lg p-3 w-fit mb-4 mx-auto">
+                <div class="group bg-gradient-to-br from-friendly-purple/25 to-friendly-purple/10 backdrop-blur-lg rounded-2xl p-6 border border-friendly-purple/30 hover:border-friendly-purple/50 transition-all duration-500 transform hover:scale-105 hover:-translate-y-1" data-aos="fade-up" data-aos-delay="400">
+                    <div class="bg-gradient-to-r from-friendly-purple to-friendly-purple/80 rounded-2xl p-3 w-fit mb-4 mx-auto group-hover:animate-bounce-gentle">
                         <i data-lucide="bar-chart" class="h-8 w-8 text-white"></i>
                     </div>
-                    <h3 class="text-lg font-semibold text-white mb-2 text-center">Reportes</h3>
-                    <p class="text-purple-200 text-sm text-center">
-                        Análisis detallados y gráficos de tu situación financiera
+                    <h3 class="text-lg font-bold text-white mb-3 text-center group-hover:text-friendly-purple transition-colors">📊 Reportes Mágicos</h3>
+                    <p class="text-friendly-purple/90 text-sm text-center leading-relaxed">
+                        <strong>Gráficos hermosos</strong> que realmente entiendes y te motivan
                     </p>
+                    <div class="text-xs text-white/70 text-center mt-2">Datos que inspiran</div>
                 </div>
                 
                 <!-- Sugerencias -->
-                <div class="bg-yellow-600/20 backdrop-blur-lg rounded-xl p-6 border border-yellow-500/30 hover:bg-yellow-600/30 transition-all duration-300">
-                    <div class="bg-yellow-600 rounded-lg p-3 w-fit mb-4 mx-auto">
+                <div class="group bg-gradient-to-br from-sunshine-yellow/25 to-sunshine-yellow/10 backdrop-blur-lg rounded-2xl p-6 border border-sunshine-yellow/30 hover:border-sunshine-yellow/50 transition-all duration-500 transform hover:scale-105 hover:-translate-y-1" data-aos="fade-up" data-aos-delay="500">
+                    <div class="bg-gradient-to-r from-sunshine-yellow to-sunshine-yellow/80 rounded-2xl p-3 w-fit mb-4 mx-auto group-hover:animate-bounce-gentle">
                         <i data-lucide="lightbulb" class="h-8 w-8 text-white"></i>
                     </div>
-                    <h3 class="text-lg font-semibold text-white mb-2 text-center">Sugerencias</h3>
-                    <p class="text-yellow-200 text-sm text-center">
-                        Recomendaciones inteligentes para optimizar tus finanzas
+                    <h3 class="text-lg font-bold text-white mb-3 text-center group-hover:text-sunshine-yellow transition-colors">💡 Sugerencias Genius</h3>
+                    <p class="text-sunshine-yellow/90 text-sm text-center leading-relaxed">
+                        <strong>Ideas brillantes</strong> para ahorrar más y gastar menos automáticamente
                     </p>
+                    <div class="text-xs text-white/70 text-center mt-2">Tu consejero 24/7</div>
                 </div>
                 
                 <!-- Tributario -->
-                <div class="bg-indigo-600/20 backdrop-blur-lg rounded-xl p-6 border border-indigo-500/30 hover:bg-indigo-600/30 transition-all duration-300">
-                    <div class="bg-indigo-600 rounded-lg p-3 w-fit mb-4 mx-auto">
+                <div class="group bg-gradient-to-br from-indigo-500/25 to-indigo-500/10 backdrop-blur-lg rounded-2xl p-6 border border-indigo-500/30 hover:border-indigo-500/50 transition-all duration-500 transform hover:scale-105 hover:-translate-y-1" data-aos="fade-up" data-aos-delay="600">
+                    <div class="bg-gradient-to-r from-indigo-500 to-indigo-500/80 rounded-2xl p-3 w-fit mb-4 mx-auto group-hover:animate-bounce-gentle">
                         <i data-lucide="file-text" class="h-8 w-8 text-white"></i>
                     </div>
-                    <h3 class="text-lg font-semibold text-white mb-2 text-center">Tributario</h3>
-                    <p class="text-indigo-200 text-sm text-center">
-                        Gestión de impuestos y obligaciones fiscales
+                    <h3 class="text-lg font-bold text-white mb-3 text-center group-hover:text-indigo-400 transition-colors">🏛️ Tributario</h3>
+                    <p class="text-indigo-300/90 text-sm text-center leading-relaxed">
+                        <strong>Impuestos sin estrés.</strong> Todo organizado para declaraciones perfectas
                     </p>
+                    <div class="text-xs text-white/70 text-center mt-2">Fisco friendly</div>
                 </div>
                 
-                <!-- Asistente IA -->
-                <div class="bg-gradient-to-br from-pink-600/20 to-purple-600/20 backdrop-blur-lg rounded-xl p-6 border border-pink-500/30 hover:from-pink-600/30 hover:to-purple-600/30 transition-all duration-300 md:col-span-2">
-                    <div class="bg-gradient-to-r from-pink-600 to-purple-600 rounded-lg p-3 w-fit mb-4 mx-auto">
-                        <i data-lucide="brain-circuit" class="h-8 w-8 text-white"></i>
+                <!-- Asistente IA - Destacado -->
+                <div class="group bg-gradient-to-br from-pink-500/30 to-friendly-purple/30 backdrop-blur-lg rounded-2xl p-8 border-2 border-pink-400/40 hover:border-pink-400/60 transition-all duration-500 transform hover:scale-105 hover:-translate-y-2 md:col-span-2 relative overflow-hidden" data-aos="zoom-in" data-aos-delay="700">
+                    <!-- Elementos decorativos -->
+                    <div class="absolute top-2 right-2 w-6 h-6 bg-pink-400/30 rounded-full animate-ping"></div>
+                    <div class="absolute bottom-2 left-2 w-4 h-4 bg-friendly-purple/40 rounded-full animate-pulse"></div>
+                    
+                    <div class="bg-gradient-to-r from-pink-500 to-friendly-purple rounded-2xl p-4 w-fit mb-6 mx-auto group-hover:animate-bounce-gentle shadow-lg">
+                        <i data-lucide="brain-circuit" class="h-12 w-12 text-white"></i>
                     </div>
-                    <h3 class="text-lg font-semibold text-white mb-2 text-center">Asistente de IA</h3>
-                    <p class="text-pink-200 text-sm text-center">
-                        Inteligencia artificial que te ayuda a tomar mejores decisiones financieras y responde tus consultas
+                    <h3 class="text-2xl font-bold text-white mb-4 text-center group-hover:text-pink-300 transition-colors">🤖 Tu Asistente IA Personal</h3>
+                    <p class="text-pink-200/95 text-center leading-relaxed text-lg">
+                        <strong>Inteligencia artificial de última generación</strong> que aprende de ti y te ayuda a tomar las mejores decisiones financieras. 
+                        ¡Como tener un experto financiero disponible 24/7!
                     </p>
+                    <div class="text-center mt-4">
+                        <span class="inline-flex items-center px-3 py-1 bg-pink-400/20 text-pink-200 rounded-full text-sm font-medium">
+                            <i data-lucide="sparkles" class="h-4 w-4 mr-1"></i>
+                            Powered by AI
+                        </span>
+                    </div>
                 </div>
             </div>
             
-            <!-- Call to Action -->
-            <div class="text-center mt-12">
-                <div class="bg-gradient-to-r from-green-600/20 to-blue-600/20 backdrop-blur-lg rounded-xl p-8 border border-white/10">
-                    <h3 class="text-2xl font-bold text-white mb-4">
-                        🎉 ¡Completamente GRATIS!
-                    </h3>
-                    <p class="text-lg text-blue-200 mb-6">
-                        Todas estas funcionalidades están disponibles sin costo alguno. 
-                        Registrate ahora y comienza a gestionar tus finanzas profesionalmente.
-                    </p>
-                    <a 
-                        href="register.html"
-                        class="inline-block bg-gradient-to-r from-green-600 to-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:from-green-700 hover:to-blue-700 transition-all duration-300 transform hover:scale-105 shadow-lg"
-                    >
-                        <i data-lucide="user-plus" class="inline h-5 w-5 mr-2"></i>
-                        Crear Cuenta Gratis
-                    </a>
-                </div>
-            </div>
         </div>
     </section>
 
-    <!-- Contacto -->
-    <section id="contacto" class="py-20 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-7xl mx-auto text-center">
-            <h2 class="text-4xl font-bold text-white mb-4">
-                ¿Listo para transformar tus finanzas?
-            </h2>
-            <p class="text-xl text-blue-200 mb-8">
-                Únete a miles de usuarios que ya controlan su futuro financiero
-            </p>
-            <a 
-                href="register.html"
-                class="inline-block bg-gradient-to-r from-blue-600 to-purple-600 text-white px-12 py-4 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-lg text-lg"
-            >
-                <i data-lucide="arrow-right" class="inline h-6 w-6 mr-2"></i>
-                Comenzar Ahora
-            </a>
+    <!-- Contacto/CTA Final - Super Motivacional -->
+    <section id="contacto" class="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-success-green/10 via-warm-blue/10 to-friendly-purple/10 relative overflow-hidden">
+        <!-- Burbujas animadas bonitas mejoradas -->
+        <div class="absolute top-10 left-10 w-20 h-20 bg-success-green/15 rounded-full animate-float hidden lg:block"></div>
+        <div class="absolute top-20 right-20 w-16 h-16 bg-sunshine-yellow/20 rounded-full animate-bounce-gentle hidden lg:block"></div>
+        <div class="absolute bottom-10 left-1/4 w-12 h-12 bg-friendly-purple/18 rounded-full animate-pulse-friendly hidden lg:block"></div>
+        <div class="absolute top-32 left-32 w-8 h-8 bg-warm-blue/22 rounded-full animate-float hidden lg:block" style="animation-delay: 1.2s;"></div>
+        <div class="absolute bottom-32 right-32 w-14 h-14 bg-pink-500/15 rounded-full animate-bounce-gentle hidden lg:block" style="animation-delay: 2.5s;"></div>
+        <div class="absolute top-48 right-8 w-6 h-6 bg-success-green/25 rounded-full animate-pulse-friendly hidden lg:block" style="animation-delay: 3.2s;"></div>
+        
+        <div class="max-w-7xl mx-auto text-center relative">
+            <div data-aos="fade-up">
+                <!-- Badge motivacional -->
+                <div class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-success-green/20 to-sunshine-yellow/20 text-success-green rounded-full text-lg font-bold border border-success-green/30 mb-8">
+                    <i data-lucide="trophy" class="h-5 w-5 mr-2 animate-bounce-gentle"></i>
+                    ¡Miles de personas ya transformaron sus vidas!
+                </div>
+            </div>
+
+            <div data-aos="zoom-in" data-aos-delay="200">
+                <h2 class="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
+                    🚀 Tu momento es <span class="bg-gradient-to-r from-sunshine-yellow via-success-green to-warm-blue bg-clip-text text-transparent">AHORA</span>
+                </h2>
+                <p class="text-2xl md:text-3xl text-blue-200 mb-6 max-w-4xl mx-auto font-medium">
+                    No esperes más para tomar el control de tu futuro financiero
+                </p>
+                
+                <!-- Estadísticas motivacionales -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 max-w-4xl mx-auto" data-aos="fade-up" data-aos-delay="300">
+                    <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
+                        <div class="text-3xl font-bold text-success-green mb-2">🎯 30 días</div>
+                        <div class="text-blue-200">para ver resultados reales</div>
+                    </div>
+                    <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
+                        <div class="text-3xl font-bold text-sunshine-yellow mb-2">💰 +$1,500</div>
+                        <div class="text-blue-200">ahorro promedio mensual</div>
+                    </div>
+                    <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
+                        <div class="text-3xl font-bold text-friendly-purple mb-2">😊 99%</div>
+                        <div class="text-blue-200">de usuarios satisfechos</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CTA Principal gigante -->
+            <div data-aos="zoom-in" data-aos-delay="400">
+                <div class="bg-gradient-to-r from-success-green/20 to-warm-blue/20 rounded-3xl p-8 mb-8 border-2 border-success-green/30">
+                    <p class="text-xl text-white mb-6 font-semibold">
+                        ✨ <strong>¡COMPLETAMENTE GRATIS!</strong> No necesitas tarjeta de crédito ni comprometerte a nada
+                    </p>
+                    <a 
+                        href="register.html"
+                        class="group inline-flex items-center bg-gradient-to-r from-success-green to-warm-blue text-white px-16 py-6 rounded-2xl font-bold hover:from-success-green/90 hover:to-warm-blue/90 transition-all duration-300 transform hover:scale-105 shadow-2xl text-2xl relative overflow-hidden"
+                    >
+                        <span class="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+                        <i data-lucide="rocket" class="h-8 w-8 mr-3 animate-bounce-gentle"></i>
+                        <span class="relative">¡EMPEZAR MI TRANSFORMACIÓN AHORA!</span>
+                        <i data-lucide="arrow-right" class="h-8 w-8 ml-3 group-hover:translate-x-2 transition-transform duration-300"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Garantías y seguridad -->
+            <div class="flex flex-wrap justify-center gap-6 text-sm text-blue-200" data-aos="fade-up" data-aos-delay="500">
+                <div class="flex items-center">
+                    <i data-lucide="shield-check" class="h-5 w-5 mr-2 text-success-green"></i>
+                    100% Seguro y Privado
+                </div>
+                <div class="flex items-center">
+                    <i data-lucide="clock" class="h-5 w-5 mr-2 text-sunshine-yellow"></i>
+                    Configuración en 2 minutos
+                </div>
+                <div class="flex items-center">
+                    <i data-lucide="heart" class="h-5 w-5 mr-2 text-red-400"></i>
+                    Soporte humano real
+                </div>
+                <div class="flex items-center">
+                    <i data-lucide="smartphone" class="h-5 w-5 mr-2 text-warm-blue"></i>
+                    Funciona en todos tus dispositivos
+                </div>
+            </div>
+
+            <!-- Mensaje final motivacional -->
+            <div class="mt-12" data-aos="fade-up" data-aos-delay="600">
+                <p class="text-lg text-blue-200 italic">
+                    "El mejor momento para plantar un árbol fue hace 20 años. <br class="hidden md:block">
+                    <span class="text-white font-semibold">El segundo mejor momento es ahora."</span>
+                </p>
+            </div>
         </div>
     </section>
 
@@ -328,10 +603,142 @@
     </footer>
 
     <!-- Scripts -->
-     <!-- Supabase -->
+    <!-- Supabase -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script src="js/supabase-config.js"></script>
     <script src="js/config.js"></script>
     <script src="js/landing.js"></script>
+    
+    <!-- Inicialización de Animaciones y Efectos Friendly -->
+    <script>
+        // Inicializar AOS (Animate On Scroll)
+        AOS.init({
+            duration: 800,
+            easing: 'ease-out-cubic',
+            once: true,
+            offset: 100
+        });
+
+        // Inicializar iconos de Lucide
+        lucide.createIcons();
+
+        // Efectos adicionales friendly
+        document.addEventListener('DOMContentLoaded', function() {
+            // Efecto de flotación personalizado para elementos decorativos
+            const floatingElements = document.querySelectorAll('[class*="animate-float"]');
+            floatingElements.forEach((el, index) => {
+                el.style.animationDelay = `${index * 0.5}s`;
+            });
+
+            // Efecto hover mejorado para cards
+            const cards = document.querySelectorAll('[class*="group"]');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scale(1.05) translateY(-8px)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1) translateY(0)';
+                });
+            });
+
+            // Contador animado con efecto friendly
+            const animateCounters = () => {
+                const counters = document.querySelectorAll('[data-count]');
+                counters.forEach(counter => {
+                    const target = parseInt(counter.getAttribute('data-count'));
+                    const current = parseInt(counter.innerText.replace(/[^\d]/g, ''));
+                    const increment = target / 100;
+                    
+                    if (current < target) {
+                        counter.innerText = Math.min(Math.ceil(current + increment), target) + (counter.innerText.includes('%') ? '%' : '');
+                        setTimeout(animateCounters, 50);
+                    }
+                });
+            };
+
+            // Mensajes motivacionales rotativos
+            const motivationalMessages = [
+                "¡Tu mejor decisión financiera empieza aquí! ✨",
+                "¡Miles de personas ya transformaron sus vidas! 🚀",
+                "¡El momento perfecto para cambiar tu futuro! 💫",
+                "¡Tu libertad financiera te está esperando! 🌟"
+            ];
+
+            let messageIndex = 0;
+            const rotateMessages = () => {
+                const messageElement = document.querySelector('[data-rotate-message]');
+                if (messageElement) {
+                    messageElement.style.opacity = '0';
+                    setTimeout(() => {
+                        messageElement.textContent = motivationalMessages[messageIndex];
+                        messageElement.style.opacity = '1';
+                        messageIndex = (messageIndex + 1) % motivationalMessages.length;
+                    }, 300);
+                }
+            };
+
+            // Rotar mensajes cada 4 segundos
+            setInterval(rotateMessages, 4000);
+        });
+
+        // CSS personalizado para animaciones
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes float {
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(-10px); }
+            }
+            
+            .animate-float {
+                animation: float 6s ease-in-out infinite;
+                backdrop-filter: blur(1px);
+                box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+            }
+            
+            .animate-bounce-gentle {
+                animation: bounce-gentle 4s ease-in-out infinite;
+                backdrop-filter: blur(1px);
+                box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+            }
+            
+            @keyframes float {
+                0%, 100% { transform: translateY(0) scale(1); opacity: 0.7; }
+                33% { transform: translateY(-12px) scale(1.05); opacity: 0.9; }
+                66% { transform: translateY(-6px) scale(0.95); opacity: 0.8; }
+            }
+            
+            @keyframes bounce-gentle {
+                0%, 100% { transform: translateY(0) scale(1); opacity: 0.7; }
+                25% { transform: translateY(-8px) scale(1.1); opacity: 0.9; }
+                50% { transform: translateY(-4px) scale(0.9); opacity: 0.8; }
+                75% { transform: translateY(-6px) scale(1.05); opacity: 0.85; }
+            }
+            
+            .animate-pulse-friendly {
+                animation: pulse-friendly 5s ease-in-out infinite;
+                backdrop-filter: blur(1px);
+                box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+            }
+            
+            @keyframes pulse-friendly {
+                0%, 100% { opacity: 0.6; transform: scale(1); }
+                25% { opacity: 0.9; transform: scale(1.15); }
+                50% { opacity: 0.8; transform: scale(0.95); }
+                75% { opacity: 0.85; transform: scale(1.08); }
+            }
+            
+            /* Efectos hover mejorados */
+            .group:hover .group-hover\\:animate-bounce-gentle {
+                animation: bounce 1s infinite;
+            }
+            
+            /* Transiciones suaves globales */
+            * {
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
 </body>
 </html>

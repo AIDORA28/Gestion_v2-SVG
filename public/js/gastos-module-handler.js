@@ -209,9 +209,11 @@ class GastosModuleHandler {
     }
 
     /**
-     * 🎨 RENDERIZAR GASTOS EN LA TABLA
+     * 🎨 RENDERIZAR GASTOS EN LA TABLA (VERSIÓN PREMIUM CDN)
      */
     renderGastos() {
+        console.log('🎨 Renderizando gastos con diseño premium...');
+        
         // Buscar tabla tanto en dashboard como en página standalone
         const tableBody = document.getElementById('gastos-table-body') || document.getElementById('gastos-tbody');
         const countElement = document.getElementById('gastos-count');
@@ -224,20 +226,41 @@ class GastosModuleHandler {
         // Aplicar filtros
         const datosParaMostrar = this.applyCurrentFilters();
         
-        // Actualizar contador
+        // Actualizar contador con animación
         if (countElement) {
-            countElement.textContent = datosParaMostrar.length > 0 ? 
+            const texto = datosParaMostrar.length > 0 ? 
                 `${datosParaMostrar.length} de ${this.gastos.length} gastos` : 
                 `${this.gastos.length} gastos`;
+            
+            countElement.innerHTML = `
+                <i class="fas fa-calculator mr-2 text-red-500"></i>
+                <span class="animate-pulse">${texto}</span>
+            `;
+        }
+
+        // Ocultar loading row si existe
+        const loadingRow = document.getElementById('loading-row');
+        if (loadingRow) {
+            loadingRow.style.display = 'none';
         }
 
         if (datosParaMostrar.length === 0) {
             tableBody.innerHTML = `
-                <tr>
-                    <td colspan="6" class="px-6 py-8 text-center text-gray-500">
-                        <div class="flex flex-col items-center">
-                            <i data-lucide="receipt" class="h-12 w-12 text-gray-300 mb-2"></i>
-                            <p>No hay gastos registrados</p>
+                <tr class="animate-fadeIn">
+                    <td colspan="6" class="px-6 py-12 text-center">
+                        <div class="flex flex-col items-center space-y-4">
+                            <div class="w-16 h-16 bg-gradient-to-r from-red-100 to-pink-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-receipt text-red-400 text-2xl"></i>
+                            </div>
+                            <div class="text-gray-500">
+                                <p class="text-lg font-medium">No hay gastos registrados</p>
+                                <p class="text-sm text-gray-400 mt-1">Comienza agregando tu primer gasto</p>
+                            </div>
+                            <button onclick="window.gastosModuleHandler && window.gastosModuleHandler.openGastoModal()" 
+                                    class="mt-4 inline-flex items-center px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg hover:from-red-600 hover:to-red-700 transition-all duration-200 shadow-lg hover:shadow-xl">
+                                <i class="fas fa-plus mr-2"></i>
+                                Agregar Primer Gasto
+                            </button>
                         </div>
                     </td>
                 </tr>
@@ -245,59 +268,140 @@ class GastosModuleHandler {
             return;
         }
 
-        tableBody.innerHTML = datosParaMostrar.map(gasto => `
-            <tr class="hover:bg-gray-50">
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    ${this.formatDate(gasto.fecha)}
-                </td>
-                <td class="px-6 py-4">
-                    <div class="font-medium">${gasto.descripcion}</div>
-                    ${gasto.notas ? `<div class="text-gray-500 text-xs mt-1">${gasto.notas}</div>` : ''}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                        ${this.getCategoriaIcon(gasto.categoria)} ${this.getCategoriaLabel(gasto.categoria)}
-                    </span>
-                    ${gasto.es_recurrente ? '<div class="text-xs text-blue-600 mt-1">🔄 Recurrente</div>' : ''}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-red-600">
-                    S/ ${this.formatMoney(gasto.monto)}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                        ${this.getMetodoIcon(gasto.metodo_pago)} ${this.getMetodoLabel(gasto.metodo_pago)}
-                    </span>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button data-action="edit" data-id="${gasto.id}" 
-                            class="btn-edit text-blue-600 hover:text-blue-900 mr-3">
-                        Editar
-                    </button>
-                    <button data-action="delete" data-id="${gasto.id}" 
-                            class="btn-delete text-red-600 hover:text-red-900">
-                        Eliminar
-                    </button>
-                </td>
-            </tr>
-        `).join('');
+        // Renderizar filas con efectos premium
+        tableBody.innerHTML = datosParaMostrar.map((gasto, index) => {
+            const categoryIcon = this.getCategoriaIcon(gasto.categoria);
+            const categoryName = this.getCategoriaLabel(gasto.categoria);
+            const methodIcon = this.getMetodoIcon(gasto.metodo_pago);
+            const methodName = this.getMetodoLabel(gasto.metodo_pago);
+            
+            return `
+                <tr class="group hover:bg-gradient-to-r hover:from-red-50 hover:to-pink-50 transition-all duration-300 animate-fadeIn border-b border-gray-50" 
+                    style="animation-delay: ${index * 0.1}s;">
+                    <!-- Fecha -->
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-10 h-10 bg-gradient-to-r from-blue-100 to-blue-200 rounded-lg flex items-center justify-center group-hover:shadow-md transition-all duration-200">
+                                <i class="fas fa-calendar-day text-blue-600 text-sm"></i>
+                            </div>
+                            <div>
+                                <div class="text-sm font-semibold text-gray-900">${this.formatDate(gasto.fecha)}</div>
+                                <div class="text-xs text-gray-500">${this.getRelativeDate(gasto.fecha)}</div>
+                            </div>
+                        </div>
+                    </td>
+                    
+                    <!-- Descripción -->
+                    <td class="px-6 py-4">
+                        <div class="max-w-xs">
+                            <div class="font-semibold text-gray-900 group-hover:text-red-600 transition-colors duration-200">${gasto.descripcion}</div>
+                            ${gasto.notas ? `<div class="text-gray-500 text-xs mt-1 line-clamp-2">${gasto.notas}</div>` : ''}
+                            ${gasto.es_recurrente ? `
+                                <div class="flex items-center mt-2 text-xs">
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                        <i class="fas fa-sync-alt mr-1 animate-spin-slow"></i>
+                                        Cada ${gasto.frecuencia_dias || 30} días
+                                    </span>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </td>
+                    
+                    <!-- Categoría -->
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <span class="inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-semibold bg-gradient-to-r from-red-100 to-pink-100 text-red-800 shadow-sm group-hover:shadow-md transition-all duration-200">
+                                <span class="text-base mr-2">${categoryIcon}</span>
+                                ${categoryName}
+                            </span>
+                        </div>
+                    </td>
+                    
+                    <!-- Monto -->
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center space-x-2">
+                            <div class="text-lg font-bold text-red-600 animate-money-float">
+                                <i class="fas fa-minus-circle text-sm mr-1"></i>
+                                S/ ${this.formatMoney(gasto.monto)}
+                            </div>
+                        </div>
+                    </td>
+                    
+                    <!-- Método de Pago -->
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-semibold bg-gradient-to-r from-gray-100 to-gray-200 text-gray-800 shadow-sm group-hover:shadow-md transition-all duration-200">
+                            <span class="text-base mr-2">${methodIcon}</span>
+                            ${methodName}
+                        </span>
+                    </td>
+                    
+                    <!-- Acciones -->
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center space-x-2">
+                            <!-- Botón Editar -->
+                            <button data-action="edit" data-id="${gasto.id}" 
+                                    class="group/btn relative inline-flex items-center px-3 py-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white text-xs font-semibold rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-200">
+                                <i class="fas fa-edit mr-1 group-hover/btn:animate-bounce"></i>
+                                Editar
+                                <div class="absolute inset-0 rounded-lg bg-white/20 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-200"></div>
+                            </button>
+                            
+                            <!-- Botón Eliminar -->
+                            <button data-action="delete" data-id="${gasto.id}" 
+                                    class="group/btn relative inline-flex items-center px-3 py-2 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white text-xs font-semibold rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-200">
+                                <i class="fas fa-trash-alt mr-1 group-hover/btn:animate-bounce"></i>
+                                Eliminar
+                                <div class="absolute inset-0 rounded-lg bg-white/20 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-200"></div>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join('');
 
-        // Reinicializar iconos de Lucide
-        if (typeof lucide !== 'undefined' && lucide.createIcons) {
-            lucide.createIcons();
+        // Actualizar indicador de estado
+        const tableStatus = document.getElementById('table-status');
+        if (tableStatus) {
+            tableStatus.classList.remove('hidden');
+            setTimeout(() => {
+                tableStatus.classList.add('hidden');
+            }, 3000);
         }
+
+        console.log(`✅ Renderizados ${datosParaMostrar.length} gastos con efectos premium`);
+    }
+
+
+
+    /**
+     * 📅 OBTENER FECHA RELATIVA
+     */
+    getRelativeDate(dateString) {
+        const date = new Date(dateString);
+        const now = new Date();
+        const diffTime = now - date;
+        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+        
+        if (diffDays === 0) return 'Hoy';
+        if (diffDays === 1) return 'Ayer';
+        if (diffDays < 7) return `Hace ${diffDays} días`;
+        if (diffDays < 30) return `Hace ${Math.floor(diffDays / 7)} semanas`;
+        return `Hace ${Math.floor(diffDays / 30)} meses`;
     }
 
     /**
-     * 📊 ACTUALIZAR ESTADÍSTICAS
+     * 📊 ACTUALIZAR ESTADÍSTICAS (VERSIÓN PREMIUM CDN)
      */
     updateStats() {
+        console.log('📊 Actualizando estadísticas premium de gastos...');
+        
         const statsContainer = document.getElementById('gastos-stats');
         if (!statsContainer) return;
 
         // Datos para estadísticas (usar datos filtrados si existen filtros activos)
         const datosParaStats = this.gastosFiltered.length < this.gastos.length ? this.gastosFiltered : this.gastos;
         
-        // Calcular estadísticas
+        // Calcular estadísticas avanzadas
         const total = datosParaStats.reduce((sum, gasto) => sum + parseFloat(gasto.monto), 0);
         const promedio = datosParaStats.length > 0 ? total / datosParaStats.length : 0;
         const recurrentes = datosParaStats.filter(g => g.es_recurrente).length;
@@ -306,77 +410,134 @@ class GastosModuleHandler {
         const mesActual = new Date().toISOString().slice(0, 7); // YYYY-MM
         const gastosMesActual = datosParaStats.filter(g => g.fecha.startsWith(mesActual));
         const totalMesActual = gastosMesActual.reduce((sum, g) => sum + parseFloat(g.monto), 0);
+        
+        // Calcular categoría con más gastos
+        const categorias = {};
+        datosParaStats.forEach(g => {
+            categorias[g.categoria] = (categorias[g.categoria] || 0) + parseFloat(g.monto);
+        });
+        const topCategoria = Object.entries(categorias).sort(([,a], [,b]) => b - a)[0];
 
+        // Generar estadísticas premium con animaciones
         statsContainer.innerHTML = `
-            <div class="bg-white overflow-hidden shadow rounded-lg">
-                <div class="p-5">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0">
-                            <i data-lucide="trending-down" class="h-8 w-8 text-red-600"></i>
+            <!-- Total Gastos -->
+            <div class="group relative bg-gradient-to-br from-red-50 to-pink-50 overflow-hidden shadow-xl rounded-2xl border border-red-100 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1" data-aos="fade-up" data-aos-delay="100">
+                <div class="absolute inset-0 bg-gradient-to-r from-red-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div class="relative p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 bg-gradient-to-r from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-200">
+                            <i class="fas fa-chart-line-down h-6 w-6 text-white"></i>
                         </div>
-                        <div class="ml-5 w-0 flex-1">
-                            <dl>
-                                <dt class="text-sm font-medium text-gray-500 truncate">Total Gastos</dt>
-                                <dd class="text-lg font-medium text-gray-900">S/ ${this.formatMoney(total)}</dd>
-                            </dl>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="bg-white overflow-hidden shadow rounded-lg">
-                <div class="p-5">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0">
-                            <i data-lucide="calendar" class="h-8 w-8 text-blue-600"></i>
-                        </div>
-                        <div class="ml-5 w-0 flex-1">
-                            <dl>
-                                <dt class="text-sm font-medium text-gray-500 truncate">Este Mes</dt>
-                                <dd class="text-lg font-medium text-gray-900">S/ ${this.formatMoney(totalMesActual)}</dd>
-                            </dl>
+                        <div class="flex items-center space-x-1 text-red-600 bg-red-100 px-2 py-1 rounded-full text-xs font-medium">
+                            <i class="fas fa-arrow-down h-3 w-3"></i>
+                            <span>Gastos</span>
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <div class="bg-white overflow-hidden shadow rounded-lg">
-                <div class="p-5">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0">
-                            <i data-lucide="bar-chart-3" class="h-8 w-8 text-green-600"></i>
+                    <div>
+                        <p class="text-sm font-medium text-gray-600 mb-1">Total Gastos</p>
+                        <p class="text-3xl font-bold text-gray-900 animate-money-float">S/ ${this.formatMoney(total)}</p>
+                        <p class="text-xs text-gray-500 mt-2">Egresos registrados</p>
+                    </div>
+                    <div class="mt-4">
+                        <div class="flex justify-between text-xs text-gray-500 mb-1">
+                            <span>Impacto financiero</span>
+                            <span class="text-red-600 font-medium">-${((total / (total + 10000)) * 100).toFixed(1)}%</span>
                         </div>
-                        <div class="ml-5 w-0 flex-1">
-                            <dl>
-                                <dt class="text-sm font-medium text-gray-500 truncate">Promedio</dt>
-                                <dd class="text-lg font-medium text-gray-900">S/ ${this.formatMoney(promedio)}</dd>
-                            </dl>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-gradient-to-r from-red-500 to-red-600 h-2 rounded-full transition-all duration-1000" style="width: ${Math.min((total / 5000) * 100, 100)}%"></div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="bg-white overflow-hidden shadow rounded-lg">
-                <div class="p-5">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0">
-                            <i data-lucide="repeat" class="h-8 w-8 text-purple-600"></i>
+            <!-- Gastos del Mes -->
+            <div class="group relative bg-gradient-to-br from-orange-50 to-red-50 overflow-hidden shadow-xl rounded-2xl border border-orange-100 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1" data-aos="fade-up" data-aos-delay="200">
+                <div class="absolute inset-0 bg-gradient-to-r from-orange-500/5 to-red-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div class="relative p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 bg-gradient-to-r from-orange-500 to-red-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-200">
+                            <i class="fas fa-calendar-alt h-6 w-6 text-white"></i>
                         </div>
-                        <div class="ml-5 w-0 flex-1">
-                            <dl>
-                                <dt class="text-sm font-medium text-gray-500 truncate">Recurrentes</dt>
-                                <dd class="text-lg font-medium text-gray-900">${recurrentes}</dd>
-                            </dl>
+                        <div class="flex items-center space-x-1 text-orange-600 bg-orange-100 px-2 py-1 rounded-full text-xs font-medium">
+                            <i class="fas fa-calendar-check h-3 w-3"></i>
+                            <span>Mes actual</span>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-600 mb-1">Gastos del Mes</p>
+                        <p class="text-3xl font-bold text-gray-900 animate-money-float">S/ ${this.formatMoney(totalMesActual)}</p>
+                        <p class="text-xs text-gray-500 mt-2">${gastosMesActual.length} transacciones</p>
+                    </div>
+                    <div class="mt-4">
+                        <div class="text-xs text-gray-500 mb-2">
+                            <i class="fas fa-chart-bar mr-1"></i>
+                            Promedio diario: S/ ${this.formatMoney(totalMesActual / new Date().getDate())}
                         </div>
                     </div>
                 </div>
             </div>
+
+            <!-- Promedio por Gasto -->
+            <div class="group relative bg-gradient-to-br from-purple-50 to-indigo-50 overflow-hidden shadow-xl rounded-2xl border border-purple-100 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1" data-aos="fade-up" data-aos-delay="300">
+                <div class="absolute inset-0 bg-gradient-to-r from-purple-500/5 to-indigo-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div class="relative p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-200">
+                            <i class="fas fa-calculator h-6 w-6 text-white"></i>
+                        </div>
+                        <div class="flex items-center space-x-1 text-purple-600 bg-purple-100 px-2 py-1 rounded-full text-xs font-medium">
+                            <i class="fas fa-equals h-3 w-3"></i>
+                            <span>Promedio</span>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-600 mb-1">Promedio por Gasto</p>
+                        <p class="text-3xl font-bold text-gray-900 animate-money-float">S/ ${this.formatMoney(promedio)}</p>
+                        <p class="text-xs text-gray-500 mt-2">Por transacción</p>
+                    </div>
+                    ${topCategoria ? `
+                        <div class="mt-4">
+                            <div class="text-xs text-gray-500 mb-1">Categoría top:</div>
+                            <div class="inline-flex items-center text-xs font-medium text-purple-600">
+                                <span class="mr-1">${this.getCategoriaIcon(topCategoria[0])}</span>
+                                ${this.getCategoriaLabel(topCategoria[0])}
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+            </div>
+
+            ${datosParaStats.length >= 3 ? `
+                <!-- Gastos Recurrentes -->
+                <div class="group relative bg-gradient-to-br from-blue-50 to-cyan-50 overflow-hidden shadow-xl rounded-2xl border border-blue-100 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1" data-aos="fade-up" data-aos-delay="400">
+                    <div class="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="relative p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-200">
+                                <i class="fas fa-sync-alt h-6 w-6 text-white animate-spin-slow"></i>
+                            </div>
+                            <div class="flex items-center space-x-1 text-blue-600 bg-blue-100 px-2 py-1 rounded-full text-xs font-medium">
+                                <i class="fas fa-repeat h-3 w-3"></i>
+                                <span>Automático</span>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-600 mb-1">Gastos Recurrentes</p>
+                            <p class="text-3xl font-bold text-gray-900">${recurrentes}</p>
+                            <p class="text-xs text-gray-500 mt-2">Gastos automáticos</p>
+                        </div>
+                        <div class="mt-4">
+                            <div class="text-xs text-gray-500">
+                                <i class="fas fa-percentage mr-1"></i>
+                                ${((recurrentes / datosParaStats.length) * 100).toFixed(1)}% del total
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            ` : ''}
         `;
 
-        // Reinicializar iconos
-        if (typeof lucide !== 'undefined' && lucide.createIcons) {
-            lucide.createIcons();
-        }
+        console.log('✅ Estadísticas premium actualizadas');
     }
 
     /**
@@ -599,6 +760,43 @@ class GastosModuleHandler {
     }
 
     /**
+     * 🎯 APLICAR FILTROS (FUNCIÓN PÚBLICA PARA TEMPLATE)
+     */
+    applyFilters() {
+        console.log('🎯 Aplicando filtros de gastos...');
+        
+        // Aplicar filtros y actualizar vista
+        this.applyCurrentFilters();
+        this.renderGastos();
+        this.updateStats();
+        
+        // Actualizar indicador de filtros activos
+        this.updateActiveFiltersIndicator();
+        
+        console.log(`✅ Filtros aplicados - Mostrando ${this.gastosFiltered.length} de ${this.gastos.length} gastos`);
+    }
+
+    /**
+     * 🏷️ ACTUALIZAR INDICADOR DE FILTROS ACTIVOS
+     */
+    updateActiveFiltersIndicator() {
+        const badge = document.getElementById('active-filters-badge');
+        if (!badge) return;
+        
+        const hasActiveFilters = this.gastosFiltered.length < this.gastos.length;
+        
+        if (hasActiveFilters) {
+            badge.classList.remove('hidden');
+            badge.innerHTML = `
+                <i class="fas fa-check-circle mr-1"></i>
+                ${this.gastosFiltered.length} resultados
+            `;
+        } else {
+            badge.classList.add('hidden');
+        }
+    }
+
+    /**
      * 📝 ABRIR MODAL PARA NUEVO GASTO
      */
     openGastoModal() {
@@ -608,24 +806,24 @@ class GastosModuleHandler {
         const form = document.getElementById('gasto-form');
         if (form) form.reset();
         
-        // Configurar fecha actual
-        const fechaInput = document.getElementById('fecha');
+        // Configurar fecha actual con ID correcto
+        const fechaInput = document.getElementById('fecha-gastos');
         if (fechaInput) {
             fechaInput.value = new Date().toISOString().split('T')[0];
         }
 
-        // Asegurar que la sección de recurrencia esté oculta
-        const recurrenciaSection = document.getElementById('frecuencia-container');
-        const recurrenteCheckbox = document.getElementById('es_recurrente');
+        // Asegurar que la sección de recurrencia esté oculta con IDs correctos
+        const recurrenciaSection = document.getElementById('recurrencia-section-gastos');
+        const recurrenteCheckbox = document.getElementById('es-recurrente-gastos');
         
         if (recurrenciaSection && recurrenteCheckbox) {
             recurrenciaSection.classList.add('hidden');
             recurrenteCheckbox.checked = false;
         }
         
-        // Actualizar título
-        const modalTitle = document.getElementById('modal-title');
-        const submitText = document.getElementById('submit-text');
+        // Actualizar título con IDs correctos
+        const modalTitle = document.getElementById('modal-title-gastos');
+        const submitText = document.getElementById('submit-text-gastos');
         
         if (modalTitle) modalTitle.textContent = 'Agregar Gasto';
         if (submitText) submitText.textContent = 'Guardar Gasto';
@@ -648,14 +846,14 @@ class GastosModuleHandler {
 
         this.currentEditId = gastoId;
         
-        // Llenar formulario
+        // Llenar formulario con IDs correctos del template
         const campos = {
-            'descripcion': gasto.descripcion || '',
-            'monto': gasto.monto || '',
-            'categoria': gasto.categoria || '',
-            'metodo_pago': gasto.metodo_pago || '',
-            'fecha': gasto.fecha || '',
-            'notas': gasto.notas || ''
+            'descripcion-gastos': gasto.descripcion || '',
+            'monto-gastos': gasto.monto || '',
+            'categoria-gastos': gasto.categoria || '',
+            'metodo-pago-gastos': gasto.metodo_pago || '',
+            'fecha-gastos': gasto.fecha || '',
+            'notas-gastos': gasto.notas || ''
         };
 
         Object.entries(campos).forEach(([id, valor]) => {
@@ -663,10 +861,10 @@ class GastosModuleHandler {
             if (elemento) elemento.value = valor;
         });
 
-        // Manejar checkbox de recurrencia
-        const recurrenteCheckbox = document.getElementById('es_recurrente');
-        const frecuenciaDiasInput = document.getElementById('frecuencia_dias');
-        const recurrenciaSection = document.getElementById('frecuencia-container');
+        // Manejar checkbox de recurrencia con IDs correctos
+        const recurrenteCheckbox = document.getElementById('es-recurrente-gastos');
+        const frecuenciaDiasInput = document.getElementById('frecuencia-dias-gastos');
+        const recurrenciaSection = document.getElementById('recurrencia-section-gastos');
         
         if (recurrenteCheckbox) {
             recurrenteCheckbox.checked = !!gasto.es_recurrente;
@@ -679,9 +877,9 @@ class GastosModuleHandler {
             }
         }
         
-        // Actualizar título del modal
-        const modalTitle = document.getElementById('modal-title');
-        const submitText = document.getElementById('submit-text');
+        // Actualizar título del modal con IDs correctos
+        const modalTitle = document.getElementById('modal-title-gastos');
+        const submitText = document.getElementById('submit-text-gastos');
         
         if (modalTitle) modalTitle.textContent = 'Editar Gasto';
         if (submitText) submitText.textContent = 'Actualizar Gasto';
@@ -758,58 +956,7 @@ class GastosModuleHandler {
     /**
      * � CONFIGURAR TOGGLE DE RECURRENCIA
      */
-    setupRecurrenceToggle() {
-        console.log('🔄 Configurando toggle de recurrencia para gastos...');
-        
-        // Buscar elementos en cada llamada (para modales dinámicos)
-        const checkbox = document.getElementById('es_recurrente');
-        const container = document.getElementById('frecuencia-container');
-        
-        console.log('🔍 Elementos encontrados:', {
-            checkbox: !!checkbox,
-            container: !!container
-        });
-        
-        if (checkbox && container) {
-            console.log('✅ Elementos encontrados, configurando event listener...');
-            
-            // Remover listeners previos para evitar duplicados
-            const newCheckbox = checkbox.cloneNode(true);
-            checkbox.parentNode.replaceChild(newCheckbox, checkbox);
-            
-            // Agregar nuevo event listener
-            newCheckbox.addEventListener('change', (event) => {
-                const isChecked = event.target.checked;
-                const frecuenciaInput = document.getElementById('frecuencia_dias');
-                
-                console.log('🔄 Checkbox recurrencia gastos cambiado:', isChecked);
-                console.log('🔍 Container classes antes:', container.className);
-                
-                if (isChecked) {
-                    container.classList.remove('hidden');
-                    console.log('✅ Sección de recurrencia gastos MOSTRADA');
-                    console.log('🔍 Container classes después:', container.className);
-                    
-                    // Establecer valor por defecto
-                    if (frecuenciaInput && !frecuenciaInput.value) {
-                        frecuenciaInput.value = '30';
-                        console.log('📅 Frecuencia establecida por defecto: 30 días');
-                    }
-                } else {
-                    container.classList.add('hidden');
-                    console.log('✅ Sección de recurrencia gastos OCULTADA');
-                    console.log('🔍 Container classes después:', container.className);
-                }
-            });
-            
-            console.log('✅ Event listener configurado correctamente');
-        } else {
-            console.warn('⚠️ No se encontraron elementos:', {
-                checkbox: checkbox ? 'ENCONTRADO' : 'NO ENCONTRADO',
-                container: container ? 'ENCONTRADO' : 'NO ENCONTRADO'
-            });
-        }
-    }
+    // Función setupRecurrenceToggle removida - funcionalidad integrada en setupEvents()
 
     /**
      * �💰 FORMATEAR DINERO

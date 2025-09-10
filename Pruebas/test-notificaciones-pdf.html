@@ -1,0 +1,65 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Prueba Rápida Notificaciones PDF</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .btn { background: #3b82f6; color: white; padding: 10px 20px; border: none; border-radius: 5px; margin: 5px; cursor: pointer; }
+        .btn:hover { background: #2563eb; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Prueba Rápida de Notificaciones PDF</h1>
+    
+    <button class="btn" onclick="mostrarInfo()">📄 Mostrar "Generando PDF..."</button>
+    <button class="btn" onclick="mostrarSuccess()">✅ Mostrar "PDF generado exitosamente"</button>
+    <button class="btn" onclick="mostrarError()">❌ Mostrar "Error PDF"</button>
+    <button class="btn" onclick="probarPDF()">🚀 Probar PDF Real</button>
+    
+    <script>
+        const notyf = new Notyf({
+            duration: 4000,
+            position: { x: 'right', y: 'top' }
+        });
+        
+        function mostrarInfo() {
+            notyf.info('📄 Generando reporte PDF profesional...');
+        }
+        
+        function mostrarSuccess() {
+            notyf.success('📄 Reporte PDF profesional generado exitosamente');
+        }
+        
+        function mostrarError() {
+            notyf.error('❌ Error: jsPDF no está cargado');
+        }
+        
+        function probarPDF() {
+            try {
+                notyf.info('📄 Generando reporte PDF profesional...');
+                
+                setTimeout(() => {
+                    if (typeof window.jsPDF === 'undefined') {
+                        notyf.error('❌ Error: jsPDF no está cargado');
+                        return;
+                    }
+                    
+                    const { jsPDF } = window.jsPDF;
+                    const doc = new jsPDF();
+                    doc.text('Prueba rápida PDF', 20, 20);
+                    doc.save('prueba-rapida.pdf');
+                    
+                    notyf.success('📄 Reporte PDF profesional generado exitosamente');
+                }, 1000);
+                
+            } catch (error) {
+                notyf.error(`❌ Error: ${error.message}`);
+            }
+        }
+    </script>
+</body>
+</html>

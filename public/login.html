@@ -25,8 +25,16 @@
     </div>
 
     <!-- Main Container -->
-    <div class="min-h-full flex items-center justify-center p-4">
-        <div class="max-w-md w-full space-y-8 login-container">
+    <div class="min-h-full flex items-center justify-center p-4 relative overflow-hidden">
+        <!-- Burbujas animadas bonitas para Login -->
+        <div class="absolute top-20 left-16 w-16 h-16 bg-blue-500/15 rounded-full animate-float hidden lg:block" style="animation-delay: 0.5s;"></div>
+        <div class="absolute top-32 right-20 w-12 h-12 bg-purple-500/20 rounded-full animate-bounce-gentle hidden lg:block" style="animation-delay: 1.5s;"></div>
+        <div class="absolute bottom-24 left-12 w-8 h-8 bg-indigo-500/18 rounded-full animate-pulse-friendly hidden lg:block" style="animation-delay: 2s;"></div>
+        <div class="absolute bottom-40 right-16 w-14 h-14 bg-blue-400/12 rounded-full animate-float hidden lg:block" style="animation-delay: 2.8s;"></div>
+        <div class="absolute top-48 left-8 w-6 h-6 bg-purple-400/25 rounded-full animate-bounce-gentle hidden lg:block" style="animation-delay: 3.2s;"></div>
+        <div class="absolute bottom-16 right-8 w-10 h-10 bg-indigo-400/16 rounded-full animate-pulse-friendly hidden lg:block" style="animation-delay: 1.8s;"></div>
+        
+        <div class="max-w-md w-full space-y-8 login-container relative z-10">
             
             <!-- Header -->
             <div class="text-center">
@@ -142,5 +150,220 @@
     <script src="js/supabase-auth.js"></script>
     <script src="js/simple-auth.js"></script>
     <script src="js/login-handler.js"></script>
+    
+    <!-- CSS para burbujas animadas y hover mejorado -->
+    <style>
+        /* Burbujas animadas */
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+            backdrop-filter: blur(1px);
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+        }
+        
+        .animate-bounce-gentle {
+            animation: bounce-gentle 4s ease-in-out infinite;
+            backdrop-filter: blur(1px);
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+        }
+        
+        .animate-pulse-friendly {
+            animation: pulse-friendly 5s ease-in-out infinite;
+            backdrop-filter: blur(1px);
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) scale(1); opacity: 0.7; }
+            33% { transform: translateY(-12px) scale(1.05); opacity: 0.9; }
+            66% { transform: translateY(-6px) scale(0.95); opacity: 0.8; }
+        }
+        
+        @keyframes bounce-gentle {
+            0%, 100% { transform: translateY(0) scale(1); opacity: 0.7; }
+            25% { transform: translateY(-8px) scale(1.1); opacity: 0.9; }
+            50% { transform: translateY(-4px) scale(0.9); opacity: 0.8; }
+            75% { transform: translateY(-6px) scale(1.05); opacity: 0.85; }
+        }
+        
+        @keyframes pulse-friendly {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            25% { opacity: 0.9; transform: scale(1.15); }
+            50% { opacity: 0.8; transform: scale(0.95); }
+            75% { opacity: 0.85; transform: scale(1.08); }
+        }
+        
+        /* ================================
+           🎨 HOVER MEJORADOS - SIN CUADRADOS
+           ================================ */
+        
+        /* Botón mostrar/ocultar contraseña - Redondeado y suave */
+        #togglePassword {
+            border-radius: 50% !important;
+            width: 36px !important;
+            height: 36px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            background: transparent !important;
+        }
+        
+        #togglePassword:hover {
+            background: rgba(59, 130, 246, 0.1) !important;
+            transform: scale(1.1) !important;
+            color: #3b82f6 !important;
+            border-radius: 50% !important;
+        }
+        
+        #togglePassword:active {
+            transform: scale(0.95) !important;
+            background: rgba(59, 130, 246, 0.2) !important;
+        }
+        
+        /* Enlaces - Hover suave sin bordes */
+        a:hover {
+            text-decoration: none !important;
+            border-radius: 6px !important;
+            padding: 2px 6px !important;
+            background: rgba(59, 130, 246, 0.1) !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            transform: translateY(-1px) !important;
+        }
+        
+        /* Hover específico para enlaces de navegación */
+        a[href="register.html"]:hover,
+        a[href="landing.html"]:hover {
+            background: rgba(59, 130, 246, 0.08) !important;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15) !important;
+            border-radius: 8px !important;
+        }
+        
+        /* Enlace "Olvidaste contraseña" */
+        a[href="#"]:hover {
+            background: rgba(59, 130, 246, 0.08) !important;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15) !important;
+            border-radius: 6px !important;
+        }
+        
+        /* Inputs - Efectos suaves */
+        input:focus {
+            outline: none !important;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+            border-color: #3b82f6 !important;
+            transform: translateY(-1px) !important;
+        }
+        
+        /* Botón principal - Hover mejorado */
+        button[type="submit"] {
+            border-radius: 12px !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        }
+        
+        button[type="submit"]:hover {
+            transform: translateY(-2px) scale(1.02) !important;
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3) !important;
+            background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%) !important;
+        }
+        
+        button[type="submit"]:active {
+            transform: translateY(0) scale(1) !important;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2) !important;
+        }
+        
+        /* Checkbox - Hover suave */
+        input[type="checkbox"] {
+            border-radius: 4px !important;
+            transition: all 0.3s ease !important;
+        }
+        
+        input[type="checkbox"]:hover {
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+            transform: scale(1.1) !important;
+        }
+        
+        /* Eliminar hover cuadrado por defecto */
+        * {
+            outline: none !important;
+        }
+        
+        *:focus {
+            outline: none !important;
+        }
+        
+        /* Card principal - Sombra suave */
+        .form-card {
+            border-radius: 16px !important;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1) !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        }
+        
+        .form-card:hover {
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.15) !important;
+            transform: translateY(-2px) !important;
+        }
+        
+        /* ================================
+           🎨 LOGO - HOVER BONITO Y SUAVE
+           ================================ */
+        
+        .logo-container {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            border-radius: 20px !important;
+            padding: 8px !important;
+        }
+        
+        .logo-container img {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            border-radius: 16px !important;
+            cursor: pointer !important;
+        }
+        
+        .logo-container:hover {
+            transform: translateY(-3px) scale(1.05) !important;
+            /* Fondo removido - solo animación */
+            border-radius: 20px !important;
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.2) !important;
+        }
+        
+        .logo-container:hover img {
+            transform: scale(1.02) !important;
+            box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2) !important;
+            border-color: rgba(59, 130, 246, 0.5) !important;
+            background: rgba(255, 255, 255, 0.15) !important;
+        }
+        
+        .logo-container:active {
+            transform: translateY(-1px) scale(1.02) !important;
+        }
+        
+        .logo-container:active img {
+            transform: scale(1) !important;
+        }
+        
+        /* Eliminar cualquier hover por defecto en imágenes */
+        img:hover {
+            outline: none !important;
+            border: none !important;
+            background: none !important;
+        }
+        
+        /* Sobreescribir cualquier hover cuadrado del logo */
+        img[alt*="Logo"]:hover,
+        img[src*="logo"]:hover {
+            outline: none !important;
+            border-color: rgba(59, 130, 246, 0.5) !important;
+            background: rgba(255, 255, 255, 0.15) !important;
+            box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2) !important;
+            transform: scale(1.02) !important;
+            border-radius: 16px !important;
+        }
+    </style>
+    
+    <script>
+        // Inicializar iconos de Lucide
+        document.addEventListener('DOMContentLoaded', function() {
+            lucide.createIcons();
+        });
+    </script>
 </body>
 </html>

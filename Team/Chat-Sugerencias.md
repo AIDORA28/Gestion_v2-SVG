@@ -3,9 +3,7 @@
 ## Joe Guillermo - Reporte:
    
 
-    new actualizado -  Claude, puedes agregar datos de ingresos y gastos a joegarcia.1395@gmail.com, pass: 123456, apra ver datos, que no tengo nada que ver XD
-
-    (dejar para depues) observacion 2 - veo que creastes index, ahora me pregunto cual vamos a usar index.hmlt o landing?
+    
 ---
 
 ## 🤖 Claude Garcia - Status Update:

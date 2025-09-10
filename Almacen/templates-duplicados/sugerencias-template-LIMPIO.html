@@ -1,0 +1,565 @@
+<!-- 💎 COACH FINANCIERO PERSONAL - DISEÑO FRIENDLY -->
+
+<div class="w-full bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- 🎉 Header Motivacional -->
+        <div class="text-center mb-12 animate__animated animate__fadeInDown">
+            <div class="relative">
+                <!-- Decoración de fondo -->
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <div class="w-96 h-96 bg-gradient-to-r from-blue-400/20 to-purple-400/20 rounded-full blur-3xl"></div>
+                </div>
+                
+                <!-- Contenido principal -->
+                <div class="relative z-10">
+                    <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mb-6 shadow-xl">
+                        <i class="fas fa-brain text-3xl text-white"></i>
+                    </div>
+                    
+                    <h1 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-4">
+                        Tu Coach Financiero Personal
+                    </h1>
+                    
+                    <p class="text-xl text-gray-600 max-w-2xl mx-auto mb-8">
+                        Tus recomendaciones inteligentes se generan automáticamente basadas en tus últimos 90 días
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 🔮 Estado de Carga Amigable -->
+        <div id="sugerencias-loading" class="text-center py-16 hidden animate__animated animate__fadeIn">
+            <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-8 max-w-md mx-auto shadow-xl border border-white/20">
+                <div class="relative mb-6">
+                    <div class="w-16 h-16 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full mx-auto flex items-center justify-center animate-pulse">
+                        <i class="fas fa-chart-line text-2xl text-white"></i>
+                    </div>
+                    <div class="absolute -top-2 -right-2 w-6 h-6 bg-yellow-400 rounded-full animate-bounce">
+                        <i class="fas fa-sparkles text-xs text-white absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></i>
+                    </div>
+                </div>
+                
+                <h3 class="text-xl font-bold text-gray-800 mb-2">🧠 Analizando tu perfil financiero</h3>
+                <p class="text-gray-600 mb-4">Procesando tus datos para generar recomendaciones personalizadas...</p>
+                
+                <div class="flex justify-center space-x-1">
+                    <div class="w-2 h-2 bg-blue-500 rounded-full animate-bounce"></div>
+                    <div class="w-2 h-2 bg-purple-500 rounded-full animate-bounce" style="animation-delay: 0.1s;"></div>
+                    <div class="w-2 h-2 bg-pink-500 rounded-full animate-bounce" style="animation-delay: 0.2s;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 📊 Dashboard de Métricas Financieras -->
+        <div id="analisis-resumen" class="mb-12 hidden animate__animated animate__fadeInUp">
+            <div class="text-center mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">📊 Tu Panorama Financiero</h2>
+                <p class="text-gray-600">Datos de los últimos 90 días</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Tarjeta Ingresos -->
+                <div class="bg-gradient-to-br from-green-400 to-green-600 rounded-2xl p-6 text-white shadow-xl transform hover:scale-105 transition-all duration-300">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
+                            <i class="fas fa-arrow-trend-up text-2xl"></i>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-sm opacity-80">Ingresos Totales</div>
+                            <div id="total-ingresos" class="text-2xl font-bold">S/ 0.00</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fas fa-chart-line mr-2 opacity-80"></i>
+                        <span class="text-sm opacity-90">Últimos 3 meses</span>
+                    </div>
+                </div>
+                
+                <!-- Tarjeta Gastos -->
+                <div class="bg-gradient-to-br from-red-400 to-red-600 rounded-2xl p-6 text-white shadow-xl transform hover:scale-105 transition-all duration-300">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
+                            <i class="fas fa-arrow-trend-down text-2xl"></i>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-sm opacity-80">Gastos Totales</div>
+                            <div id="total-gastos" class="text-2xl font-bold">S/ 0.00</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fas fa-credit-card mr-2 opacity-80"></i>
+                        <span class="text-sm opacity-90">Control mensual</span>
+                    </div>
+                </div>
+                
+                <!-- Tarjeta Balance -->
+                <div class="bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl p-6 text-white shadow-xl transform hover:scale-105 transition-all duration-300">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
+                            <i class="fas fa-piggy-bank text-2xl"></i>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-sm opacity-80">Balance</div>
+                            <div id="balance-total" class="text-2xl font-bold">S/ 0.00</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fas fa-balance-scale mr-2 opacity-80"></i>
+                        <span class="text-sm opacity-90">Estado actual</span>
+                    </div>
+                </div>
+                
+                <!-- Tarjeta Ahorro -->
+                <div class="bg-gradient-to-br from-purple-400 to-purple-600 rounded-2xl p-6 text-white shadow-xl transform hover:scale-105 transition-all duration-300">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
+                            <i class="fas fa-percentage text-2xl"></i>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-sm opacity-80">% Ahorro</div>
+                            <div id="porcentaje-ahorro" class="text-2xl font-bold">0%</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fas fa-target mr-2 opacity-80"></i>
+                        <span class="text-sm opacity-90">Meta: 20%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 💡 Sugerencias Personalizadas - Diseño Coach -->
+        <div id="sugerencias-container" class="animate__animated animate__fadeInUp">
+            
+            <!-- Estado inicial - Invitación amigable -->
+            <div id="welcome-state" class="text-center py-16">
+                <div class="max-w-2xl mx-auto">
+                    <div class="relative mb-8">
+                        <div class="w-32 h-32 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full mx-auto flex items-center justify-center shadow-2xl">
+                            <i class="fas fa-lightbulb text-4xl text-white animate-pulse"></i>
+                        </div>
+                        <div class="absolute -top-4 -right-4 w-12 h-12 bg-blue-500 rounded-full animate-bounce">
+                            <i class="fas fa-sparkles text-white absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></i>
+                        </div>
+                    </div>
+                    
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">
+                        ¡Hola! 👋 Soy tu coach financiero personal
+                    </h2>
+                    
+                    <p class="text-lg text-gray-600 mb-8 leading-relaxed">
+                        Estoy aquí para ayudarte a tomar mejores decisiones financieras. 
+                        Analizo tus datos y te doy consejos personalizados para mejorar tu situación económica.
+                    </p>
+                    
+                    <div class="bg-gradient-to-r from-blue-100 to-purple-100 rounded-2xl p-6 mb-8">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">🎯 ¿Qué puedo hacer por ti?</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                            <div class="flex items-center">
+                                <i class="fas fa-chart-line text-green-500 mr-2"></i>
+                                <span>Analizar tus patrones de gasto</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-target text-blue-500 mr-2"></i>
+                                <span>Sugerir metas de ahorro</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-coins text-yellow-500 mr-2"></i>
+                                <span>Optimizar tus finanzas</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button onclick="ejecutarActualizarAnalisis()" 
+                            class="group inline-flex items-center px-8 py-4 bg-gradient-to-r from-green-500 to-blue-600 text-white font-bold text-lg rounded-xl shadow-lg hover:from-green-600 hover:to-blue-700 transform hover:scale-105 transition-all duration-300">
+                        <i class="fas fa-rocket mr-3 group-hover:animate-bounce"></i>
+                        ¡Comencemos! Analiza mis finanzas
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Contenedor para sugerencias dinámicas -->
+            <div id="dynamic-suggestions" class="hidden">
+                <!-- Las sugerencias se cargarán aquí dinámicamente -->
+            </div>
+            
+        </div>
+
+        <!-- 🎯 Centro de Herramientas Financieras -->
+        <div class="mt-16 mb-8">
+            <div class="text-center mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">🛠️ Herramientas Adicionales</h2>
+                <p class="text-gray-600">Explora más funciones para optimizar tus finanzas</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Tutorial -->
+                <div onclick="window.sugerenciasModuleHandler && window.sugerenciasModuleHandler.mostrarTutorial()" 
+                     class="group cursor-pointer bg-gradient-to-br from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 rounded-2xl p-6 border-2 border-blue-200 hover:border-blue-300 transition-all duration-300 transform hover:scale-105">
+                    <div class="text-center">
+                        <div class="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:animate-bounce">
+                            <i class="fas fa-graduation-cap text-white text-xl"></i>
+                        </div>
+                        <h3 class="font-semibold text-blue-800 mb-1">¿Cómo Funciona?</h3>
+                        <p class="text-sm text-blue-600">Aprende a usar tu coach</p>
+                    </div>
+                </div>
+                
+                <!-- Alertas -->
+                <div onclick="window.sugerenciasModuleHandler && window.sugerenciasModuleHandler.configurarAlertas()" 
+                     class="group cursor-pointer bg-gradient-to-br from-yellow-50 to-yellow-100 hover:from-yellow-100 hover:to-yellow-200 rounded-2xl p-6 border-2 border-yellow-200 hover:border-yellow-300 transition-all duration-300 transform hover:scale-105">
+                    <div class="text-center">
+                        <div class="w-12 h-12 bg-yellow-500 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:animate-bounce">
+                            <i class="fas fa-bell text-white text-xl"></i>
+                        </div>
+                        <h3 class="font-semibold text-yellow-800 mb-1">Alertas Inteligentes</h3>
+                        <p class="text-sm text-yellow-600">Notificaciones personalizadas</p>
+                    </div>
+                </div>
+                
+                <!-- Reportes -->
+                <div onclick="window.sugerenciasModuleHandler && window.sugerenciasModuleHandler.exportarReporte()" 
+                     class="group cursor-pointer bg-gradient-to-br from-green-50 to-green-100 hover:from-green-100 hover:to-green-200 rounded-2xl p-6 border-2 border-green-200 hover:border-green-300 transition-all duration-300 transform hover:scale-105">
+                    <div class="text-center">
+                        <div class="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:animate-bounce">
+                            <i class="fas fa-chart-bar text-white text-xl"></i>
+                        </div>
+                        <h3 class="font-semibold text-green-800 mb-1">Generar Reporte</h3>
+                        <p class="text-sm text-green-600">Exporta tu análisis completo</p>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        
+        <!-- Footer motivacional -->
+        <div class="text-center py-8">
+            <div class="max-w-2xl mx-auto">
+                <div class="bg-gradient-to-r from-indigo-100 via-purple-100 to-pink-100 rounded-2xl p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">💪 ¡Estás en el camino correcto!</h3>
+                    <p class="text-gray-600 mb-4">Cada pequeña decisión financiera te acerca más a tus metas. Keep going! 🚀</p>
+                    <div class="flex justify-center space-x-6 text-sm text-gray-500">
+                        <div class="flex items-center">
+                            <i class="fas fa-shield-alt text-green-500 mr-1"></i>
+                            <span>Datos seguros</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-robot text-blue-500 mr-1"></i>
+                            <span>IA avanzada</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-heart text-red-500 mr-1"></i>
+                            <span>Hecho con amor</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+<!-- Modal de Tutorial -->
+<div id="tutorial-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden p-4">
+    <div class="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <h3 class="text-lg font-medium text-gray-900">🧠 Cómo Funciona el Sistema de IA</h3>
+        </div>
+        <div class="p-6">
+            <div class="space-y-6">
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <h4 class="font-medium text-blue-900 mb-2">📊 Análisis de Datos</h4>
+                    <p class="text-sm text-blue-800">
+                        El sistema analiza automáticamente tus ingresos y gastos de los últimos 90 días para identificar patrones y tendencias.
+                    </p>
+                </div>
+                
+                <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                    <h4 class="font-medium text-green-900 mb-2">🎯 Sugerencias Personalizadas</h4>
+                    <p class="text-sm text-green-800">
+                        Basado en tu comportamiento financiero, la IA genera recomendaciones específicas para mejorar tu situación económica.
+                    </p>
+                </div>
+                
+                <div class="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                    <h4 class="font-medium text-purple-900 mb-2">🔄 Actualización Continua</h4>
+                    <p class="text-sm text-purple-800">
+                        Las sugerencias se actualizan automáticamente conforme registras nuevas transacciones en el sistema.
+                    </p>
+                </div>
+                
+                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                    <h4 class="font-medium text-yellow-900 mb-2">⚡ Tecnología Utilizada</h4>
+                    <ul class="text-sm text-yellow-800 space-y-1">
+                        <li>• Análisis predictivo con JavaScript</li>
+                        <li>• Conexión directa a base de datos Supabase</li>
+                        <li>• Algoritmos de categorización automática</li>
+                        <li>• Detección de patrones de comportamiento</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="flex justify-end pt-6 border-t border-gray-200 mt-6">
+                <button onclick="window.sugerenciasModuleHandler && window.sugerenciasModuleHandler.cerrarTutorial()" 
+                        class="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Entendido
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Configuración de Alertas -->
+<div id="alertas-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden p-4">
+    <div class="bg-white rounded-xl max-w-lg w-full shadow-2xl">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <h3 class="text-lg font-medium text-gray-900">🔔 Configurar Alertas Inteligentes</h3>
+        </div>
+        <div class="p-6">
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <label class="text-sm font-medium text-gray-900">Gastos elevados</label>
+                        <p class="text-xs text-gray-500">Alerta cuando un gasto supere el promedio</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="alerta-gastos" class="sr-only peer" checked>
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                    </label>
+                </div>
+                
+                <div class="flex items-center justify-between">
+                    <div>
+                        <label class="text-sm font-medium text-gray-900">Bajo ahorro</label>
+                        <p class="text-xs text-gray-500">Alerta cuando el ahorro sea menor al 10%</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="alerta-ahorro" class="sr-only peer" checked>
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                    </label>
+                </div>
+                
+                <div class="flex items-center justify-between">
+                    <div>
+                        <label class="text-sm font-medium text-gray-900">Tendencias negativas</label>
+                        <p class="text-xs text-gray-500">Alerta cuando los gastos aumenten consistentemente</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="alerta-tendencias" class="sr-only peer">
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                    </label>
+                </div>
+            </div>
+            
+            <div class="flex flex-col sm:flex-row gap-3 pt-6 border-t border-gray-200 mt-6">
+                <button onclick="window.sugerenciasModuleHandler && window.sugerenciasModuleHandler.guardarAlertas()" 
+                        class="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Guardar Configuración
+                </button>
+                <button onclick="window.sugerenciasModuleHandler && window.sugerenciasModuleHandler.cerrarAlertas()" 
+                        class="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Funciones específicas del template de sugerencias
+    console.log('🧠 Template de Sugerencias Inteligentes cargado');
+    
+    // 🔄 FUNCIÓN MEJORADA: Actualizar Análisis con feedback visual y auto-creación de handler
+    function ejecutarActualizarAnalisis() {
+        console.log('🔄 === EJECUTANDO ACTUALIZAR ANÁLISIS ===');
+        
+        // Mostrar notificación
+        if (window.notyf) {
+            window.notyf.info('🧠 Iniciando análisis inteligente...');
+        } else {
+            console.log('🧠 Iniciando análisis inteligente...');
+        }
+        
+        // Auto-crear handler si no existe
+        if (!window.sugerenciasModuleHandler) {
+            console.log('🔧 Handler no disponible, creando automáticamente...');
+            
+            if (window.SugerenciasModuleHandler) {
+                window.sugerenciasModuleHandler = new window.SugerenciasModuleHandler();
+                
+                window.sugerenciasModuleHandler.init().then(() => {
+                    console.log('✅ Handler creado e inicializado');
+                    ejecutarAnalisisReal();
+                }).catch(error => {
+                    console.error('❌ Error creando handler:', error);
+                    mostrarError('Error inicializando sistema: ' + error.message);
+                });
+                return;
+            } else {
+                mostrarError('Sistema no disponible. Recarga la página.');
+                return;
+            }
+        }
+        
+        // Ejecutar análisis si handler ya existe
+        ejecutarAnalisisReal();
+        
+        function ejecutarAnalisisReal() {
+            Promise.resolve(window.sugerenciasModuleHandler.actualizarSugerencias())
+                .then(() => {
+                    console.log('✅ Análisis completado exitosamente');
+                    if (window.notyf) {
+                        window.notyf.success('✅ Análisis actualizado correctamente');
+                    } else {
+                        alert('✅ Análisis actualizado correctamente');
+                    }
+                })
+                .catch(error => {
+                    console.error('❌ Error en análisis:', error);
+                    mostrarError('Error en análisis: ' + error.message);
+                });
+        }
+        
+        function mostrarError(mensaje) {
+            if (window.notyf) {
+                window.notyf.error(mensaje);
+            } else {
+                alert('❌ ' + mensaje);
+            }
+        }
+    }
+    
+    // 🌍 REGISTRAR FUNCIONES GLOBALMENTE (CRÍTICO para onclick)
+    window.ejecutarActualizarAnalisis = ejecutarActualizarAnalisis;
+    
+    // Auto-inicializar cuando el template se carga
+    if (typeof document !== 'undefined') {
+        setTimeout(() => {
+            // Inicializar iconos de Lucide
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+            
+            // Intentar crear handler si no existe
+            if (!window.sugerenciasModuleHandler && window.SugerenciasModuleHandler) {
+                console.log('🔧 Creando handler de sugerencias automáticamente...');
+                window.sugerenciasModuleHandler = new window.SugerenciasModuleHandler();
+                
+                window.sugerenciasModuleHandler.init().then(() => {
+                    console.log('✅ Handler de sugerencias auto-creado e inicializado');
+                }).catch(error => {
+                    console.warn('⚠️ Error auto-creando handler (se creará cuando se use):', error);
+                });
+            } else if (window.sugerenciasModuleHandler) {
+                console.log('✅ Handler de sugerencias ya existe, notificando template cargado...');
+                if (typeof window.sugerenciasModuleHandler.onTemplateLoaded === 'function') {
+                    window.sugerenciasModuleHandler.onTemplateLoaded();
+                }
+            }
+            
+            // 🎨 NUEVAS FUNCIONES PARA EL DISEÑO FRIENDLY
+            window.mostrarSugerenciasAmigables = function(sugerencias) {
+                const container = document.getElementById('dynamic-suggestions');
+                const welcomeState = document.getElementById('welcome-state');
+                
+                if (!container || !sugerencias || sugerencias.length === 0) return;
+                
+                // Ocultar estado de bienvenida y mostrar sugerencias
+                if (welcomeState) welcomeState.style.display = 'none';
+                container.classList.remove('hidden');
+                
+                const sugerenciasHTML = sugerencias.map((sugerencia, index) => `
+                    <div class="animate__animated animate__fadeInUp" style="animation-delay: ${index * 0.1}s;">
+                        <div class="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/20 hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02]">
+                            <div class="flex items-start space-x-4">
+                                <div class="flex-shrink-0">
+                                    <div class="w-16 h-16 rounded-2xl ${getSugerenciaColor(sugerencia.tipo)} flex items-center justify-center text-2xl shadow-lg">
+                                        ${sugerencia.icono}
+                                    </div>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <h3 class="text-xl font-bold text-gray-800">${sugerencia.titulo}</h3>
+                                        <div class="px-3 py-1 rounded-full text-xs font-medium ${getPrioridadBadge(sugerencia.prioridad)}">
+                                            ${sugerencia.prioridad || 'Media'}
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-600 mb-4 leading-relaxed">${sugerencia.descripcion}</p>
+                                    <div class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-4 border-l-4 ${getBorderColor(sugerencia.tipo)}">
+                                        <div class="flex items-start">
+                                            <i class="fas fa-lightbulb text-yellow-500 mr-2 mt-1"></i>
+                                            <div>
+                                                <h4 class="font-semibold text-gray-800 mb-1">💡 Mi Recomendación:</h4>
+                                                <p class="text-sm text-gray-700">${sugerencia.accion}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+                
+                container.innerHTML = `
+                    <div class="text-center mb-8">
+                        <h2 class="text-3xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent mb-2">
+                            🎉 ¡Aquí están tus sugerencias personalizadas!
+                        </h2>
+                        <p class="text-gray-600">Basadas en el análisis de tus últimos 90 días</p>
+                    </div>
+                    <div class="space-y-6">
+                        ${sugerenciasHTML}
+                    </div>
+                    <div class="text-center mt-8">
+                        <button onclick="ejecutarActualizarAnalisis()" 
+                                class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-medium rounded-xl hover:from-blue-600 hover:to-purple-700 transition-all duration-300">
+                            <i class="fas fa-sync-alt mr-2"></i>
+                            Actualizar Sugerencias
+                        </button>
+                    </div>
+                `;
+            };
+            
+            // Funciones auxiliares para colores y estilos
+            window.getSugerenciaColor = function(tipo) {
+                const colores = {
+                    'felicitacion': 'bg-gradient-to-br from-green-400 to-green-600',
+                    'alerta': 'bg-gradient-to-br from-yellow-400 to-yellow-600',
+                    'advertencia': 'bg-gradient-to-br from-red-400 to-red-600',
+                    'analisis': 'bg-gradient-to-br from-blue-400 to-blue-600',
+                    'oportunidad': 'bg-gradient-to-br from-purple-400 to-purple-600',
+                    'revision': 'bg-gradient-to-br from-orange-400 to-orange-600',
+                    'bienvenida': 'bg-gradient-to-br from-indigo-400 to-indigo-600'
+                };
+                return colores[tipo] || 'bg-gradient-to-br from-gray-400 to-gray-600';
+            };
+            
+            window.getPrioridadBadge = function(prioridad) {
+                const badges = {
+                    'alta': 'bg-red-100 text-red-800 border border-red-200',
+                    'media': 'bg-yellow-100 text-yellow-800 border border-yellow-200',
+                    'baja': 'bg-green-100 text-green-800 border border-green-200'
+                };
+                return badges[prioridad] || badges['media'];
+            };
+            
+            window.getBorderColor = function(tipo) {
+                const colores = {
+                    'felicitacion': 'border-green-400',
+                    'alerta': 'border-yellow-400',
+                    'advertencia': 'border-red-400',
+                    'analisis': 'border-blue-400',
+                    'oportunidad': 'border-purple-400',
+                    'revision': 'border-orange-400',
+                    'bienvenida': 'border-indigo-400'
+                };
+                return colores[tipo] || 'border-gray-400';
+            };
+            
+            console.log('🎯 Template FRIENDLY de sugerencias cargado con funciones GLOBALES registradas');
+            console.log('✅ Funciones disponibles globalmente para onclick handlers');
+            console.log('🎨 Nuevo diseño amigable y motivador activado');
+        }, 100);
+    }
+</script>

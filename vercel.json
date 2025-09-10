@@ -1,40 +1,24 @@
 {
-  "version": 2,
-  "name": "planificapro-dashboard",
-  "builds": [
+  "rewrites": [
     {
-      "src": "public/**/*",
-      "use": "@vercel/static"
+      "source": "/api/(.*)",
+      "destination": "/api/backend.js"
     },
     {
-      "src": "api/**/*.js",
-      "use": "@vercel/node"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/api/backend.js"
+      "source": "/",
+      "destination": "/landing.html"
     },
     {
-      "src": "/",
-      "dest": "/public/landing.html"
+      "source": "/login",
+      "destination": "/login.html"
     },
     {
-      "src": "/login",
-      "dest": "/public/login.html"
+      "source": "/register", 
+      "destination": "/register.html"
     },
     {
-      "src": "/register",
-      "dest": "/public/register.html"
-    },
-    {
-      "src": "/dashboard",
-      "dest": "/public/dashboard.html"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/public/$1"
+      "source": "/dashboard",
+      "destination": "/dashboard.html"
     }
   ],
   "headers": [
@@ -51,7 +35,7 @@
       "source": "/js/(.*)",
       "headers": [
         {
-          "key": "Content-Type",
+          "key": "Content-Type", 
           "value": "application/javascript; charset=utf-8"
         }
       ]

@@ -1,0 +1,319 @@
+/* 
+🎨 LOGIN OPTIMIZADO - PLANIFICAPRO
+Estilos consolidados y optimizados para login
+Versión: 2.0 - Limpia y Moderna
+*/
+
+/* ================================
+   🌈 VARIABLES DE COLOR
+   ================================ */
+:root {
+    /* Gradientes de Login */
+    --gradient-primary: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+    --gradient-bg: linear-gradient(135deg, #1e3a8a 0%, #7c3aed 50%, #312e81 100%);
+    
+    /* Sombras */
+    --shadow-primary: 0 4px 15px rgba(59, 130, 246, 0.3);
+    --shadow-hover: 0 8px 25px rgba(59, 130, 246, 0.4);
+    --shadow-input-focus: 0 8px 25px rgba(59, 130, 246, 0.15);
+    
+    /* Colores de Estado */
+    --status-online: #10b981;
+    --status-offline: #ef4444;
+}
+
+/* ================================
+   🎭 ANIMACIONES PRINCIPALES
+   ================================ */
+.login-container {
+    animation: slideInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* ================================
+   🔘 BOTONES OPTIMIZADOS
+   ================================ */
+.btn-primary {
+    background: var(--gradient-primary);
+    box-shadow: var(--shadow-primary);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.btn-primary:hover::before {
+    left: 100%;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: var(--shadow-hover);
+}
+
+.btn-primary:active {
+    transform: translateY(0) scale(1);
+    box-shadow: var(--shadow-primary);
+}
+
+/* ================================
+   📱 FORMULARIOS MEJORADOS
+   ================================ */
+.form-input-enhanced {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 2px solid #e5e7eb;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(5px);
+}
+
+.form-input-enhanced:focus {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-input-focus);
+    border-color: #3b82f6;
+    background: rgba(255, 255, 255, 1);
+}
+
+.form-input-enhanced:hover {
+    border-color: #d1d5db;
+}
+
+/* ================================
+   🎯 INDICADORES DE ESTADO
+   ================================ */
+.status-indicator {
+    border-radius: 50%;
+    width: 8px;
+    height: 8px;
+    transition: all 0.3s ease;
+}
+
+.status-online {
+    background-color: var(--status-online);
+    animation: pulseGreen 2s infinite;
+}
+
+.status-offline {
+    background-color: var(--status-offline);
+    animation: pulseRed 2s infinite;
+}
+
+.status-checking {
+    background-color: #f59e0b;
+    animation: pulseYellow 2s infinite;
+}
+
+@keyframes pulseGreen {
+    0%, 100% { 
+        background-color: var(--status-online);
+        transform: scale(1);
+    }
+    50% { 
+        background-color: #34d399;
+        transform: scale(1.1);
+    }
+}
+
+@keyframes pulseRed {
+    0%, 100% { 
+        background-color: var(--status-offline);
+        transform: scale(1);
+    }
+    50% { 
+        background-color: #f87171;
+        transform: scale(1.1);
+    }
+}
+
+@keyframes pulseYellow {
+    0%, 100% { 
+        background-color: #f59e0b;
+        transform: scale(1);
+    }
+    50% { 
+        background-color: #fbbf24;
+        transform: scale(1.1);
+    }
+}
+
+/* ================================
+   🔄 LOADER PERSONALIZADO
+   ================================ */
+.custom-loader {
+    border: 3px solid #f3f4f6;
+    border-top: 3px solid #3b82f6;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ================================
+   🎨 EFECTOS VISUALES
+   ================================ */
+.glass-morphism {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.gradient-bg {
+    background: var(--gradient-bg);
+}
+
+.text-shadow {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.hover-lift {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-lift:hover {
+    transform: translateY(-2px);
+}
+
+/* ================================
+   🖼️ LOGO OPTIMIZADO
+   ================================ */
+.logo-container {
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.logo-container:hover {
+    transform: scale(1.05) rotate(1deg);
+}
+
+.logo-container::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    border-radius: inherit;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+}
+
+.logo-container:hover::after {
+    opacity: 1;
+}
+
+/* ================================
+   🔐 SECURITY INDICATORS
+   ================================ */
+.security-badge {
+    background: linear-gradient(135deg, #059669, #10b981);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ================================
+   📱 RESPONSIVE OPTIMIZADO
+   ================================ */
+@media (max-width: 640px) {
+    .login-container {
+        padding: 1rem;
+        animation: slideInUp 0.6s ease-out;
+    }
+    
+    .form-card {
+        padding: 1.5rem;
+        border-radius: 1rem;
+    }
+    
+    .logo-container img {
+        height: 2.5rem;
+    }
+    
+    .btn-primary {
+        padding: 0.875rem 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .glass-morphism {
+        margin: 0.5rem;
+        border-radius: 1rem;
+    }
+}
+
+/* ================================
+   ⚡ PERFORMANCE OPTIMIZATIONS
+   ================================ */
+.will-change-transform {
+    will-change: transform;
+}
+
+.gpu-accelerated {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+}
+
+/* Hardware acceleration for smooth animations */
+.btn-primary,
+.form-input-enhanced,
+.logo-container {
+    will-change: transform;
+    backface-visibility: hidden;
+}
+
+/* ================================
+   🌙 DARK MODE SUPPORT
+   ================================ */
+@media (prefers-color-scheme: dark) {
+    .glass-morphism {
+        background: rgba(31, 41, 55, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .form-input-enhanced {
+        background: rgba(31, 41, 55, 0.8);
+        border-color: #4b5563;
+        color: #f9fafb;
+    }
+    
+    .form-input-enhanced:focus {
+        background: rgba(31, 41, 55, 1);
+        border-color: #3b82f6;
+    }
+}

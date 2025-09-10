@@ -1,0 +1,62 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Prueba Manual PDF</title>
+</head>
+<body>
+    <h1>Script de Prueba Manual PDF</h1>
+    <pre>
+<!-- SCRIPT DE PRUEBA MANUAL PARA PDF -->
+<!-- Copia este código en la consola del navegador cuando tengas la página abierta -->
+
+console.log('🧪 INICIANDO PRUEBA MANUAL DE PDF...');
+
+// 1. Verificar que jsPDF esté disponible
+if (typeof window.jsPDF !== 'undefined') {
+    console.log('✅ jsPDF está disponible');
+    console.log('📦 Versión:', window.jsPDF.version);
+} else {
+    console.log('❌ jsPDF NO está disponible');
+    console.log('💡 Solución: Verificar que el CDN se haya cargado correctamente');
+}
+
+// 2. Verificar que el handler esté disponible
+if (typeof window.sugerenciasModuleHandler !== 'undefined') {
+    console.log('✅ Handler de sugerencias está disponible');
+    
+    // 3. Probar la función de exportar
+    if (typeof window.sugerenciasModuleHandler.exportarReporte === 'function') {
+        console.log('✅ Función exportarReporte está disponible');
+        console.log('🚀 Intentando generar PDF...');
+        
+        try {
+            window.sugerenciasModuleHandler.exportarReporte();
+            console.log('✅ Función ejecutada sin errores aparentes');
+        } catch (error) {
+            console.log('❌ Error al ejecutar exportarReporte:', error);
+        }
+    } else {
+        console.log('❌ Función exportarReporte NO está disponible');
+    }
+} else {
+    console.log('❌ Handler de sugerencias NO está disponible');
+    console.log('💡 Solución: Verificar que el módulo se haya cargado correctamente');
+}
+
+// 4. Prueba simple de jsPDF
+if (typeof window.jsPDF !== 'undefined') {
+    console.log('🧪 Probando jsPDF básico...');
+    try {
+        const { jsPDF } = window.jsPDF;
+        const doc = new jsPDF();
+        doc.text('Prueba PDF', 20, 20);
+        doc.save('prueba.pdf');
+        console.log('✅ Prueba básica de PDF exitosa');
+    } catch (error) {
+        console.log('❌ Error en prueba básica de PDF:', error);
+    }
+}
+</pre>
+</body>
+</html>

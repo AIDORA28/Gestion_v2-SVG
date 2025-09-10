@@ -9,9 +9,13 @@
 
 class IngresosModuleHandler {
     constructor() {
-        // 🎯 CONFIGURACIÓN SUPABASE (igual que dashboard)
-        this.supabaseUrl = 'https://lobyofpwqwqsszugdwnw.supabase.co';
-        this.supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxvYnlvZnB3cXdxc3N6dWdkd253Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczMTU4NDIsImV4cCI6MjA3Mjg5MTg0Mn0.QsZ2dIU1iPffRGtHUREQIhQ5--7_w4ANowG0rJ0AtcI';
+        // 🎯 CONFIGURACIÓN SUPABASE - Usando configuración centralizada
+        this.supabaseConfig = window.supabaseConfig || {
+            url: 'https://lobyofpwqwqsszugdwnw.supabase.co',
+            key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxvYnlvZnB3cXdxc3N6dWdkd253Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczMTU4NDIsImV4cCI6MjA3Mjg5MTg0Mn0.QsZ2dIU1iPffRGtHUREQIhQ5--7_w4ANowG0rJ0AtcI'
+        };
+        this.supabaseUrl = this.supabaseConfig.url;
+        this.supabaseKey = this.supabaseConfig.key;
         
         // 🔐 AUTENTICACIÓN (patrón dashboard)
         this.authToken = null;
@@ -22,6 +26,35 @@ class IngresosModuleHandler {
         this.ingresosFiltered = [];
         this.currentEditId = null;
         this.isInitialized = false; // Prevenir múltiples inicializaciones
+        
+        // 🗂️ CONFIGURACIÓN CENTRALIZADA DEL MÓDULO
+        this.moduleConfig = {
+            categorias: [
+                { value: 'Salario', text: '💼 Salario' },
+                { value: 'Freelance', text: '💻 Freelance' },
+                { value: 'Negocio', text: '🏪 Negocio' },
+                { value: 'Inversiones', text: '📈 Inversiones' },
+                { value: 'Ventas', text: '🛒 Ventas' },
+                { value: 'Comisiones', text: '🤝 Comisiones' },
+                { value: 'Bonificaciones', text: '🎁 Bonificaciones' },
+                { value: 'Alquiler', text: '🏠 Alquiler' },
+                { value: 'Intereses', text: '💰 Intereses' },
+                { value: 'Dividendos', text: '📊 Dividendos' },
+                { value: 'Pensión', text: '👴 Pensión' },
+                { value: 'Subsidios', text: '🏛️ Subsidios' },
+                { value: 'Regalos', text: '🎉 Regalos' },
+                { value: 'Préstamos', text: '🏦 Préstamos' },
+                { value: 'Otros', text: '📦 Otros' }
+            ],
+            formatos: [
+                { value: 'efectivo', text: '💵 Efectivo' },
+                { value: 'transferencia', text: '🏦 Transferencia' },
+                { value: 'debito', text: '💳 Tarjeta de débito' },
+                { value: 'credito', text: '💎 Tarjeta de crédito' },
+                { value: 'cheque', text: '📋 Cheque' },
+                { value: 'otro', text: '📦 Otro' }
+            ]
+        };
         
         // 🔍 FILTROS
         this.filters = {
@@ -58,7 +91,10 @@ class IngresosModuleHandler {
             // 🔐 PASO 1: Verificar autenticación automática
             await this.checkAuth();
             
-            // 📊 PASO 2: Cargar datos reales
+            // 🎨 PASO 2: Inicializar UI optimizada
+            this.initializeOptimizedUI();
+            
+            // 📊 PASO 3: Cargar datos reales
             await this.loadIngresos();
             
             // 🎨 PASO 3: Configurar interfaz
@@ -304,34 +340,93 @@ class IngresosModuleHandler {
             noIngresosDiv.classList.add('hidden');
         }
 
-        // Generar filas de tabla
-        tbody.innerHTML = datosParaMostrar.map(ingreso => `
-            <tr class="hover:bg-gray-50">
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    ${this.formatDate(ingreso.fecha)}
+        // Generar filas de tabla con diseño premium
+        tbody.innerHTML = datosParaMostrar.map((ingreso, index) => `
+            <tr class="group hover:bg-gradient-to-r hover:from-green-50 hover:to-blue-50 transition-all duration-300 animate-fadeIn" style="animation-delay: ${index * 50}ms">
+                <!-- 📅 Fecha con icono premium -->
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center space-x-3">
+                        <div class="flex-shrink-0 w-8 h-8 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-lg flex items-center justify-center group-hover:from-blue-200 group-hover:to-indigo-200 transition-colors duration-200">
+                            <i class="fas fa-calendar-day text-blue-600 text-xs"></i>
+                        </div>
+                        <div class="text-sm font-medium text-gray-900">
+                            ${this.formatDate(ingreso.fecha)}
+                        </div>
+                    </div>
                 </td>
-                <td class="px-6 py-4 text-sm text-gray-900">
-                    <div class="font-medium">${ingreso.descripcion}</div>
-                    ${ingreso.notas ? `<div class="text-gray-500 text-xs mt-1">${ingreso.notas}</div>` : ''}
+                
+                <!-- 📝 Descripción con diseño mejorado -->
+                <td class="px-6 py-4">
+                    <div class="flex items-start space-x-3">
+                        <div class="flex-shrink-0 w-8 h-8 bg-gradient-to-r from-green-100 to-emerald-100 rounded-lg flex items-center justify-center group-hover:from-green-200 group-hover:to-emerald-200 transition-colors duration-200">
+                            <i class="fas fa-file-invoice-dollar text-green-600 text-xs"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="text-sm font-semibold text-gray-900 group-hover:text-green-700 transition-colors duration-200">
+                                ${ingreso.descripcion}
+                            </div>
+                            ${ingreso.notas ? `
+                                <div class="mt-1 flex items-center space-x-1">
+                                    <i class="fas fa-sticky-note text-gray-400 text-xs"></i>
+                                    <span class="text-xs text-gray-500 italic">${ingreso.notas}</span>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm">
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                        ${ingreso.categoria || 'otros'}
-                    </span>
-                    ${ingreso.es_recurrente ? '<div class="text-xs text-blue-600 mt-1">🔄 Recurrente</div>' : ''}
+                
+                <!-- 🏷️ Categoría con badge premium -->
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex flex-col space-y-2">
+                        <div class="inline-flex items-center space-x-2">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-green-100 to-green-200 text-green-800 border border-green-300 group-hover:from-green-200 group-hover:to-green-300 transition-all duration-200 shadow-sm">
+                                <i class="fas fa-tag mr-1 text-green-600"></i>
+                                ${this.getCategoryIcon(ingreso.categoria)} ${ingreso.categoria || 'Otros'}
+                            </span>
+                        </div>
+                        ${ingreso.es_recurrente ? `
+                            <div class="inline-flex items-center space-x-1 text-xs">
+                                <div class="w-5 h-5 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-sync-alt text-blue-600 text-xs animate-spin-slow"></i>
+                                </div>
+                                <span class="text-blue-600 font-medium">Recurrente</span>
+                                ${ingreso.frecuencia_dias ? `
+                                    <span class="text-gray-500">cada ${ingreso.frecuencia_dias}d</span>
+                                ` : ''}
+                            </div>
+                        ` : ''}
+                    </div>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    S/ ${this.formatMoney(ingreso.monto)}
+                
+                <!-- 💰 Monto con efectos premium -->
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center space-x-2">
+                        <div class="flex-shrink-0 w-8 h-8 bg-gradient-to-r from-yellow-100 to-amber-100 rounded-lg flex items-center justify-center group-hover:from-yellow-200 group-hover:to-amber-200 transition-colors duration-200">
+                            <i class="fas fa-coins text-yellow-600 text-xs"></i>
+                        </div>
+                        <div class="text-sm font-bold text-gray-900 group-hover:text-green-700 transition-colors duration-200">
+                            <span class="text-lg">S/</span> ${this.formatMoney(ingreso.monto)}
+                        </div>
+                    </div>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button data-action="edit" data-id="${ingreso.id}" 
-                            class="btn-edit text-blue-600 hover:text-blue-900 mr-3">
-                        Editar
-                    </button>
-                    <button data-action="delete" data-id="${ingreso.id}" 
-                            class="btn-delete text-red-600 hover:text-red-900">
-                        Eliminar
-                    </button>
+                
+                <!-- ⚡ Acciones con botones premium -->
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center justify-center space-x-2">
+                        <!-- Botón Editar -->
+                        <button data-action="edit" data-id="${ingreso.id}" 
+                                class="btn-edit group/btn inline-flex items-center px-3 py-2 text-xs font-medium rounded-lg text-blue-700 bg-blue-50 border border-blue-200 hover:bg-blue-100 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 transition-all duration-200 transform hover:scale-105 shadow-sm hover:shadow-md">
+                            <i class="fas fa-edit mr-1 text-blue-600 group-hover/btn:animate-pulse"></i>
+                            Editar
+                        </button>
+                        
+                        <!-- Botón Eliminar -->
+                        <button data-action="delete" data-id="${ingreso.id}" 
+                                class="btn-delete group/btn inline-flex items-center px-3 py-2 text-xs font-medium rounded-lg text-red-700 bg-red-50 border border-red-200 hover:bg-red-100 hover:border-red-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 transition-all duration-200 transform hover:scale-105 shadow-sm hover:shadow-md">
+                            <i class="fas fa-trash-alt mr-1 text-red-600 group-hover/btn:animate-bounce"></i>
+                            Eliminar
+                        </button>
+                    </div>
                 </td>
             </tr>
         `).join('');
@@ -365,7 +460,7 @@ class IngresosModuleHandler {
                 <div class="p-5">
                     <div class="flex items-center">
                         <div class="flex-shrink-0">
-                            <i data-lucide="dollar-sign" class="h-6 w-6 text-green-600"></i>
+                            <i data-lucide="coins" class="h-6 w-6 text-green-600"></i>
                         </div>
                         <div class="ml-5 w-0 flex-1">
                             <dl>
@@ -547,13 +642,16 @@ class IngresosModuleHandler {
     }
 
     /**
-     * 🎨 ABRIR MODAL (simplificado)
+     * 🎨 ABRIR MODAL (optimizado con configuración dinámica)
      */
     openIngresoModal() {
         const modal = document.getElementById('ingreso-modal');
         if (!modal) return;
         
         modal.classList.remove('hidden');
+        
+        // Poblar selects dinámicamente
+        this.populateFormSelects();
         
         // Configurar fecha actual si está vacía
         const fechaInput = document.getElementById('fecha');
@@ -757,7 +855,29 @@ class IngresosModuleHandler {
         });
     }
 
-
+    /**
+     * 🏷️ OBTENER ICONO DE CATEGORÍA (para tabla premium)
+     */
+    getCategoryIcon(categoria) {
+        const iconMap = {
+            'Salario': '💼',
+            'Freelance': '💻',
+            'Negocio': '🏪',
+            'Inversiones': '📈',
+            'Ventas': '🛒',
+            'Comisiones': '🤝',
+            'Bonificaciones': '🎁',
+            'Alquiler': '🏠',
+            'Intereses': '💰',
+            'Dividendos': '📊',
+            'Pensión': '👴',
+            'Subsidios': '🏛️',
+            'Regalos': '🎉',
+            'Préstamos': '🏦',
+            'Otros': '📦'
+        };
+        return iconMap[categoria] || '📦';
+    }
 
     /**
      * 🔍 CONFIGURAR FILTROS
@@ -775,43 +895,58 @@ class IngresosModuleHandler {
     }
     
     /**
-     * 📋 LLENAR CATEGORÍAS (COMPLETAS CON ICONOS)
+     * 📋 LLENAR CATEGORÍAS (OPTIMIZADO CON CONFIG CENTRALIZADA)
      */
     populateCategories() {
         const categoriaSelect = document.getElementById('filter-categoria');
         if (!categoriaSelect) return;
         
-        // 🎯 CATEGORÍAS COMPLETAS (igual que el formulario)
-        const todasLasCategorias = [
-            { value: 'Salario', text: '💼 Salario' },
-            { value: 'Freelance', text: '💻 Freelance' },
-            { value: 'Negocio', text: '🏪 Negocio' },
-            { value: 'Inversiones', text: '📈 Inversiones' },
-            { value: 'Ventas', text: '🛒 Ventas' },
-            { value: 'Comisiones', text: '🤝 Comisiones' },
-            { value: 'Bonificaciones', text: '🎁 Bonificaciones' },
-            { value: 'Alquiler', text: '🏠 Alquiler' },
-            { value: 'Intereses', text: '💰 Intereses' },
-            { value: 'Dividendos', text: '📊 Dividendos' },
-            { value: 'Pensión', text: '👴 Pensión' },
-            { value: 'Subsidios', text: '🏛️ Subsidios' },
-            { value: 'Regalos', text: '🎉 Regalos' },
-            { value: 'Préstamos', text: '🏦 Préstamos' },
-            { value: 'Otros', text: '📦 Otros' }
-        ];
-        
         // Limpiar y agregar opción "Todas"
         categoriaSelect.innerHTML = '<option value="">Todas las categorías</option>';
         
-        // Agregar todas las categorías disponibles
-        todasLasCategorias.forEach(categoria => {
+        // Usar configuración centralizada
+        this.moduleConfig.categorias.forEach(categoria => {
             const option = document.createElement('option');
             option.value = categoria.value;
             option.textContent = categoria.text;
             categoriaSelect.appendChild(option);
         });
         
-        console.log(`✅ Filtro de categorías poblado con ${todasLasCategorias.length} opciones`);
+        console.log(`✅ Filtro de categorías poblado con ${this.moduleConfig.categorias.length} opciones`);
+    }
+
+    /**
+     * 🎨 POBLAR SELECTS DE FORMULARIOS (DINÁMICO)
+     */
+    populateFormSelects() {
+        // Poblar categorías en formulario
+        const categoriaSelect = document.getElementById('categoria');
+        if (categoriaSelect) {
+            // Solo poblar si está vacío (evitar duplicados)
+            if (categoriaSelect.children.length <= 1) {
+                this.moduleConfig.categorias.forEach(categoria => {
+                    const option = document.createElement('option');
+                    option.value = categoria.value;
+                    option.textContent = categoria.text;
+                    categoriaSelect.appendChild(option);
+                });
+                console.log(`✅ Formulario de categorías poblado con ${this.moduleConfig.categorias.length} opciones`);
+            }
+        }
+    }
+
+    /**
+     * 🚀 INICIALIZAR UI OPTIMIZADA (CENTRALIZADA)
+     */
+    initializeOptimizedUI() {
+        try {
+            // Poblar filtros dinámicamente
+            this.populateCategories();
+            
+            console.log('✅ UI optimizada inicializada correctamente');
+        } catch (error) {
+            console.error('❌ Error al inicializar UI optimizada:', error);
+        }
     }
     
     /**

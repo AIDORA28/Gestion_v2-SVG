@@ -1,0 +1,123 @@
+# ===================================================================
+# 🔄 GITHUB ACTIONS - PROCESAMIENTO AUTOMÁTICO DE RECURRENCIAS
+# ===================================================================
+# Descripción: Se ejecuta automáticamente todos los días a las 6 AM
+# Frecuencia: Diario (0 6 * * *)
+# Funcionalidad: Llama a la función de Supabase para procesar recurrencias
+# ===================================================================
+
+name: 🔄 Procesar Recurrencias Automáticas
+
+# Configurar cuándo se ejecuta
+on:
+  # Programación automática: todos los días a las 6:00 AM UTC
+  schedule:
+    - cron: '0 6 * * *'
+  
+  # También permitir ejecución manual desde GitHub
+  workflow_dispatch:
+    inputs:
+      force_run:
+        description: 'Forzar ejecución (true/false)'
+        required: false
+        default: 'false'
+
+# Configuración de permisos
+permissions:
+  contents: read
+
+jobs:
+  procesar-recurrencias:
+    name: 📊 Procesar Ingresos y Gastos Recurrentes
+    runs-on: ubuntu-latest
+    
+    steps:
+      # Paso 1: Mostrar información de ejecución
+      - name: 📋 Información de ejecución
+        run: |
+          echo "🕐 Fecha y hora de ejecución: $(date)"
+          echo "🔄 Iniciando procesamiento de recurrencias..."
+          echo "🌍 Timezone: UTC"
+          echo "📅 Cron schedule: 6:00 AM UTC diario"
+
+      # Paso 2: Llamar directamente a Supabase
+      - name: 🎯 Ejecutar función de recurrencias en Supabase
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: |
+          echo "🔗 Conectando con Supabase..."
+          
+          # Llamar directamente a la función RPC de Supabase
+          response=$(curl -s -w "\n%{http_code}" \
+            -X POST "$SUPABASE_URL/rest/v1/rpc/procesar_todas_recurrencias" \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer $SUPABASE_SERVICE_KEY" \
+            -H "apikey: $SUPABASE_SERVICE_KEY" \
+            -d '{}')
+          
+          # Separar respuesta y código HTTP
+          http_code=$(echo "$response" | tail -n1)
+          response_body=$(echo "$response" | head -n -1)
+          
+          echo "📊 Código de respuesta: $http_code"
+          echo "📄 Respuesta completa: $response_body"
+          
+          # Verificar si fue exitoso
+          if [ "$http_code" -eq 200 ]; then
+            echo "✅ Recurrencias procesadas exitosamente"
+            
+            # Extraer información del JSON (si está disponible)
+            if command -v jq &> /dev/null; then
+              procesados=$(echo "$response_body" | jq -r '.total_procesados // "N/A"')
+              errores=$(echo "$response_body" | jq -r '.total_errores // "N/A"')
+              echo "📈 Transacciones procesadas: $procesados"
+              echo "❌ Errores encontrados: $errores"
+            fi
+          else
+            echo "⚠️ Error en el procesamiento (HTTP $http_code)"
+            echo "🔍 Respuesta del servidor: $response_body"
+            exit 1
+          fi
+
+      # Paso 3: Notificación de finalización
+      - name: 🎉 Finalización
+        if: always()
+        run: |
+          echo "🏁 Procesamiento de recurrencias completado"
+          echo "⏰ Próxima ejecución programada: Mañana a las 6:00 AM UTC"
+          echo "🔧 Para ejecutar manualmente: GitHub → Actions → 'Procesar Recurrencias' → 'Run workflow'"
+
+      # Paso 4: Crear summary (opcional)
+      - name: 📊 Crear resumen
+        if: always()
+        run: |
+          echo "## 🔄 Resumen de Procesamiento de Recurrencias" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Fecha:** $(date)" >> $GITHUB_STEP_SUMMARY
+          echo "- **Estado:** ✅ Completado" >> $GITHUB_STEP_SUMMARY
+          echo "- **Próxima ejecución:** Mañana a las 6:00 AM UTC" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 🔧 Configuración:" >> $GITHUB_STEP_SUMMARY
+          echo "- Función SQL: \`procesar_todas_recurrencias()\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Base de datos: Supabase" >> $GITHUB_STEP_SUMMARY
+          echo "- Frecuencia: Diaria (6:00 AM UTC)" >> $GITHUB_STEP_SUMMARY
+
+# ===================================================================
+# 📝 NOTAS IMPORTANTES:
+# ===================================================================
+# 1. Configurar secretos en GitHub:
+#    - SUPABASE_URL: https://tu-proyecto.supabase.co
+#    - SUPABASE_SERVICE_KEY: tu-service-role-key
+#
+# 2. Horarios:
+#    - 6:00 AM UTC = 1:00 AM Perú (horario de verano)
+#    - 6:00 AM UTC = 2:00 AM Perú (horario estándar)
+#
+# 3. Para cambiar horario, modificar cron expression:
+#    - '0 11 * * *' = 6:00 AM Perú
+#    - '0 6 * * *'  = 1:00 AM Perú
+#
+# 4. Ejecución manual:
+#    - GitHub → Actions → "Procesar Recurrencias" → "Run workflow"
+# ===================================================================

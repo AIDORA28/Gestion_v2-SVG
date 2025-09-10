@@ -1,105 +1,283 @@
-<!-- Template del Módulo de Gastos -->
-<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-    <!-- Header -->
-    <div class="mb-8">
-        <div class="md:flex md:items-center md:justify-between">
+<!-- ✨ MÓDULO DE GASTOS OPTIMIZADO CON CDN -->
+<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" data-aos="fade-up" data-aos-duration="600">
+    
+    <!-- 💸 Header Premium con animaciones -->
+    <div class="mb-8 relative">
+        <!-- Fondo decorativo con gradiente -->
+        <div class="absolute inset-0 bg-gradient-to-r from-red-50 to-pink-50 rounded-2xl transform -skew-y-1 shadow-lg"></div>
+        
+        <!-- Contenido principal -->
+        <div class="relative p-6 md:flex md:items-center md:justify-between">
             <div class="flex-1 min-w-0">
-                <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
-                    💸 Gestión de Gastos
-                </h2>
-                <p class="mt-1 text-sm text-gray-500">
-                    Administra y controla todos tus gastos de manera eficiente
-                </p>
+                <div class="flex items-center space-x-3">
+                    <!-- Icono animado con FontAwesome CDN -->
+                    <div class="flex-shrink-0">
+                        <div class="w-12 h-12 bg-gradient-to-r from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg">
+                            <i class="fas fa-receipt text-white text-xl animate-pulse"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl">
+                            💸 Gestión de Gastos
+                        </h2>
+                        <p class="mt-1 text-sm text-gray-600 flex items-center">
+                            <i class="fas fa-chart-line-down mr-2 text-red-500"></i>
+                            Administra y controla todos tus gastos de manera eficiente
+                        </p>
+                    </div>
+                </div>
             </div>
-            <div class="mt-4 flex md:mt-0 md:ml-4">
+            
+            <!-- Botón de acción mejorado -->
+            <div class="mt-6 md:mt-0 md:ml-6">
                 <button onclick="window.gastosModuleHandler && window.gastosModuleHandler.openGastoModal()" 
-                        class="ml-3 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                    <i data-lucide="plus" class="mr-2 h-4 w-4"></i>
+                        class="group inline-flex items-center px-6 py-3 border border-transparent rounded-xl shadow-lg text-sm font-semibold text-white bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 focus:outline-none focus:ring-4 focus:ring-red-500/30 transform hover:scale-105 transition-all duration-200">
+                    <i class="fas fa-plus mr-2 h-4 w-4 group-hover:rotate-90 transition-transform duration-200"></i>
                     Agregar Gasto
+                    <div class="absolute inset-0 rounded-xl bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Stats Grid -->
-    <div id="gastos-stats" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <!-- Stats se generan dinámicamente -->
-    </div>
-
-    <!-- Filtros -->
-    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-        <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-medium text-gray-900">Filtros</h3>
-            <div class="flex items-center space-x-4">
-                <button id="export-gastos" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors text-sm font-medium">
-                    <i data-lucide="download" class="inline h-4 w-4 mr-2"></i>
-                    Exportar
-                </button>
-                <button id="clear-filters" class="text-gray-600 hover:text-gray-900 text-sm font-medium">
-                    Limpiar filtros
-                </button>
+    <!-- 📉 Estadísticas Premium con animaciones y CDN icons -->
+    <div id="gastos-stats" class="mb-8 grid grid-cols-1 md:grid-cols-3 gap-6" data-aos="fade-up" data-aos-delay="200">
+        <!-- Loading skeleton mientras cargan los datos -->
+        <div class="stat-loading hidden">
+            <div class="animate-pulse">
+                <div class="bg-gradient-to-br from-red-100 to-pink-100 rounded-2xl p-6 shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <div class="space-y-2 flex-1">
+                            <div class="h-4 bg-gray-300 rounded w-3/4"></div>
+                            <div class="h-8 bg-gray-400 rounded w-1/2"></div>
+                        </div>
+                        <div class="w-12 h-12 bg-gray-300 rounded-xl"></div>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-                <label for="filter-categoria-gastos" class="block text-sm font-medium text-gray-700 mb-2">Categoría</label>
-                <select id="filter-categoria-gastos" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500">
-                    <option value="">🔍 Todas las categorías</option>
-                    <!-- Categorías se cargan dinámicamente -->
-                </select>
+        <!-- Las estadísticas reales se cargarán aquí con iconos FontAwesome -->
+    </div>
+
+    <!-- 🎛️ Panel de Filtros Premium -->
+    <div class="bg-white shadow-xl rounded-2xl mb-8 overflow-hidden" data-aos="fade-up" data-aos-delay="400">
+        <!-- Header del panel -->
+        <div class="bg-gradient-to-r from-red-50 to-pink-50 px-6 py-4 border-b border-gray-100">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-red-500 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-filter text-white text-sm"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900">Filtros Inteligentes</h3>
+                <div class="flex-1"></div>
+                <!-- Indicador de filtros activos -->
+                <span id="active-filters-badge" class="hidden bg-red-500 text-white text-xs px-2 py-1 rounded-full">
+                    <i class="fas fa-check-circle mr-1"></i>
+                    Filtros activos
+                </span>
             </div>
-            <div>
-                <label for="filter-año-gastos" class="block text-sm font-medium text-gray-700 mb-2">Año</label>
-                <select id="filter-año-gastos" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500">
-                    <option value="">📅 Todos los años</option>
-                    <!-- Años se cargan dinámicamente -->
-                </select>
-            </div>
-            <div>
-                <label for="filter-mes-gastos" class="block text-sm font-medium text-gray-700 mb-2">Mes</label>
-                <select id="filter-mes-gastos" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500">
-                    <option value="">📅 Todos los meses</option>
-                    <option value="01">Enero</option>
-                    <option value="02">Febrero</option>
-                    <option value="03">Marzo</option>
-                    <option value="04">Abril</option>
-                    <option value="05">Mayo</option>
-                    <option value="06">Junio</option>
-                    <option value="07">Julio</option>
-                    <option value="08">Agosto</option>
-                    <option value="09">Septiembre</option>
-                    <option value="10">Octubre</option>
-                    <option value="11">Noviembre</option>
-                    <option value="12">Diciembre</option>
-                </select>
+        </div>
+        
+        <!-- Contenido de filtros -->
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <!-- Categoría con icono premium -->
+                <div class="space-y-2">
+                    <label for="filter-categoria-gastos" class="flex items-center text-sm font-medium text-gray-700">
+                        <i class="fas fa-tags text-red-500 mr-2"></i>
+                        Categoría
+                    </label>
+                    <div class="relative">
+                        <select id="filter-categoria-gastos" onchange="window.gastosModuleHandler && window.gastosModuleHandler.applyFilters()" 
+                                class="w-full pl-4 pr-10 py-3 text-sm border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white appearance-none">
+                            <option value="">🏷️ Todas las categorías</option>
+                        </select>
+                        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                            <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Año con icono premium -->
+                <div class="space-y-2">
+                    <label for="filter-año-gastos" class="flex items-center text-sm font-medium text-gray-700">
+                        <i class="fas fa-calendar-alt text-orange-500 mr-2"></i>
+                        Año
+                    </label>
+                    <div class="relative">
+                        <select id="filter-año-gastos" onchange="window.gastosModuleHandler && window.gastosModuleHandler.applyFilters()" 
+                                class="w-full pl-4 pr-10 py-3 text-sm border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white appearance-none">
+                            <option value="">📅 Todos los años</option>
+                        </select>
+                        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                            <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Mes con iconos premium -->
+                <div class="space-y-2">
+                    <label for="filter-mes-gastos" class="flex items-center text-sm font-medium text-gray-700">
+                        <i class="fas fa-calendar-week text-purple-500 mr-2"></i>
+                        Mes
+                    </label>
+                    <div class="relative">
+                        <select id="filter-mes-gastos" onchange="window.gastosModuleHandler && window.gastosModuleHandler.applyFilters()" 
+                                class="w-full pl-4 pr-10 py-3 text-sm border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white appearance-none">
+                            <option value="">�️ Todos los meses</option>
+                            <option value="01">🌟 Enero</option>
+                            <option value="02">💝 Febrero</option>
+                            <option value="03">🌸 Marzo</option>
+                            <option value="04">🌧️ Abril</option>
+                            <option value="05">🌺 Mayo</option>
+                            <option value="06">☀️ Junio</option>
+                            <option value="07">🏖️ Julio</option>
+                            <option value="08">🏄 Agosto</option>
+                            <option value="09">🍂 Septiembre</option>
+                            <option value="10">🎃 Octubre</option>
+                            <option value="11">🦃 Noviembre</option>
+                            <option value="12">🎄 Diciembre</option>
+                        </select>
+                        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                            <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Botones de acción premium -->
+                <div class="flex flex-col space-y-3">
+                    <label class="text-sm font-medium text-gray-700 mb-1">
+                        <i class="fas fa-tools text-orange-500 mr-2"></i>
+                        Acciones
+                    </label>
+                    
+                    <!-- Botón limpiar con animación -->
+                    <button id="clear-filters" onclick="window.gastosModuleHandler && window.gastosModuleHandler.clearFilters()" 
+                            class="group w-full inline-flex items-center justify-center px-4 py-3 border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-600 bg-white hover:bg-gray-50 hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all duration-200">
+                        <i class="fas fa-broom mr-2 text-gray-400 group-hover:text-gray-600 group-hover:animate-bounce"></i>
+                        Limpiar Filtros
+                    </button>
+                    
+                    <!-- Botón exportar con animación -->
+                    <button id="export-gastos" onclick="window.gastosModuleHandler && window.gastosModuleHandler.exportFiltered()" 
+                            class="group w-full inline-flex items-center justify-center px-4 py-3 border border-transparent rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
+                        <i class="fas fa-download mr-2 group-hover:animate-bounce"></i>
+                        Exportar CSV
+                        <div class="absolute inset-0 rounded-xl bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Tabla de Gastos -->
-    <div class="bg-white rounded-lg shadow-md overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-200">
+    <!-- 📊 Tabla Premium de Gastos -->
+    <div class="bg-white shadow-2xl rounded-2xl overflow-hidden border border-gray-100" data-aos="fade-up" data-aos-delay="600">
+        <!-- Header de la tabla con gradiente -->
+        <div class="bg-gradient-to-r from-red-50 via-pink-50 to-red-50 px-6 py-5 border-b border-red-100">
             <div class="flex justify-between items-center">
-                <h3 class="text-lg font-medium text-gray-900">Lista de Gastos</h3>
-                <span id="gastos-count" class="text-sm text-gray-500">0 gastos</span>
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-r from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-list text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-900">Mis Gastos</h3>
+                        <p class="text-sm text-gray-600">Historial completo de gastos registrados</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <!-- Contador con animación -->
+                    <div class="bg-white/70 backdrop-blur-sm rounded-xl px-4 py-2 shadow-md">
+                        <span id="gastos-count" class="text-sm font-semibold text-gray-700 flex items-center">
+                            <i class="fas fa-calculator mr-2 text-red-500"></i>
+                            <span class="animate-pulse">Cargando...</span>
+                        </span>
+                    </div>
+                    <!-- Indicador de estado -->
+                    <div class="hidden" id="table-status">
+                        <div class="bg-green-100 text-green-800 text-xs px-3 py-1 rounded-full font-medium">
+                            <i class="fas fa-check-circle mr-1"></i>
+                            Actualizado
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+        
+        <!-- Contenedor de tabla con scroll personalizado -->
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
+            <table class="min-w-full divide-y divide-gray-100">
+                <!-- Header premium de tabla -->
+                <thead class="bg-gradient-to-r from-gray-50 to-red-50">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Descripción</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Categoría</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Monto (S/)</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Método Pago</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                        <th class="group px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
+                            <div class="flex items-center space-x-2">
+                                <i class="fas fa-calendar-alt text-red-500"></i>
+                                <span class="group-hover:text-red-600 transition-colors">Fecha</span>
+                            </div>
+                        </th>
+                        <th class="group px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
+                            <div class="flex items-center space-x-2">
+                                <i class="fas fa-file-alt text-blue-500"></i>
+                                <span class="group-hover:text-blue-600 transition-colors">Descripción</span>
+                            </div>
+                        </th>
+                        <th class="group px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
+                            <div class="flex items-center space-x-2">
+                                <i class="fas fa-tags text-purple-500"></i>
+                                <span class="group-hover:text-purple-600 transition-colors">Categoría</span>
+                            </div>
+                        </th>
+                        <th class="group px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
+                            <div class="flex items-center space-x-2">
+                                <i class="fas fa-coins text-yellow-500"></i>
+                                <span class="group-hover:text-yellow-600 transition-colors">Monto (S/)</span>
+                            </div>
+                        </th>
+                        <th class="group px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
+                            <div class="flex items-center space-x-2">
+                                <i class="fas fa-credit-card text-green-500"></i>
+                                <span class="group-hover:text-green-600 transition-colors">Método</span>
+                            </div>
+                        </th>
+                        <th class="group px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
+                            <div class="flex items-center space-x-2">
+                                <i class="fas fa-cogs text-gray-500"></i>
+                                <span class="group-hover:text-gray-600 transition-colors">Acciones</span>
+                            </div>
+                        </th>
                     </tr>
                 </thead>
-                <tbody id="gastos-table-body" class="bg-white divide-y divide-gray-200">
-                    <!-- Filas se generan dinámicamente -->
+                
+                <!-- Body de tabla premium -->
+                <tbody id="gastos-table-body" class="bg-white divide-y divide-gray-50">
+                    <!-- Estado de carga inicial -->
+                    <tr id="loading-row" class="animate-pulse">
+                        <td colspan="6" class="px-6 py-8 text-center">
+                            <div class="flex flex-col items-center justify-center space-y-3">
+                                <div class="w-12 h-12 bg-gradient-to-r from-red-400 to-pink-400 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-spinner animate-spin text-white text-xl"></i>
+                                </div>
+                                <div class="text-gray-500 font-medium">Cargando gastos...</div>
+                                <div class="text-sm text-gray-400">Conectando con base de datos</div>
+                            </div>
+                        </td>
+                    </tr>
+                    <!-- Las filas se generarán dinámicamente con efectos premium -->
                 </tbody>
             </table>
+        </div>
+        
+        <!-- Footer de la tabla con información adicional -->
+        <div class="bg-gray-50 px-6 py-3 border-t border-gray-100">
+            <div class="flex items-center justify-between text-sm text-gray-500">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-info-circle text-blue-400"></i>
+                    <span>Los gastos se ordenan por fecha más reciente</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                    <span>Datos sincronizados</span>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -200,13 +378,32 @@
                     </div>
                 </div>
 
-                <!-- Sección de Recurrencia (oculta por defecto) -->
-                <div id="recurrencia-section-gastos" class="hidden">
-                    <div>
-                        <label for="frecuencia-dias-gastos" class="block text-sm font-medium text-gray-700 mb-2">Repetir cada (días)</label>
-                        <input type="number" id="frecuencia-dias-gastos" name="frecuencia_dias" min="1" max="365"
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500"
-                               placeholder="30">
+                <!-- Sección de Recurrencia Premium (oculta por defecto) -->
+                <div id="recurrencia-section-gastos" class="md:col-span-2 hidden">
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                        <h4 class="text-sm font-medium text-red-900 mb-3">⏰ Configuración de Recurrencia</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="frecuencia-dias-gastos" class="block text-sm font-medium text-gray-700 mb-2">Frecuencia (días)</label>
+                                <input type="number" id="frecuencia-dias-gastos" name="frecuencia_dias" min="1" max="365"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500"
+                                       placeholder="30">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Ejemplos comunes</label>
+                                <div class="flex flex-wrap gap-2">
+                                    <button type="button" onclick="setFrecuencia(7)" class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded hover:bg-blue-200 transition-colors duration-200">
+                                        Semanal (7d)
+                                    </button>
+                                    <button type="button" onclick="setFrecuencia(15)" class="text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded hover:bg-orange-200 transition-colors duration-200">
+                                        Quincenal (15d)
+                                    </button>
+                                    <button type="button" onclick="setFrecuencia(30)" class="text-xs bg-red-100 text-red-800 px-2 py-1 rounded hover:bg-red-200 transition-colors duration-200">
+                                        Mensual (30d)
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -234,7 +431,178 @@
     </div>
 </div>
 
+<!-- 🎨 Estilos CSS Premium para Tabla de Gastos -->
+<style>
+    /* Animaciones personalizadas para tabla premium */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes slideInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes spin-slow {
+        from {
+            transform: rotate(0deg);
+        }
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    @keyframes moneyFloat {
+        0%, 100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-3px);
+        }
+    }
+
+    .animate-fadeIn {
+        animation: fadeIn 0.5s ease-out forwards;
+    }
+
+    .animate-slideInLeft {
+        animation: slideInLeft 0.6s ease-out forwards;
+    }
+
+    .animate-spin-slow {
+        animation: spin-slow 3s linear infinite;
+    }
+
+    .animate-money-float {
+        animation: moneyFloat 2s ease-in-out infinite;
+    }
+
+    /* Efectos hover premium para filas */
+    .group:hover .group-hover\:animate-pulse {
+        animation: pulse 1s ease-in-out infinite;
+    }
+
+    .group:hover .group-hover\:animate-bounce {
+        animation: bounce 0.5s ease-in-out;
+    }
+
+    /* Efectos premium para botones */
+    .group\/btn:hover {
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+    }
+
+    /* Efectos de gradiente animado para gastos */
+    .hover\:from-red-50:hover {
+        background: linear-gradient(to right, rgb(254 242 242), rgb(254 226 226));
+    }
+
+    .hover\:to-pink-50:hover {
+        background: linear-gradient(to right, rgb(254 242 242), rgb(253 242 248));
+    }
+
+    /* Optimización para rendimiento */
+    .group {
+        will-change: background-color, transform;
+    }
+
+    /* Efectos de escala suave */
+    .transform.hover\:scale-105:hover {
+        transform: scale(1.05);
+        transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Estilo personalizado para inputs de gastos */
+    .gasto-input:focus {
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+        border-color: #ef4444;
+    }
+
+    /* Efectos especiales para categorías de gastos */
+    .categoria-alimentacion { color: #f59e0b; }
+    .categoria-transporte { color: #3b82f6; }
+    .categoria-servicios { color: #10b981; }
+    .categoria-entretenimiento { color: #8b5cf6; }
+    .categoria-salud { color: #ef4444; }
+    .categoria-otros { color: #6b7280; }
+
+    /* Animación para monto negativo */
+    .monto-gasto {
+        color: #dc2626;
+        font-weight: 600;
+    }
+
+    .monto-gasto:hover {
+        animation: moneyFloat 0.5s ease-in-out;
+    }
+
+    /* Mejoras para filtros */
+    .filter-active {
+        background: linear-gradient(135deg, #fef2f2, #fee2e2);
+        border-color: #ef4444;
+        box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.1);
+    }
+</style>
+
 <script>
+    // 🔄 Funciones específicas del template de gastos
+    function setFrecuencia(dias) {
+        const input = document.getElementById('frecuencia-dias-gastos');
+        if (input) {
+            input.value = dias;
+            
+            // Activar checkbox automáticamente
+            const checkbox = document.getElementById('es-recurrente-gastos');
+            const section = document.getElementById('recurrencia-section-gastos');
+            
+            if (checkbox && section) {
+                checkbox.checked = true;
+                section.classList.remove('hidden');
+                
+                // Efecto visual para confirmar la selección
+                input.style.background = 'linear-gradient(135deg, #fef2f2, #fee2e2)';
+                setTimeout(() => {
+                    input.style.background = '';
+                }, 1000);
+            }
+        }
+    }
+
+    // 🎯 Funciones premium de interacción
+    function highlightCategory(categoria) {
+        const select = document.getElementById('categoria-gastos');
+        if (select) {
+            select.value = categoria;
+            select.style.background = 'linear-gradient(135deg, #fef2f2, #fee2e2)';
+            setTimeout(() => {
+                select.style.background = '';
+            }, 1000);
+        }
+    }
+
+    function setQuickAmount(amount) {
+        const input = document.getElementById('monto-gastos');
+        if (input) {
+            input.value = amount;
+            input.style.background = 'linear-gradient(135deg, #fef2f2, #fee2e2)';
+            setTimeout(() => {
+                input.style.background = '';
+            }, 1000);
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         // Configurar fecha por defecto
         const fechaInput = document.getElementById('fecha-gastos');

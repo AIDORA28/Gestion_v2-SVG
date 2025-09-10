@@ -1,0 +1,168 @@
+<!-- ===================================================================
+ 🔄 WIDGET DE RECURRENCIAS PARA DASHBOARD
+===================================================================-->
+
+<div class="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-2xl shadow-lg p-6 border border-purple-100" data-aos="fade-up">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-xl flex items-center justify-center">
+                <i class="fas fa-sync-alt text-white text-lg"></i>
+            </div>
+            <div>
+                <h3 class="text-lg font-semibold text-gray-900">🔄 Recurrencias</h3>
+                <p class="text-sm text-gray-600">Gestión automática</p>
+            </div>
+        </div>
+        
+        <!-- Estado -->
+        <div id="recurrencias-status" class="hidden bg-green-100 text-green-800 text-xs px-3 py-1 rounded-full font-medium">
+            <i class="fas fa-check-circle mr-1"></i>
+            Procesadas
+        </div>
+    </div>
+    
+    <!-- Estadísticas -->
+    <div id="recurrencias-stats" class="grid grid-cols-3 gap-4 mb-4">
+        <div class="text-center">
+            <div id="pendientes-count" class="text-2xl font-bold text-orange-600">-</div>
+            <div class="text-xs text-gray-500">Pendientes</div>
+        </div>
+        <div class="text-center">
+            <div id="programadas-count" class="text-2xl font-bold text-blue-600">-</div>
+            <div class="text-xs text-gray-500">Programadas</div>
+        </div>
+        <div class="text-center">
+            <div id="procesadas-count" class="text-2xl font-bold text-green-600">0</div>
+            <div class="text-xs text-gray-500">Procesadas hoy</div>
+        </div>
+    </div>
+    
+    <!-- Acciones -->
+    <div class="flex space-x-3">
+        <!-- Botón Procesar -->
+        <button id="btn-procesar-recurrencias" 
+                onclick="procesarRecurrenciasManual()" 
+                class="flex-1 group bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white px-4 py-2 rounded-xl font-medium text-sm transition-all duration-200 transform hover:scale-105 shadow-lg">
+            <i class="fas fa-play mr-2 group-hover:animate-pulse"></i>
+            Procesar Ahora
+        </button>
+        
+        <!-- Botón Ver Pendientes -->
+        <button onclick="verRecurrenciasPendientes()" 
+                class="bg-white hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-xl font-medium text-sm border border-gray-200 transition-all duration-200">
+            <i class="fas fa-list mr-2"></i>
+            Ver
+        </button>
+    </div>
+    
+    <!-- Loading -->
+    <div id="recurrencias-loading" class="hidden mt-4 text-center">
+        <div class="inline-flex items-center space-x-2 text-purple-600">
+            <i class="fas fa-spinner animate-spin"></i>
+            <span class="text-sm">Procesando recurrencias...</span>
+        </div>
+    </div>
+</div>
+
+<script>
+// 🔄 FUNCIONES PARA EL WIDGET DE RECURRENCIAS
+async function procesarRecurrenciasManual() {
+    const btn = document.getElementById('btn-procesar-recurrencias');
+    const loading = document.getElementById('recurrencias-loading');
+    const status = document.getElementById('recurrencias-status');
+    
+    try {
+        // Mostrar loading
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner animate-spin mr-2"></i>Procesando...';
+        loading.classList.remove('hidden');
+        
+        // Llamar a la función SQL
+        const { data, error } = await supabase.rpc('procesar_todas_recurrencias');
+        
+        if (error) {
+            console.error('❌ Error:', error);
+            showNotification(`❌ Error: ${error.message}`, 'error');
+            return;
+        }
+        
+        console.log('✅ Resultado:', data);
+        
+        // Mostrar resultado
+        document.getElementById('procesadas-count').textContent = data.total_procesados;
+        status.classList.remove('hidden');
+        
+        // Actualizar estadísticas
+        await actualizarEstadisticasRecurrencias();
+        
+        showNotification(
+            `🎉 ${data.total_procesados} transacciones procesadas correctamente`,
+            'success'
+        );
+        
+    } catch (error) {
+        console.error('❌ Error inesperado:', error);
+        showNotification(`❌ Error: ${error.message}`, 'error');
+    } finally {
+        // Restaurar botón
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-play mr-2"></i>Procesar Ahora';
+        loading.classList.add('hidden');
+    }
+}
+
+async function verRecurrenciasPendientes() {
+    try {
+        const { data, error } = await supabase
+            .from('vista_recurrencias_pendientes')
+            .select('*')
+            .order('proxima_fecha', { ascending: true });
+        
+        if (error) {
+            console.error('❌ Error:', error);
+            return;
+        }
+        
+        console.log('📋 Recurrencias pendientes:');
+        console.table(data);
+        
+        const pendientes = data.filter(item => item.estado === 'PENDIENTE');
+        
+        if (pendientes.length > 0) {
+            showNotification(`📋 ${pendientes.length} recurrencias pendientes (ver consola)`, 'info');
+        } else {
+            showNotification('✅ No hay recurrencias pendientes', 'success');
+        }
+        
+    } catch (error) {
+        console.error('❌ Error:', error);
+    }
+}
+
+async function actualizarEstadisticasRecurrencias() {
+    try {
+        const { data, error } = await supabase
+            .from('vista_recurrencias_pendientes')
+            .select('*');
+        
+        if (error) return;
+        
+        const pendientes = data.filter(item => item.estado === 'PENDIENTE').length;
+        const programadas = data.filter(item => item.estado === 'PROGRAMADO').length;
+        
+        document.getElementById('pendientes-count').textContent = pendientes;
+        document.getElementById('programadas-count').textContent = programadas;
+        
+    } catch (error) {
+        console.error('❌ Error actualizando stats:', error);
+    }
+}
+
+// Auto-cargar estadísticas al cargar la página
+document.addEventListener('DOMContentLoaded', function() {
+    if (window.supabase) {
+        actualizarEstadisticasRecurrencias();
+    }
+});
+</script>
