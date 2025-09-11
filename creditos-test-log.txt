@@ -1,0 +1,54 @@
+11:25:07 a. m. [INFO] Iniciando suite completa de pruebas...
+11:25:07 a. m. [INFO] Test 1: Verificando estructura de archivos...
+11:25:07 a. m. [SUCCESS] Archivo encontrado: public/js/creditos-module-handler.js (22522 bytes)
+11:25:07 a. m. [SUCCESS] Archivo encontrado: public/creditos.html (26865 bytes)
+11:25:07 a. m. [SUCCESS] Archivo encontrado: public/modules/creditos-template.html (25953 bytes)
+11:25:07 a. m. [INFO] Test 2: Validando sintaxis JavaScript...
+11:25:07 a. m. [SUCCESS] Clase principal - OK
+11:25:07 a. m. [SUCCESS] Constructor - OK
+11:25:07 a. m. [SUCCESS] Método init - OK
+11:25:07 a. m. [SUCCESS] Inicialización Supabase - OK
+11:25:07 a. m. [SUCCESS] Método cargar datos - OK
+11:25:07 a. m. [SUCCESS] Handler de formulario - OK
+11:25:07 a. m. [SUCCESS] Calculadora de cuotas - OK
+11:25:07 a. m. [SUCCESS] Actualización estadísticas - OK
+11:25:07 a. m. [SUCCESS] Actualización tabla - OK
+11:25:07 a. m. [SUCCESS] URL Supabase configurada
+11:25:07 a. m. [SUCCESS] Tabla simulaciones_credito referenciada
+11:25:07 a. m. [INFO] Test 3: Verificando estructura HTML...
+11:25:07 a. m. [SUCCESS] Elemento HTML Formulario principal - OK
+11:25:07 a. m. [SUCCESS] Elemento HTML Campo tipo crédito - OK
+11:25:07 a. m. [SUCCESS] Elemento HTML Campo monto - OK
+11:25:07 a. m. [SUCCESS] Elemento HTML Campo tasa - OK
+11:25:07 a. m. [SUCCESS] Elemento HTML Campo plazo - OK
+11:25:07 a. m. [SUCCESS] Elemento HTML Display cuota calculada - OK
+11:25:07 a. m. [SUCCESS] Elemento HTML Tabla de créditos - OK
+11:25:07 a. m. [SUCCESS] Elemento HTML Estadística total créditos - OK
+11:25:07 a. m. [SUCCESS] Elemento HTML Canvas para gráfico - OK
+11:25:07 a. m. [SUCCESS] CDN tailwindcss.com incluido
+11:25:07 a. m. [SUCCESS] CDN font-awesome incluido
+11:25:07 a. m. [SUCCESS] CDN chart.js incluido
+11:25:07 a. m. [SUCCESS] CDN notyf incluido
+11:25:07 a. m. [SUCCESS] CDN supabase-js incluido
+11:25:07 a. m. [INFO] Test 4: Validando configuración Supabase...
+11:25:07 a. m. [SUCCESS] URL Supabase: https://lobyofpwqwqsszugdwnw.s...
+11:25:07 a. m. [SUCCESS] Formato URL Supabase válido
+11:25:07 a. m. [SUCCESS] Clave Supabase: eyJhbGciOiJIUzI1NiIs...
+11:25:07 a. m. [SUCCESS] Formato clave JWT válido
+11:25:07 a. m. [INFO] Test 5: Verificando funciones matemáticas...
+11:25:07 a. m. [SUCCESS] Cálculo cuota S/10000 @ 15% = S/902.58 - OK
+11:25:07 a. m. [SUCCESS] Cálculo cuota S/50000 @ 12% = S/2353.67 - OK
+11:25:07 a. m. [SUCCESS] Cálculo cuota S/100000 @ 10% = S/3226.72 - OK
+11:25:07 a. m. [SUCCESS] Manejo correcto de monto cero
+11:25:07 a. m. [INFO] Test 6: Validando handlers y eventos...
+11:25:07 a. m. [SUCCESS] Submit handler implementado
+11:25:07 a. m. [SUCCESS] Input handlers implementado
+11:25:07 a. m. [SUCCESS] Setup event listeners implementado
+11:25:07 a. m. [SUCCESS] Inline click handlers implementado
+11:25:07 a. m. [SUCCESS] Filter handler implementado
+11:25:07 a. m. [SUCCESS] Delete handler implementado
+11:25:07 a. m. [SUCCESS] Edit handler implementado
+11:25:07 a. m. [SUCCESS] Handler disponible globalmente
+11:25:07 a. m. [INFO] Test 7: Verificando integración con dashboard...
+11:25:07 a. m. [SUCCESS] Enlace a créditos en dashboard - OK
+11:25:07 a. m. [SUCCESS] Ícono de créditos configurado

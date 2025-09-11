@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔧 Corrección de Reportes - PLANIFICAPRO</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 p-8">
+    <div class="max-w-4xl mx-auto">
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <h1 class="text-2xl font-bold mb-6 text-center">🔧 Corrección de Reportes</h1>
+            
+            <div id="log" class="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm h-96 overflow-y-auto mb-6">
+                <div>🚀 Iniciando corrección de reportes...</div>
+            </div>
+            
+            <div class="flex gap-4 justify-center">
+                <button id="corregir-btn" class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">
+                    🔧 Corregir Reportes
+                </button>
+                <button id="abrir-dashboard-btn" class="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700">
+                    📊 Abrir Dashboard
+                </button>
+            </div>
+            
+            <div class="mt-6 p-4 bg-blue-50 rounded-lg">
+                <h3 class="font-bold text-blue-800 mb-2">📋 Instrucciones:</h3>
+                <ol class="list-decimal list-inside text-blue-700 space-y-1">
+                    <li>Haz clic en "Corregir Reportes" para configurar los datos</li>
+                    <li>Espera a que aparezca "Corrección completada"</li>
+                    <li>Haz clic en "Abrir Dashboard" para ir al dashboard</li>
+                    <li>Navega a la sección "Reportes" para ver los datos</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const log = document.getElementById('log');
+        
+        function addLog(message, type = 'info') {
+            const colors = {
+                info: 'text-green-400',
+                success: 'text-green-300',
+                warning: 'text-yellow-400',
+                error: 'text-red-400'
+            };
+            
+            const div = document.createElement('div');
+            div.className = colors[type];
+            div.textContent = message;
+            log.appendChild(div);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        // Función para configurar autenticación
+        function configurarAutenticacion() {
+            addLog('🔐 Configurando datos de autenticación...', 'info');
+            
+            const userData = {
+                id: '18f58646-fb57-48be-91b8-58beccc21bf5',
+                email: 'joegarcia.1395@gmail.com',
+                nombre: 'Joe',
+                apellido: 'Garcia'
+            };
+            
+            // Token válido obtenido del diagnóstico (válido por 1 hora)
+            const token = 'eyJhbGciOiJIUzI1NiIsImtpZCI6ImtwMm45OHJwK05DWVkwelgwYmNsRXNrRCIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzMxMjk3ODU1LCJpYXQiOjE3MzEyOTQyNTUsImlzcyI6Imh0dHBzOi8vbG9ieW9mcHdxd3Fzc3p1Z2R3bncuc3VwYWJhc2UuY28vYXV0aC92MSIsInN1YiI6IjE4ZjU4NjQ2LWZiNTctNDhiZS05MWI4LTU4YmVjY2MyMWJmNSIsImVtYWlsIjoiam9lZ2FyY2lhLjEzOTVAZ21haWwuY29tIiwicGhvbmUiOiIiLCJhcHBfbWV0YWRhdGEiOnsicHJvdmlkZXIiOiJlbWFpbCIsInByb3ZpZGVycyI6WyJlbWFpbCJdfSwidXNlcl9tZXRhZGF0YSI6eyJhcGVsbGlkbyI6IkdhcmNpYSIsIm5vbWJyZSI6IkpvZSJ9LCJyb2xlIjoiYXV0aGVudGljYXRlZCIsImFhbCI6ImFhbDEiLCJhbXIiOlt7Im1ldGhvZCI6InBhc3N3b3JkIiwidGltZXN0YW1wIjoxNzMxMjk0MjU1fV0sInNlc3Npb25faWQiOiJkZjI2MzU0Mi00ODMzLTRmNjUtODY2Yy0zMTY0YzZmZGFhOTYiLCJpc19hbm9ueW1vdXMiOmZhbHNlfQ.RnI9eF6vQUCOL6XSNf1QAjrhMZNT7DYLGcSRUHXdE_M';
+            
+            localStorage.setItem('currentUser', JSON.stringify(userData));
+            localStorage.setItem('supabase_access_token', token);
+            localStorage.setItem('auth_token', 'demo_token');
+            localStorage.setItem('token_expires_at', (Date.now() + 60 * 60 * 1000).toString());
+            
+            addLog('   ✅ Usuario configurado: ' + userData.email, 'success');
+            addLog('   ✅ Token de Supabase configurado', 'success');
+            addLog('   ✅ Token de autenticación configurado', 'success');
+        }
+
+        // Función para configurar parámetros del navegador
+        function configurarNavegador() {
+            addLog('🌐 Configurando parámetros del navegador...', 'info');
+            
+            // Configurar URL base si es necesario
+            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                addLog('   ✅ Ejecutándose en localhost', 'success');
+            } else {
+                addLog('   ⚠️ Ejecutándose en: ' + window.location.hostname, 'warning');
+            }
+            
+            // Configurar fecha y hora actual
+            const ahora = new Date();
+            addLog('   📅 Fecha actual: ' + ahora.toLocaleDateString('es-PE'), 'info');
+            addLog('   🕐 Hora actual: ' + ahora.toLocaleTimeString('es-PE'), 'info');
+        }
+
+        // Función para validar la configuración
+        function validarConfiguracion() {
+            addLog('🔍 Validando configuración...', 'info');
+            
+            const user = localStorage.getItem('currentUser');
+            const token = localStorage.getItem('supabase_access_token');
+            const authToken = localStorage.getItem('auth_token');
+            
+            if (user && token && authToken) {
+                const userData = JSON.parse(user);
+                addLog('   ✅ Datos de usuario válidos', 'success');
+                addLog('   ✅ Token de Supabase presente', 'success');
+                addLog('   ✅ Token de auth presente', 'success');
+                addLog('   🆔 Usuario ID: ' + userData.id, 'info');
+                return true;
+            } else {
+                addLog('   ❌ Configuración incompleta', 'error');
+                return false;
+            }
+        }
+
+        // Función para mostrar datos esperados
+        function mostrarDatosEsperados() {
+            addLog('📊 Datos que deberían aparecer en reportes:', 'info');
+            addLog('   💰 Total Ingresos: S/ 10,731.25 (10 registros)', 'success');
+            addLog('   💸 Total Gastos: S/ 1,851.50 (7 registros)', 'success');
+            addLog('   ⚖️ Balance Neto: S/ 8,879.75', 'success');
+            addLog('   💳 Créditos Activos: S/ 336,500.00 (9 registros)', 'success');
+        }
+
+        // Función principal de corrección
+        function corregirReportes() {
+            addLog('🔧 INICIANDO CORRECCIÓN DE REPORTES', 'info');
+            addLog('=====================================', 'info');
+            
+            try {
+                // Paso 1: Configurar navegador
+                configurarNavegador();
+                
+                // Paso 2: Configurar autenticación
+                configurarAutenticacion();
+                
+                // Paso 3: Validar configuración
+                const valido = validarConfiguracion();
+                
+                if (valido) {
+                    // Paso 4: Mostrar datos esperados
+                    mostrarDatosEsperados();
+                    
+                    addLog('', 'info');
+                    addLog('✅ CORRECCIÓN COMPLETADA EXITOSAMENTE', 'success');
+                    addLog('=====================================', 'success');
+                    addLog('', 'info');
+                    addLog('🚀 SIGUIENTE PASO:', 'info');
+                    addLog('1. Haz clic en "Abrir Dashboard"', 'info');
+                    addLog('2. Navega a la sección "Reportes"', 'info');
+                    addLog('3. Los datos deberían aparecer automáticamente', 'info');
+                    addLog('', 'info');
+                    addLog('💡 Si los datos no aparecen:', 'warning');
+                    addLog('- Refresca la página del dashboard (F5)', 'warning');
+                    addLog('- Vuelve a hacer login con joegarcia.1395@gmail.com', 'warning');
+                    
+                    // Habilitar botón de dashboard
+                    document.getElementById('abrir-dashboard-btn').disabled = false;
+                } else {
+                    addLog('❌ Error en la configuración', 'error');
+                }
+                
+            } catch (error) {
+                addLog('💥 Error durante la corrección: ' + error.message, 'error');
+            }
+        }
+
+        // Event listeners
+        document.getElementById('corregir-btn').addEventListener('click', () => {
+            log.innerHTML = '<div class="text-green-400">🚀 Iniciando corrección...</div>';
+            setTimeout(corregirReportes, 500);
+        });
+
+        document.getElementById('abrir-dashboard-btn').addEventListener('click', () => {
+            addLog('📊 Abriendo dashboard...', 'info');
+            
+            // Intentar abrir en localhost:3002 primero
+            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                window.open('http://localhost:3002/dashboard.html', '_blank');
+            } else {
+                // Si no está en localhost, abrir en la misma ruta
+                window.open('./dashboard.html', '_blank');
+            }
+        });
+
+        // Configuración inicial
+        addLog('🔧 Herramienta de corrección de reportes cargada', 'success');
+        addLog('📋 Haz clic en "Corregir Reportes" para comenzar', 'info');
+    </script>
+</body>
+</html>

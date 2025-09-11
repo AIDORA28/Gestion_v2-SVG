@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 Prueba: Botón Simular Crédito</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .step {
+            background: #e3f2fd;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 4px solid #2196f3;
+        }
+        .success {
+            background: #e8f5e8;
+            border-left-color: #4caf50;
+        }
+        .error {
+            background: #ffebee;
+            border-left-color: #f44336;
+        }
+        button {
+            background: #2196f3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #1976d2;
+        }
+        .test-result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Prueba: Botón "Simular Crédito"</h1>
+        <p>Esta página te guiará paso a paso para probar el botón "Simular Crédito" en el módulo de créditos.</p>
+        
+        <div class="step">
+            <h3>Paso 1: Abrir aplicación principal</h3>
+            <p>Abre la aplicación principal en una nueva pestaña:</p>
+            <button onclick="window.open('http://localhost:3000', '_blank')">📂 Abrir Aplicación</button>
+        </div>
+
+        <div class="step">
+            <h3>Paso 2: Ir al módulo de créditos</h3>
+            <p>En la aplicación, haz clic en "💳 Créditos" en el menú principal.</p>
+        </div>
+
+        <div class="step">
+            <h3>Paso 3: Abrir nueva simulación</h3>
+            <p>Haz clic en el botón "Nueva Simulación" (color morado).</p>
+        </div>
+
+        <div class="step">
+            <h3>Paso 4: Llenar formulario de prueba</h3>
+            <p>Llena los campos con estos valores de prueba:</p>
+            <ul>
+                <li><strong>Monto:</strong> 50000</li>
+                <li><strong>Tasa Anual:</strong> 18.5</li>
+                <li><strong>Plazo:</strong> 36</li>
+            </ul>
+        </div>
+
+        <div class="step">
+            <h3>Paso 5: Probar botón "Simular Crédito"</h3>
+            <p>Haz clic en el botón <strong>"Simular Crédito"</strong> (morado) y verifica:</p>
+            <ul>
+                <li>✅ Aparecen los resultados de la simulación</li>
+                <li>✅ Se muestra la cuota mensual calculada</li>
+                <li>✅ Se habilita el botón "Guardar Simulación"</li>
+            </ul>
+        </div>
+
+        <div class="step">
+            <h3>Paso 6: Reportar resultado</h3>
+            <p>Marca el resultado de tu prueba:</p>
+            <button onclick="reportResult(true)" style="background: #4caf50;">✅ FUNCIONA CORRECTAMENTE</button>
+            <button onclick="reportResult(false)" style="background: #f44336;">❌ NO FUNCIONA</button>
+        </div>
+
+        <div id="test-result" class="test-result" style="display: none;"></div>
+
+        <div class="step">
+            <h3>🔍 Instrucciones de debugging (si falla)</h3>
+            <p>Si el botón no funciona, abre las DevTools (F12) y verifica:</p>
+            <ol>
+                <li>Ve a la pestaña <strong>Console</strong></li>
+                <li>Busca mensajes como "🔥 Botón simular clickeado!"</li>
+                <li>Si no aparece, significa que el event listener no está configurado</li>
+                <li>Si aparece pero no hay resultados, el problema está en el cálculo</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        function reportResult(success) {
+            const resultDiv = document.getElementById('test-result');
+            resultDiv.style.display = 'block';
+            
+            if (success) {
+                resultDiv.className = 'test-result success';
+                resultDiv.innerHTML = `
+                    <h3>✅ ¡ÉXITO!</h3>
+                    <p>El botón "Simular Crédito" funciona correctamente. Los cambios implementados han solucionado el problema.</p>
+                    <p><strong>Siguiente paso:</strong> Puedes proceder a crear y guardar simulaciones de crédito normalmente.</p>
+                `;
+            } else {
+                resultDiv.className = 'test-result error';
+                resultDiv.innerHTML = `
+                    <h3>❌ PROBLEMA DETECTADO</h3>
+                    <p>El botón "Simular Crédito" no funciona correctamente.</p>
+                    <p><strong>Posibles causas:</strong></p>
+                    <ul>
+                        <li>Event listener no configurado correctamente</li>
+                        <li>Error en la función simularCredito()</li>
+                        <li>Problema con el timing de carga del modal</li>
+                    </ul>
+                    <p><strong>Acción requerida:</strong> Revisar la consola del navegador para más detalles.</p>
+                `;
+            }
+            
+            // Scroll al resultado
+            resultDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Auto-abrir aplicación principal después de 2 segundos
+        setTimeout(() => {
+            console.log('🔄 Auto-abriendo aplicación principal...');
+        }, 2000);
+    </script>
+</body>
+</html>

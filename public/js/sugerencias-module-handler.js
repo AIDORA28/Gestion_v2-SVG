@@ -67,6 +67,11 @@ class SugerenciasModuleHandler {
             
             // 🧠 PASO 3: Ejecutar análisis IA inicial
             await this.ejecutarAnalisisCompleto();
+
+            // 🔔 PASO 4: Verificar alertas automáticamente
+            setTimeout(() => {
+                this.verificarAlertas();
+            }, 2000);
             
             console.log('✅ Módulo sugerencias inicializado exitosamente');
             
@@ -577,6 +582,215 @@ class SugerenciasModuleHandler {
         }
         
         console.log('✅ Configuración de alertas guardada:', configuracion);
+        
+        // Verificar alertas inmediatamente después de guardar
+        setTimeout(() => {
+            this.verificarAlertas();
+        }, 1000);
+    }
+
+    // 🔔 VERIFICAR ALERTAS AUTOMÁTICAMENTE
+    verificarAlertas() {
+        const config = this.cargarConfiguracionAlertas();
+        if (!config) return;
+
+        console.log('🔍 Verificando alertas...');
+
+        // Solo verificar si hay datos
+        if (!this.ingresos || !this.gastos) {
+            return;
+        }
+
+        // 1. ALERTA DE GASTOS ELEVADOS
+        if (config.alertaGastos) {
+            this.verificarGastosElevados();
+        }
+
+        // 2. ALERTA DE BAJO AHORRO
+        if (config.alertaAhorro) {
+            this.verificarBajoAhorro();
+        }
+
+        // 3. ALERTA DE TENDENCIAS NEGATIVAS
+        if (config.alertaTendencias) {
+            this.verificarTendenciasNegativas();
+        }
+    }
+
+    cargarConfiguracionAlertas() {
+        try {
+            const configStr = localStorage.getItem('sugerencias_alertas_config');
+            return configStr ? JSON.parse(configStr) : null;
+        } catch (error) {
+            console.error('Error cargando config alertas:', error);
+            return null;
+        }
+    }
+
+    // 🔴 VERIFICAR GASTOS ELEVADOS (simple)
+    verificarGastosElevados() {
+        if (!this.gastos || this.gastos.length === 0) return;
+
+        // Calcular promedio de gastos del mes actual
+        const fechaActual = new Date();
+        const mesActual = fechaActual.getMonth();
+        const añoActual = fechaActual.getFullYear();
+
+        const gastosEsteMes = this.gastos.filter(g => {
+            const fechaGasto = new Date(g.fecha);
+            return fechaGasto.getMonth() === mesActual && fechaGasto.getFullYear() === añoActual;
+        });
+
+        if (gastosEsteMes.length === 0) return;
+
+        const totalGastos = gastosEsteMes.reduce((sum, g) => sum + parseFloat(g.monto || 0), 0);
+        const promedioGasto = totalGastos / gastosEsteMes.length;
+
+        // Buscar gastos que superen el promedio por 50%
+        const gastosElevados = gastosEsteMes.filter(g => parseFloat(g.monto) > (promedioGasto * 1.5));
+
+        if (gastosElevados.length > 0) {
+            const mayorGasto = gastosElevados[0];
+            this.mostrarAlerta(
+                'warning',
+                `🔴 Gasto elevado detectado: S/ ${parseFloat(mayorGasto.monto).toFixed(2)} en ${mayorGasto.descripcion}`
+            );
+        }
+    }
+
+    // 🟡 VERIFICAR BAJO AHORRO (simple)
+    verificarBajoAhorro() {
+        if (!this.ingresos || !this.gastos) return;
+
+        // Calcular totales del mes actual
+        const fechaActual = new Date();
+        const mesActual = fechaActual.getMonth();
+        const añoActual = fechaActual.getFullYear();
+
+        const ingresosEsteMes = this.ingresos.filter(i => {
+            const fecha = new Date(i.fecha);
+            return fecha.getMonth() === mesActual && fecha.getFullYear() === añoActual;
+        });
+
+        const gastosEsteMes = this.gastos.filter(g => {
+            const fecha = new Date(g.fecha);
+            return fecha.getMonth() === mesActual && fecha.getFullYear() === añoActual;
+        });
+
+        const totalIngresos = ingresosEsteMes.reduce((sum, i) => sum + parseFloat(i.monto || 0), 0);
+        const totalGastos = gastosEsteMes.reduce((sum, g) => sum + parseFloat(g.monto || 0), 0);
+
+        if (totalIngresos === 0) return;
+
+        const porcentajeAhorro = ((totalIngresos - totalGastos) / totalIngresos) * 100;
+
+        // Alerta si ahorro es menor al 10%
+        if (porcentajeAhorro < 10 && porcentajeAhorro > 0) {
+            this.mostrarAlerta(
+                'warning',
+                `🟡 Bajo ahorro este mes: ${porcentajeAhorro.toFixed(1)}%. Recomendamos al menos 10%`
+            );
+        } else if (porcentajeAhorro <= 0) {
+            this.mostrarAlerta(
+                'error',
+                `🔴 ¡Alerta! Estás gastando más de lo que ingresas este mes`
+            );
+        }
+    }
+
+    // 🟠 VERIFICAR TENDENCIAS NEGATIVAS (simple)
+    verificarTendenciasNegativas() {
+        if (!this.gastos || this.gastos.length < 10) return; // Necesitamos datos suficientes
+
+        // Comparar últimos 2 meses
+        const fechaActual = new Date();
+        const mesActual = fechaActual.getMonth();
+        const mesAnterior = mesActual === 0 ? 11 : mesActual - 1;
+        const añoActual = fechaActual.getFullYear();
+        const añoAnterior = mesActual === 0 ? añoActual - 1 : añoActual;
+
+        const gastosEsteMes = this.gastos.filter(g => {
+            const fecha = new Date(g.fecha);
+            return fecha.getMonth() === mesActual && fecha.getFullYear() === añoActual;
+        });
+
+        const gastosMesAnterior = this.gastos.filter(g => {
+            const fecha = new Date(g.fecha);
+            return fecha.getMonth() === mesAnterior && fecha.getFullYear() === añoAnterior;
+        });
+
+        if (gastosMesAnterior.length === 0 || gastosEsteMes.length === 0) return;
+
+        const totalEsteMes = gastosEsteMes.reduce((sum, g) => sum + parseFloat(g.monto || 0), 0);
+        const totalMesAnterior = gastosMesAnterior.reduce((sum, g) => sum + parseFloat(g.monto || 0), 0);
+
+        // Alerta si gastos aumentaron más del 20%
+        const aumentoPorcentaje = ((totalEsteMes - totalMesAnterior) / totalMesAnterior) * 100;
+
+        if (aumentoPorcentaje > 20) {
+            this.mostrarAlerta(
+                'warning',
+                `🟠 Tendencia negativa: Tus gastos aumentaron ${aumentoPorcentaje.toFixed(1)}% respecto al mes anterior`
+            );
+        }
+    }
+
+    // 📢 MOSTRAR ALERTA (simple)
+    mostrarAlerta(tipo, mensaje) {
+        console.log(`🔔 ALERTA ${tipo.toUpperCase()}: ${mensaje}`);
+
+        // 1. Mostrar en Dashboard (si está disponible)
+        if (window.mostrarAlertaDashboard) {
+            window.mostrarAlertaDashboard(mensaje, tipo);
+        }
+        // 2. Usar Notyf si está disponible
+        else if (window.globalNotyf) {
+            if (tipo === 'error') {
+                window.globalNotyf.error(mensaje);
+            } else if (tipo === 'warning') {
+                window.globalNotyf.open({
+                    type: 'warning',
+                    message: mensaje,
+                    duration: 6000
+                });
+            } else {
+                window.globalNotyf.success(mensaje);
+            }
+        } 
+        // 3. Fallback simple
+        else {
+            alert(mensaje);
+        }
+
+        // Guardar historial de alertas
+        this.guardarHistorialAlerta(tipo, mensaje);
+    }
+
+    // 💾 GUARDAR HISTORIAL DE ALERTAS (simple)
+    guardarHistorialAlerta(tipo, mensaje) {
+        try {
+            const historial = JSON.parse(localStorage.getItem('alertasHistorial') || '[]');
+            historial.unshift({
+                tipo,
+                mensaje,
+                fecha: new Date().toISOString(),
+                leida: false
+            });
+
+            // Mantener solo últimas 10 alertas
+            if (historial.length > 10) {
+                historial.splice(10);
+            }
+
+            localStorage.setItem('alertasHistorial', JSON.stringify(historial));
+            
+            // Notificar al botón de notificaciones para actualizar contador
+            if (window.actualizarContadorNotificaciones) {
+                window.actualizarContadorNotificaciones();
+            }
+        } catch (error) {
+            console.error('Error guardando historial alertas:', error);
+        }
     }
 
     exportarReporte() {

@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 Test Reportes Module Handler FIXED V2</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        .console-output {
+            background: #1a1a1a;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-4">
+    <div class="max-w-6xl mx-auto">
+        <!-- Header -->
+        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+            <h1 class="text-2xl font-bold text-gray-900 mb-2">🧪 Test Reportes Module Handler FIXED V2</h1>
+            <p class="text-gray-600">Prueba del módulo de reportes corregido usando el patrón exitoso del dashboard</p>
+            
+            <div class="mt-4 flex space-x-4">
+                <button onclick="testLoginAndInit()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                    🔐 Simular Login e Inicializar
+                </button>
+                <button onclick="testGenerarReporte()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+                    📊 Generar Reporte
+                </button>
+                <button onclick="clearConsole()" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700">
+                    🧹 Limpiar Console
+                </button>
+            </div>
+        </div>
+
+        <!-- Status Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div class="bg-white p-4 rounded-lg shadow-sm">
+                <h3 class="text-sm font-medium text-gray-700">Sesión</h3>
+                <p id="status-sesion" class="text-lg font-bold text-red-600">❌ No iniciada</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow-sm">
+                <h3 class="text-sm font-medium text-gray-700">Ingresos</h3>
+                <p id="status-ingresos" class="text-lg font-bold text-gray-600">⏳ Pendiente</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow-sm">
+                <h3 class="text-sm font-medium text-gray-700">Gastos</h3>
+                <p id="status-gastos" class="text-lg font-bold text-gray-600">⏳ Pendiente</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow-sm">
+                <h3 class="text-sm font-medium text-gray-700">Créditos</h3>
+                <p id="status-creditos" class="text-lg font-bold text-gray-600">⏳ Pendiente</p>
+            </div>
+        </div>
+
+        <!-- Reportes Template Simulation -->
+        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+            <h2 class="text-xl font-bold text-gray-900 mb-4">📊 Resumen Ejecutivo (Simulado)</h2>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+                    <div class="flex items-center">
+                        <i class="fas fa-arrow-up text-green-600 text-2xl mr-3"></i>
+                        <div>
+                            <p class="text-sm text-green-700 font-medium">Total Ingresos</p>
+                            <p id="total-ingresos" class="text-xl font-bold text-green-800">S/ 0.00</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-red-50 p-4 rounded-lg border border-red-200">
+                    <div class="flex items-center">
+                        <i class="fas fa-arrow-down text-red-600 text-2xl mr-3"></i>
+                        <div>
+                            <p class="text-sm text-red-700 font-medium">Total Gastos</p>
+                            <p id="total-gastos" class="text-xl font-bold text-red-800">S/ 0.00</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                    <div class="flex items-center">
+                        <i class="fas fa-balance-scale text-blue-600 text-2xl mr-3"></i>
+                        <div>
+                            <p class="text-sm text-blue-700 font-medium">Balance Neto</p>
+                            <p id="balance-neto" class="text-xl font-bold text-blue-800">S/ 0.00</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                    <div class="flex items-center">
+                        <i class="fas fa-credit-card text-yellow-600 text-2xl mr-3"></i>
+                        <div>
+                            <p class="text-sm text-yellow-700 font-medium">Total Créditos</p>
+                            <p id="total-creditos" class="text-xl font-bold text-yellow-800">S/ 0.00</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filtros simulados -->
+        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+            <h3 class="text-lg font-semibold mb-4">⚙️ Filtros de Período</h3>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Período</label>
+                    <select id="periodo-select" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                        <option value="mes-actual">Mes Actual</option>
+                        <option value="mes-anterior">Mes Anterior</option>
+                        <option value="trimestre">Último Trimestre</option>
+                        <option value="año">Este Año</option>
+                        <option value="personalizado">Personalizado</option>
+                    </select>
+                </div>
+                <div id="fecha-desde-container" class="hidden">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Desde</label>
+                    <input type="date" id="fecha-desde" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                </div>
+                <div id="fecha-hasta-container" class="hidden">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Hasta</label>
+                    <input type="date" id="fecha-hasta" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                </div>
+                <div class="flex items-end">
+                    <button onclick="testGenerarReporte()" class="w-full px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">
+                        🔄 Actualizar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Console Output -->
+        <div class="bg-white rounded-lg shadow-sm p-6">
+            <h3 class="text-lg font-semibold mb-4">🖥️ Console Output</h3>
+            <div id="console-output" class="console-output p-4 rounded-lg"></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    <script src="js/reportes-module-handler-fixed.js"></script>
+    
+    <script>
+        // Variables globales para testing
+        let consoleOutput = '';
+        let originalConsoleLog = console.log;
+        let originalConsoleError = console.error;
+
+        // Interceptar console.log para mostrar en pantalla
+        console.log = function(...messages) {
+            originalConsoleLog.apply(console, messages);
+            const message = messages.join(' ');
+            consoleOutput += new Date().toLocaleTimeString() + ' - ' + message + '\n';
+            updateConsoleDisplay();
+        };
+
+        console.error = function(...messages) {
+            originalConsoleError.apply(console, messages);
+            const message = '❌ ERROR: ' + messages.join(' ');
+            consoleOutput += new Date().toLocaleTimeString() + ' - ' + message + '\n';
+            updateConsoleDisplay();
+        };
+
+        function updateConsoleDisplay() {
+            const consoleDiv = document.getElementById('console-output');
+            if (consoleDiv) {
+                consoleDiv.textContent = consoleOutput;
+                consoleDiv.scrollTop = consoleDiv.scrollHeight;
+            }
+        }
+
+        function clearConsole() {
+            consoleOutput = '';
+            updateConsoleDisplay();
+            console.log('🧹 Console limpiado');
+        }
+
+        // Función para simular login exitoso
+        function testLoginAndInit() {
+            console.log('🔐 Iniciando simulación de login...');
+            
+            // Simular datos de usuario del dashboard exitoso
+            const userData = {
+                id: '18f58646-fb57-48be-91b8-58beccc21bf5',
+                email: 'joegarcia.1395@gmail.com',
+                name: 'Joe Garcia'
+            };
+            
+            const supabaseToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzM2Nzk1MDEwLCJpYXQiOjE3MzY3MDg2MTAsImlzcyI6Imh0dHBzOi8vbG9ieW9mcHdxd3Fzc3p1Z2R3bncuc3VwYWJhc2UuY28vYXV0aC92MSIsInN1YiI6IjE4ZjU4NjQ2LWZiNTctNDhiZS05MWI4LTU4YmVjY2MyMWJmNSIsImVtYWlsIjoiam9lZ2FyY2lhLjEzOTVAZ21haWwuY29tIiwicGhvbmUiOiIiLCJhcHBfbWV0YWRhdGEiOnsicHJvdmlkZXIiOiJlbWFpbCIsInByb3ZpZGVycyI6WyJlbWFpbCJdfSwidXNlcl9tZXRhZGF0YSI6e30sInJvbGUiOiJhdXRoZW50aWNhdGVkIiwiYWFsIjoiYWFsMSIsImFtciI6W3sibWV0aG9kIjoicGFzc3dvcmQiLCJ0aW1lc3RhbXAiOjE3MzY3MDg2MTB9XSwic2Vzc2lvbl9pZCI6IjFlNzY5MGRhLTA3ZDMtNGRkNy04MjNiLTgzMjZmZjYzMzJjNyIsImlzX2Fub255bW91cyI6ZmFsc2V9.VZo1ZiJ3hJWCZhIQQKQrFbGPXB7Gb8PGl-qfPDwfNWw';
+            
+            // Establecer en localStorage (igual que el dashboard)
+            localStorage.setItem('currentUser', JSON.stringify(userData));
+            localStorage.setItem('supabase_access_token', supabaseToken);
+            
+            console.log('✅ Datos de sesión establecidos:');
+            console.log('   📧 Usuario:', userData.email);
+            console.log('   🆔 ID:', userData.id);
+            console.log('   🔑 Token:', supabaseToken ? 'Presente' : 'Ausente');
+            
+            // Actualizar status
+            document.getElementById('status-sesion').innerHTML = '✅ Activa';
+            document.getElementById('status-sesion').className = 'text-lg font-bold text-green-600';
+            
+            // Inicializar módulo de reportes
+            setTimeout(() => {
+                console.log('🚀 Inicializando módulo de reportes...');
+                
+                // Limpiar instancia anterior si existe
+                if (window.reportesModuleHandler) {
+                    console.log('🔄 Reinicializando módulo existente...');
+                }
+                
+                window.reportesModuleHandler = new ReportesModuleHandler();
+                window.reportesModuleHandler.init();
+                
+            }, 1000);
+        }
+
+        // Función para forzar generación de reporte
+        function testGenerarReporte() {
+            if (!window.reportesModuleHandler) {
+                console.log('⚠️ Módulo no inicializado. Ejecutar login primero.');
+                return;
+            }
+            
+            console.log('📊 Forzando generación de reporte...');
+            window.reportesModuleHandler.generarReporte();
+        }
+
+        // Monitorear cambios en los elementos de la UI
+        function monitorearCambiosUI() {
+            const elementos = [
+                { id: 'total-ingresos', status: 'status-ingresos' },
+                { id: 'total-gastos', status: 'status-gastos' },
+                { id: 'total-creditos', status: 'status-creditos' }
+            ];
+            
+            elementos.forEach(elemento => {
+                const el = document.getElementById(elemento.id);
+                const status = document.getElementById(elemento.status);
+                
+                if (el && status) {
+                    const observer = new MutationObserver(() => {
+                        const valor = el.textContent;
+                        if (valor && valor !== 'S/ 0.00' && valor !== 'Error') {
+                            status.innerHTML = '✅ ' + valor;
+                            status.className = 'text-lg font-bold text-green-600';
+                        } else if (valor === 'Error') {
+                            status.innerHTML = '❌ Error';
+                            status.className = 'text-lg font-bold text-red-600';
+                        }
+                    });
+                    
+                    observer.observe(el, { childList: true, subtree: true });
+                }
+            });
+        }
+
+        // Inicializar monitoreo cuando se carga la página
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🧪 Test Reportes Module Handler FIXED V2 - Página cargada');
+            monitorearCambiosUI();
+            
+            // Mensaje inicial
+            setTimeout(() => {
+                console.log('📋 Instrucciones:');
+                console.log('1. Hacer clic en "🔐 Simular Login e Inicializar"');
+                console.log('2. Esperar que se carguen los datos automáticamente');
+                console.log('3. Si no se cargan, hacer clic en "📊 Generar Reporte"');
+                console.log('4. Observar los valores en las tarjetas de arriba');
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

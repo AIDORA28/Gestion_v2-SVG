@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 Test Reportes FIXED - Final</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        .test-log {
+            background: #1a1a1a;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        .success { color: #22c55e; }
+        .error { color: #ef4444; }
+        .warning { color: #f59e0b; }
+        .info { color: #3b82f6; }
+    </style>
+</head>
+<body class="bg-gray-100 p-4">
+    <div class="max-w-7xl mx-auto space-y-6">
+        <!-- Header -->
+        <div class="bg-white rounded-lg shadow-sm p-6">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">🧪 Test Reportes Module FIXED</h1>
+            <p class="text-gray-600 mb-4">Prueba final del módulo de reportes corregido</p>
+            
+            <div class="flex flex-wrap gap-3">
+                <button onclick="testLoginAndInit()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                    🔐 1. Inicializar Login
+                </button>
+                <button onclick="testDataLoad()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                    📊 2. Cargar Datos
+                </button>
+                <button onclick="testUIUpdate()" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+                    🖥️ 3. Actualizar UI
+                </button>
+                <button onclick="clearLog()" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors">
+                    🧹 Limpiar Log
+                </button>
+            </div>
+        </div>
+
+        <!-- Status Dashboard -->
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+            <div class="bg-white p-4 rounded-lg shadow-sm">
+                <h3 class="text-sm font-medium text-gray-700 mb-2">🔐 Autenticación</h3>
+                <p id="auth-status" class="text-lg font-bold text-red-600">❌ Pendiente</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow-sm">
+                <h3 class="text-sm font-medium text-gray-700 mb-2">💰 Ingresos</h3>
+                <p id="ingresos-status" class="text-lg font-bold text-gray-600">⏳ Pendiente</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow-sm">
+                <h3 class="text-sm font-medium text-gray-700 mb-2">💸 Gastos</h3>
+                <p id="gastos-status" class="text-lg font-bold text-gray-600">⏳ Pendiente</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow-sm">
+                <h3 class="text-sm font-medium text-gray-700 mb-2">💳 Créditos</h3>
+                <p id="creditos-status" class="text-lg font-bold text-gray-600">⏳ Pendiente</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow-sm">
+                <h3 class="text-sm font-medium text-gray-700 mb-2">📊 Módulo</h3>
+                <p id="module-status" class="text-lg font-bold text-gray-600">⏳ No inicializado</p>
+            </div>
+        </div>
+
+        <!-- UI Simulation -->
+        <div class="bg-white rounded-lg shadow-sm p-6">
+            <h2 class="text-xl font-bold text-gray-900 mb-4">📊 Simulación de UI Reportes</h2>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+                    <div class="flex items-center">
+                        <i class="fas fa-arrow-up text-green-600 text-2xl mr-3"></i>
+                        <div>
+                            <p class="text-sm text-green-700 font-medium">Total Ingresos</p>
+                            <p id="total-ingresos" class="text-xl font-bold text-green-800">S/ 0.00</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-red-50 p-4 rounded-lg border border-red-200">
+                    <div class="flex items-center">
+                        <i class="fas fa-arrow-down text-red-600 text-2xl mr-3"></i>
+                        <div>
+                            <p class="text-sm text-red-700 font-medium">Total Gastos</p>
+                            <p id="total-gastos" class="text-xl font-bold text-red-800">S/ 0.00</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                    <div class="flex items-center">
+                        <i class="fas fa-balance-scale text-blue-600 text-2xl mr-3"></i>
+                        <div>
+                            <p class="text-sm text-blue-700 font-medium">Balance Neto</p>
+                            <p id="balance-neto" class="text-xl font-bold text-blue-800">S/ 0.00</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                    <div class="flex items-center">
+                        <i class="fas fa-credit-card text-yellow-600 text-2xl mr-3"></i>
+                        <div>
+                            <p class="text-sm text-yellow-700 font-medium">Total Créditos</p>
+                            <p id="total-creditos" class="text-xl font-bold text-yellow-800">S/ 0.00</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filtros Mock -->
+        <div class="bg-white rounded-lg shadow-sm p-6">
+            <h3 class="text-lg font-semibold mb-4">⚙️ Filtros (Mock)</h3>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <select id="periodo-select" class="px-3 py-2 border border-gray-300 rounded-md">
+                    <option value="mes-actual">Mes Actual</option>
+                    <option value="mes-anterior">Mes Anterior</option>
+                    <option value="año">Este Año</option>
+                </select>
+                <input type="date" id="fecha-desde" class="px-3 py-2 border border-gray-300 rounded-md">
+                <input type="date" id="fecha-hasta" class="px-3 py-2 border border-gray-300 rounded-md">
+                <button onclick="testDataLoad()" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">
+                    🔄 Actualizar
+                </button>
+            </div>
+        </div>
+
+        <!-- Log Console -->
+        <div class="bg-white rounded-lg shadow-sm p-6">
+            <h3 class="text-lg font-semibold mb-4">🖥️ Test Log</h3>
+            <div id="test-log" class="test-log p-4 rounded-lg border"></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    <script src="js/reportes-module-handler.js"></script>
+    
+    <script>
+        // Test logger
+        let testLog = '';
+        let originalConsole = {
+            log: console.log,
+            error: console.error,
+            warn: console.warn
+        };
+
+        function logToTest(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const colorClass = type === 'error' ? 'error' : type === 'warning' ? 'warning' : type === 'success' ? 'success' : 'info';
+            testLog += `[${timestamp}] ${message}\n`;
+            
+            const logElement = document.getElementById('test-log');
+            if (logElement) {
+                logElement.innerHTML = testLog.split('\n').map(line => {
+                    if (line.includes('❌') || line.includes('ERROR')) return `<span class="error">${line}</span>`;
+                    if (line.includes('⚠️')) return `<span class="warning">${line}</span>`;
+                    if (line.includes('✅')) return `<span class="success">${line}</span>`;
+                    return `<span class="info">${line}</span>`;
+                }).join('\n');
+                logElement.scrollTop = logElement.scrollHeight;
+            }
+        }
+
+        // Override console methods
+        console.log = function(...args) {
+            originalConsole.log.apply(console, args);
+            logToTest(args.join(' '), 'info');
+        };
+
+        console.error = function(...args) {
+            originalConsole.error.apply(console, args);
+            logToTest('ERROR: ' + args.join(' '), 'error');
+        };
+
+        console.warn = function(...args) {
+            originalConsole.warn.apply(console, args);
+            logToTest('WARNING: ' + args.join(' '), 'warning');
+        };
+
+        function clearLog() {
+            testLog = '';
+            document.getElementById('test-log').innerHTML = '';
+            console.log('🧹 Log limpiado');
+        }
+
+        function updateStatus(elementId, status, message) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.textContent = message;
+                element.className = `text-lg font-bold ${status === 'success' ? 'text-green-600' : 
+                                                       status === 'error' ? 'text-red-600' : 
+                                                       status === 'warning' ? 'text-yellow-600' : 'text-gray-600'}`;
+            }
+        }
+
+        // Test functions
+        function testLoginAndInit() {
+            console.log('🔐 === INICIO TEST LOGIN E INICIALIZACIÓN ===');
+            
+            // Simular datos de usuario correctos
+            const userData = {
+                id: '18f58646-fb57-48be-91b8-58beccc21bf5',
+                email: 'joegarcia.1395@gmail.com',
+                name: 'Joe Garcia'
+            };
+            
+            const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzM2Nzk1MDEwLCJpYXQiOjE3MzY3MDg2MTAsImlzcyI6Imh0dHBzOi8vbG9ieW9mcHdxd3Fzc3p1Z2R3bncuc3VwYWJhc2UuY28vYXV0aC92MSIsInN1YiI6IjE4ZjU4NjQ2LWZiNTctNDhiZS05MWI4LTU4YmVjY2MyMWJmNSIsImVtYWlsIjoiam9lZ2FyY2lhLjEzOTVAZ21haWwuY29tIiwicGhvbmUiOiIiLCJhcHBfbWV0YWRhdGEiOnsicHJvdmlkZXIiOiJlbWFpbCIsInByb3ZpZGVycyI6WyJlbWFpbCJdfSwidXNlcl9tZXRhZGF0YSI6e30sInJvbGUiOiJhdXRoZW50aWNhdGVkIiwiYWFsIjoiYWFsMSIsImFtciI6W3sibWV0aG9kIjoicGFzc3dvcmQiLCJ0aW1lc3RhbXAiOjE3MzY3MDg2MTB9XSwic2Vzc2lvbl9pZCI6IjFlNzY5MGRhLTA3ZDMtNGRkNy04MjNiLTgzMjZmZjYzMzJjNyIsImlzX2Fub255bW91cyI6ZmFsc2V9.VZo1ZiJ3hJWCZhIQQKQrFbGPXB7Gb8PGl-qfPDwfNWw';
+            
+            // Establecer en localStorage
+            localStorage.setItem('currentUser', JSON.stringify(userData));
+            localStorage.setItem('supabase_access_token', token);
+            
+            console.log('✅ Datos de sesión establecidos');
+            console.log('📧 Usuario:', userData.email);
+            console.log('🆔 ID:', userData.id);
+            
+            updateStatus('auth-status', 'success', '✅ Activa');
+            
+            // Inicializar módulo
+            setTimeout(() => {
+                try {
+                    console.log('🚀 Inicializando módulo de reportes...');
+                    
+                    if (window.reportesModuleHandler) {
+                        console.log('🔄 Reinicializando módulo existente');
+                    }
+                    
+                    window.reportesModuleHandler = new ReportesModuleHandler();
+                    window.reportesModuleHandler.init().then(() => {
+                        console.log('✅ Módulo inicializado correctamente');
+                        updateStatus('module-status', 'success', '✅ Inicializado');
+                    }).catch(error => {
+                        console.error('❌ Error inicializando módulo:', error);
+                        updateStatus('module-status', 'error', '❌ Error');
+                    });
+                    
+                } catch (error) {
+                    console.error('❌ Error creando módulo:', error);
+                    updateStatus('module-status', 'error', '❌ Error');
+                }
+            }, 1000);
+        }
+
+        function testDataLoad() {
+            if (!window.reportesModuleHandler) {
+                console.log('⚠️ Módulo no inicializado. Ejecutar login primero.');
+                return;
+            }
+            
+            console.log('📊 === INICIO TEST CARGA DE DATOS ===');
+            
+            // Forzar generación de reporte
+            window.reportesModuleHandler.generarReporte().then(() => {
+                console.log('✅ Generación de reporte completada');
+                
+                // Verificar datos cargados
+                const ingresos = window.reportesModuleHandler.datosReporte.ingresos.length;
+                const gastos = window.reportesModuleHandler.datosReporte.gastos.length;
+                const creditos = window.reportesModuleHandler.datosReporte.creditos.length;
+                
+                updateStatus('ingresos-status', ingresos > 0 ? 'success' : 'warning', 
+                           ingresos > 0 ? `✅ ${ingresos} registros` : '⚠️ Sin datos');
+                updateStatus('gastos-status', gastos > 0 ? 'success' : 'warning', 
+                           gastos > 0 ? `✅ ${gastos} registros` : '⚠️ Sin datos');
+                updateStatus('creditos-status', creditos > 0 ? 'success' : 'warning', 
+                           creditos > 0 ? `✅ ${creditos} registros` : '⚠️ Sin datos');
+                
+            }).catch(error => {
+                console.error('❌ Error generando reporte:', error);
+            });
+        }
+
+        function testUIUpdate() {
+            if (!window.reportesModuleHandler) {
+                console.log('⚠️ Módulo no inicializado');
+                return;
+            }
+            
+            console.log('🖥️ === INICIO TEST ACTUALIZACIÓN UI ===');
+            
+            // Forzar actualización del resumen
+            window.reportesModuleHandler.actualizarResumen();
+            
+            // Verificar elementos de UI
+            const elementos = ['total-ingresos', 'total-gastos', 'balance-neto', 'total-creditos'];
+            elementos.forEach(id => {
+                const elemento = document.getElementById(id);
+                if (elemento) {
+                    const valor = elemento.textContent;
+                    console.log(`🖥️ ${id}: ${valor}`);
+                    
+                    if (valor && valor !== 'S/ 0.00' && valor !== 'Error') {
+                        console.log(`✅ ${id} actualizado correctamente`);
+                    } else {
+                        console.log(`⚠️ ${id} no actualizado (${valor})`);
+                    }
+                }
+            });
+        }
+
+        // Monitorear cambios en elementos UI
+        function setupUIMonitoring() {
+            const elementos = ['total-ingresos', 'total-gastos', 'balance-neto', 'total-creditos'];
+            
+            elementos.forEach(id => {
+                const elemento = document.getElementById(id);
+                if (elemento) {
+                    const observer = new MutationObserver(() => {
+                        const valor = elemento.textContent;
+                        if (valor && valor !== 'S/ 0.00' && valor !== 'Error') {
+                            console.log(`✅ UI actualizada - ${id}: ${valor}`);
+                        }
+                    });
+                    
+                    observer.observe(elemento, { childList: true, subtree: true });
+                }
+            });
+        }
+
+        // Inicializar cuando se carga la página
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🧪 Test Reportes Module FIXED - Página cargada');
+            setupUIMonitoring();
+            
+            // Configurar fechas por defecto
+            const hoy = new Date();
+            const primerDiaMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+            
+            document.getElementById('fecha-desde').value = primerDiaMes.toISOString().split('T')[0];
+            document.getElementById('fecha-hasta').value = hoy.toISOString().split('T')[0];
+            
+            setTimeout(() => {
+                console.log('📋 Instrucciones:');
+                console.log('1. 🔐 Inicializar Login - Simula autenticación y crea módulo');
+                console.log('2. 📊 Cargar Datos - Obtiene datos del servidor/Supabase');
+                console.log('3. 🖥️ Actualizar UI - Fuerza actualización de la interfaz');
+                console.log('4. Observar los cambios en las tarjetas de arriba');
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
