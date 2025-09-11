@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 Test Reportes Dashboard Pattern - SIMPLE</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .test-output {
+            background: #1a1a1a;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-6">
+    <div class="max-w-6xl mx-auto space-y-6">
+        <!-- Header -->
+        <div class="bg-white rounded-lg shadow-sm p-6">
+            <h1 class="text-2xl font-bold text-gray-900 mb-2">🧪 Test Reportes - Dashboard Pattern</h1>
+            <p class="text-gray-600 mb-4">Prueba directa del módulo de reportes usando patrón del dashboard</p>
+            
+            <div class="flex space-x-4">
+                <button onclick="ejecutarTest()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                    🚀 Ejecutar Test Completo
+                </button>
+                <button onclick="limpiarOutput()" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700">
+                    🧹 Limpiar
+                </button>
+            </div>
+        </div>
+
+        <!-- Resultados -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="bg-white p-4 rounded-lg shadow-sm">
+                <h3 class="text-sm font-medium text-gray-700 mb-2">💰 Ingresos</h3>
+                <p id="result-ingresos" class="text-xl font-bold text-green-600">-</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow-sm">
+                <h3 class="text-sm font-medium text-gray-700 mb-2">💸 Gastos</h3>
+                <p id="result-gastos" class="text-xl font-bold text-red-600">-</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow-sm">
+                <h3 class="text-sm font-medium text-gray-700 mb-2">⚖️ Balance</h3>
+                <p id="result-balance" class="text-xl font-bold text-blue-600">-</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow-sm">
+                <h3 class="text-sm font-medium text-gray-700 mb-2">💳 Créditos</h3>
+                <p id="result-creditos" class="text-xl font-bold text-purple-600">-</p>
+            </div>
+        </div>
+
+        <!-- Elements para el módulo de reportes -->
+        <div class="bg-white rounded-lg shadow-sm p-6">
+            <h3 class="text-lg font-semibold mb-4">📊 Elementos UI Reportes</h3>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="bg-green-50 p-4 rounded-lg">
+                    <p class="text-sm text-green-700 font-medium">Total Ingresos</p>
+                    <p id="total-ingresos" class="text-xl font-bold text-green-800">S/ 0.00</p>
+                </div>
+                <div class="bg-red-50 p-4 rounded-lg">
+                    <p class="text-sm text-red-700 font-medium">Total Gastos</p>
+                    <p id="total-gastos" class="text-xl font-bold text-red-800">S/ 0.00</p>
+                </div>
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <p class="text-sm text-blue-700 font-medium">Balance Neto</p>
+                    <p id="balance-neto" class="text-xl font-bold text-blue-800">S/ 0.00</p>
+                </div>
+                <div class="bg-purple-50 p-4 rounded-lg">
+                    <p class="text-sm text-purple-700 font-medium">Total Créditos</p>
+                    <p id="total-creditos" class="text-xl font-bold text-purple-800">S/ 0.00</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filtros Mock -->
+        <div class="bg-white rounded-lg shadow-sm p-6">
+            <h3 class="text-lg font-semibold mb-4">⚙️ Filtros</h3>
+            <div class="flex space-x-4">
+                <select id="periodo-select" class="px-3 py-2 border border-gray-300 rounded-md">
+                    <option value="mes-actual">Mes Actual</option>
+                    <option value="año">Este Año</option>
+                </select>
+                <input type="date" id="fecha-desde" class="px-3 py-2 border border-gray-300 rounded-md">
+                <input type="date" id="fecha-hasta" class="px-3 py-2 border border-gray-300 rounded-md">
+            </div>
+        </div>
+
+        <!-- Output -->
+        <div class="bg-white rounded-lg shadow-sm p-6">
+            <h3 class="text-lg font-semibold mb-4">🖥️ Test Output</h3>
+            <div id="test-output" class="test-output"></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/reportes-module-handler.js"></script>
+    
+    <script>
+        let output = '';
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const colorClass = type === 'error' ? 'color: #ff6b6b;' : 
+                              type === 'success' ? 'color: #51cf66;' : 
+                              type === 'warning' ? 'color: #ffd43b;' : 
+                              'color: #74c0fc;';
+            
+            output += `[${timestamp}] ${message}\n`;
+            
+            const outputElement = document.getElementById('test-output');
+            if (outputElement) {
+                outputElement.innerHTML = output.split('\n').map(line => {
+                    if (line.includes('❌') || line.includes('ERROR')) return `<span style="color: #ff6b6b;">${line}</span>`;
+                    if (line.includes('⚠️')) return `<span style="color: #ffd43b;">${line}</span>`;
+                    if (line.includes('✅')) return `<span style="color: #51cf66;">${line}</span>`;
+                    return `<span style="color: #74c0fc;">${line}</span>`;
+                }).join('\n');
+                outputElement.scrollTop = outputElement.scrollHeight;
+            }
+        }
+
+        function limpiarOutput() {
+            output = '';
+            document.getElementById('test-output').innerHTML = '';
+            
+            // Limpiar resultados
+            ['result-ingresos', 'result-gastos', 'result-balance', 'result-creditos'].forEach(id => {
+                document.getElementById(id).textContent = '-';
+            });
+            
+            ['total-ingresos', 'total-gastos', 'balance-neto', 'total-creditos'].forEach(id => {
+                document.getElementById(id).textContent = 'S/ 0.00';
+            });
+        }
+
+        // Override console para capturar logs del módulo
+        const originalConsole = {
+            log: console.log,
+            error: console.error,
+            warn: console.warn
+        };
+
+        console.log = function(...args) {
+            originalConsole.log.apply(console, args);
+            log(args.join(' '), 'info');
+        };
+
+        console.error = function(...args) {
+            originalConsole.error.apply(console, args);
+            log('ERROR: ' + args.join(' '), 'error');
+        };
+
+        console.warn = function(...args) {
+            originalConsole.warn.apply(console, args);
+            log('WARNING: ' + args.join(' '), 'warning');
+        };
+
+        async function ejecutarTest() {
+            try {
+                log('🧪 === INICIO TEST REPORTES PATRÓN DASHBOARD ===', 'info');
+                limpiarOutput();
+                log('🧪 === INICIO TEST REPORTES PATRÓN DASHBOARD ===', 'info');
+                
+                // 1. Simular login
+                log('🔐 Simulando login...', 'info');
+                const userData = {
+                    id: '18f58646-fb57-48be-91b8-58beccc21bf5',
+                    email: 'joegarcia.1395@gmail.com',
+                    name: 'Joe Garcia'
+                };
+                
+                const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzM2Nzk1MDEwLCJpYXQiOjE3MzY3MDg2MTAsImlzcyI6Imh0dHBzOi8vbG9ieW9mcHdxd3Fzc3p1Z2R3bncuc3VwYWJhc2UuY28vYXV0aC92MSIsInN1YiI6IjE4ZjU4NjQ2LWZiNTctNDhiZS05MWI4LTU4YmVjY2MyMWJmNSIsImVtYWlsIjoiam9lZ2FyY2lhLjEzOTVAZ21haWwuY29tIiwicGhvbmUiOiIiLCJhcHBfbWV0YWRhdGEiOnsicHJvdmlkZXIiOiJlbWFpbCIsInByb3ZpZGVycyI6WyJlbWFpbCJdfSwidXNlcl9tZXRhZGF0YSI6e30sInJvbGUiOiJhdXRoZW50aWNhdGVkIiwiYWFsIjoiYWFsMSIsImFtciI6W3sibWV0aG9kIjoicGFzc3dvcmQiLCJ0aW1lc3RhbXAiOjE3MzY3MDg2MTB9XSwic2Vzc2lvbl9pZCI6IjFlNzY5MGRhLTA3ZDMtNGRkNy04MjNiLTgzMjZmZjYzMzJjNyIsImlzX2Fub255bW91cyI6ZmFsc2V9.VZo1ZiJ3hJWCZhIQQKQrFbGPXB7Gb8PGl-qfPDwfNWw';
+                
+                localStorage.setItem('currentUser', JSON.stringify(userData));
+                localStorage.setItem('supabase_access_token', token);
+                
+                log('✅ Login simulado correctamente', 'success');
+                
+                // 2. Configurar fechas
+                const hoy = new Date();
+                const primerDiaMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+                document.getElementById('fecha-desde').value = primerDiaMes.toISOString().split('T')[0];
+                document.getElementById('fecha-hasta').value = hoy.toISOString().split('T')[0];
+                
+                // 3. Crear e inicializar módulo
+                log('🚀 Creando módulo de reportes...', 'info');
+                window.reportesHandler = new ReportesModuleHandler();
+                
+                log('🔧 Inicializando módulo...', 'info');
+                await window.reportesHandler.init();
+                
+                log('✅ Módulo inicializado', 'success');
+                
+                // 4. Generar reporte
+                log('📊 Generando reporte...', 'info');
+                await window.reportesHandler.generarReporte();
+                
+                log('✅ Reporte generado', 'success');
+                
+                // 5. Mostrar resultados
+                const ingresos = window.reportesHandler.datosReporte.ingresos;
+                const gastos = window.reportesHandler.datosReporte.gastos;
+                const creditos = window.reportesHandler.datosReporte.creditos;
+                
+                const totalIngresos = ingresos.reduce((sum, item) => sum + parseFloat(item.monto || 0), 0);
+                const totalGastos = gastos.reduce((sum, item) => sum + parseFloat(item.monto || 0), 0);
+                const totalCreditos = creditos.reduce((sum, item) => sum + parseFloat(item.monto || 0), 0);
+                const balance = totalIngresos - totalGastos;
+                
+                document.getElementById('result-ingresos').textContent = `${ingresos.length} reg. - S/ ${totalIngresos.toFixed(2)}`;
+                document.getElementById('result-gastos').textContent = `${gastos.length} reg. - S/ ${totalGastos.toFixed(2)}`;
+                document.getElementById('result-balance').textContent = `S/ ${balance.toFixed(2)}`;
+                document.getElementById('result-creditos').textContent = `${creditos.length} reg. - S/ ${totalCreditos.toFixed(2)}`;
+                
+                log('📈 Resumen Final:', 'success');
+                log(`💰 Ingresos: ${ingresos.length} registros, S/ ${totalIngresos.toFixed(2)}`, 'success');
+                log(`💸 Gastos: ${gastos.length} registros, S/ ${totalGastos.toFixed(2)}`, 'success');
+                log(`💳 Créditos: ${creditos.length} registros, S/ ${totalCreditos.toFixed(2)}`, 'success');
+                log(`⚖️ Balance: S/ ${balance.toFixed(2)}`, 'success');
+                
+                log('🎉 TEST COMPLETADO EXITOSAMENTE', 'success');
+                
+            } catch (error) {
+                log('❌ ERROR EN TEST: ' + error.message, 'error');
+                console.error('Error completo:', error);
+            }
+        }
+
+        // Configurar página al cargar
+        document.addEventListener('DOMContentLoaded', () => {
+            log('📋 Test listo. Hacer clic en "🚀 Ejecutar Test Completo"', 'info');
+        });
+    </script>
+</body>
+</html>

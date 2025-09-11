@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 Prueba: Combo Box de Plazos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            color: #333;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        .step {
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 10px;
+            border-left: 5px solid #6c5ce7;
+        }
+        .step h3 {
+            margin-top: 0;
+            color: #6c5ce7;
+        }
+        .code {
+            background: #2d3436;
+            color: #00cec9;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Consolas', monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+        button {
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 5px;
+            transition: transform 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+        }
+        .success { border-left-color: #00b894; }
+        .warning { border-left-color: #fdcb6e; }
+        .error { border-left-color: #e17055; }
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .feature {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .feature i {
+            font-size: 2em;
+            color: #2196f3;
+            margin-bottom: 10px;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1 style="text-align: center; color: #6c5ce7;">
+            <i class="fas fa-clock"></i> Prueba: Combo Box de Plazos Mejorado
+        </h1>
+        
+        <div class="step success">
+            <h3><i class="fas fa-check-circle"></i> ¡Mejora Implementada!</h3>
+            <p><strong>Problema resuelto:</strong> Ya no es posible ingresar plazos menores a 6 meses.</p>
+            <p><strong>Solución:</strong> Campo numérico reemplazado por combo box con opciones predefinidas.</p>
+        </div>
+
+        <div class="feature-list">
+            <div class="feature">
+                <i class="fas fa-shield-alt"></i>
+                <h4>Validación Automática</h4>
+                <p>Solo opciones válidas (≥ 6 meses)</p>
+            </div>
+            <div class="feature">
+                <i class="fas fa-list"></i>
+                <h4>Opciones Organizadas</h4>
+                <p>Agrupadas por corto, mediano y largo plazo</p>
+            </div>
+            <div class="feature">
+                <i class="fas fa-user-friendly"></i>
+                <h4>Fácil de Usar</h4>
+                <p>Con años equivalentes para claridad</p>
+            </div>
+            <div class="feature">
+                <i class="fas fa-home"></i>
+                <h4>Incluye Hipotecarios</h4>
+                <p>Hasta 30 años (360 meses)</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <h3><i class="fas fa-play"></i> Instrucciones de Prueba</h3>
+            <ol>
+                <li><strong>Abrir aplicación principal:</strong></li>
+                <button onclick="window.open('http://localhost:3000', '_blank')">
+                    <i class="fas fa-external-link-alt"></i> Abrir App Principal
+                </button>
+                
+                <li><strong>Ir al módulo de créditos</strong> (menú "💳 Créditos")</li>
+                
+                <li><strong>Hacer clic en "Nueva Simulación"</strong></li>
+                
+                <li><strong>Observar el nuevo combo box de plazos:</strong>
+                    <ul>
+                        <li>Ya no es un campo numérico libre</li>
+                        <li>Solo opciones desde 6 meses hacia arriba</li>
+                        <li>Organizadas por grupos (corto, mediano, largo plazo)</li>
+                        <li>Incluye equivalencias en años</li>
+                    </ul>
+                </li>
+                
+                <li><strong>Probar diferentes plazos:</strong>
+                    <ul>
+                        <li>Monto: $50,000</li>
+                        <li>Tasa: 18.5%</li>
+                        <li>Plazo: Seleccionar diferentes opciones</li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+
+        <div class="step warning">
+            <h3><i class="fas fa-code"></i> Prueba Automática (Opcional)</h3>
+            <p>Si quieres probar automáticamente, copia este código en la consola del navegador (F12):</p>
+            <div class="code">
+// Cargar script de prueba automática<br>
+const script = document.createElement('script');<br>
+script.src = 'Pruebas/test-combo-plazos.js';<br>
+document.head.appendChild(script);
+            </div>
+            <p>O ejecuta estos comandos paso a paso:</p>
+            <div class="code">
+// 1. Ir a créditos<br>
+document.querySelector('a[href="#creditos"]').click();<br><br>
+// 2. Abrir modal<br>
+window.creditosModuleHandler.openCreditoModal();<br><br>
+// 3. Ver opciones disponibles<br>
+mostrarOpcionesPlazos();<br><br>
+// 4. Probar plazo específico<br>
+probarPlazoEspecifico(36);
+            </div>
+        </div>
+
+        <div class="step">
+            <h3><i class="fas fa-list-check"></i> Verificaciones Esperadas</h3>
+            <ul>
+                <li>✅ <strong>Campo es un combo box:</strong> No permite entrada libre de texto</li>
+                <li>✅ <strong>Opciones mínimas:</strong> La opción más baja es "6 meses"</li>
+                <li>✅ <strong>Opciones agrupadas:</strong> Corto plazo, mediano plazo, largo plazo, muy largo plazo</li>
+                <li>✅ <strong>Equivalencias claras:</strong> "36 meses (3 años)", "120 meses (10 años)", etc.</li>
+                <li>✅ <strong>Funcionalidad completa:</strong> Simulación y guardado funcionan con todas las opciones</li>
+                <li>✅ <strong>Validación mejorada:</strong> Mensaje más claro si hay algún problema</li>
+            </ul>
+        </div>
+
+        <div class="step success">
+            <h3><i class="fas fa-star"></i> Beneficios de la Mejora</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div>
+                    <h4>❌ Antes:</h4>
+                    <ul>
+                        <li>Campo numérico libre</li>
+                        <li>Posible ingresar 1, 2, 3 meses</li>
+                        <li>Error confuso al validar</li>
+                        <li>Usuario debe recordar límites</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>✅ Ahora:</h4>
+                    <ul>
+                        <li>Combo box con opciones predefinidas</li>
+                        <li>Imposible seleccionar < 6 meses</li>
+                        <li>Validación preventiva</li>
+                        <li>Opciones claras y organizadas</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <h3><i class="fas fa-rocket"></i> ¡Listo para Probar!</h3>
+            <p>El combo box de plazos está implementado y listo para usar.</p>
+            <button onclick="window.open('http://localhost:3000', '_blank')" style="font-size: 1.2em; padding: 15px 30px;">
+                <i class="fas fa-play"></i> Probar Ahora
+            </button>
+        </div>
+    </div>
+</body>
+</html>

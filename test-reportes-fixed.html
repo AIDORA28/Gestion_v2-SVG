@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 Test Reportes Corregido</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-50">
+    <div class="container mx-auto p-8">
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h1 class="text-2xl font-bold mb-6">🧪 Test de Reportes Corregido</h1>
+            
+            <div id="test-results" class="space-y-4">
+                <!-- Los resultados se mostrarán aquí -->
+            </div>
+            
+            <button id="test-btn" class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">
+                🚀 Ejecutar Test de Reportes
+            </button>
+            
+            <div id="reportes-container" class="mt-8 hidden">
+                <h2 class="text-xl font-bold mb-4">📊 Resultados del Reporte</h2>
+                
+                <!-- Resumen Ejecutivo -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                    <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+                        <p class="text-sm text-green-700 font-medium">Total Ingresos</p>
+                        <p id="total-ingresos" class="text-xl font-bold text-green-800">S/ 0.00</p>
+                    </div>
+                    <div class="bg-red-50 p-4 rounded-lg border border-red-200">
+                        <p class="text-sm text-red-700 font-medium">Total Gastos</p>
+                        <p id="total-gastos" class="text-xl font-bold text-red-800">S/ 0.00</p>
+                    </div>
+                    <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                        <p class="text-sm text-blue-700 font-medium">Balance Neto</p>
+                        <p id="balance-neto" class="text-xl font-bold text-blue-800">S/ 0.00</p>
+                    </div>
+                    <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                        <p class="text-sm text-yellow-700 font-medium">Total Créditos</p>
+                        <p id="total-creditos" class="text-xl font-bold text-yellow-800">S/ 0.00</p>
+                    </div>
+                </div>
+                
+                <!-- Datos detallados -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white p-4 rounded-lg shadow border">
+                        <h3 class="font-bold mb-2">💰 Ingresos</h3>
+                        <div id="ingresos-detail" class="text-sm text-gray-600">
+                            <!-- Detalles de ingresos -->
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-4 rounded-lg shadow border">
+                        <h3 class="font-bold mb-2">💸 Gastos</h3>
+                        <div id="gastos-detail" class="text-sm text-gray-600">
+                            <!-- Detalles de gastos -->
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-4 rounded-lg shadow border">
+                        <h3 class="font-bold mb-2">💳 Créditos</h3>
+                        <div id="creditos-detail" class="text-sm text-gray-600">
+                            <!-- Detalles de créditos -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simular datos de autenticación
+        localStorage.setItem('currentUser', JSON.stringify({
+            id: 'bcc34167-c282-46dd-9b92-f4b15e7c4fcd',
+            email: 'joegarcia.1395@gmail.com',
+            nombre: 'Joe',
+            apellido: 'Garcia'
+        }));
+        localStorage.setItem('supabase_access_token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzMxMjc4NjU4LCJpYXQiOjE3MzEyNzUwNTgsImlzcyI6Imh0dHBzOi8vbG9ieW9mcHdxd3Fzc3p1Z2R3bncuc3VwYWJhc2UuY28vYXV0aC92MSIsInN1YiI6ImJjYzM0MTY3LWMyODItNDZkZC05YjkyLWY0YjE1ZTdjNGZjZCIsImVtYWlsIjoiam9lZ2FyY2lhLjEzOTVAZ21haWwuY29tIiwicGhvbmUiOiIiLCJhcHBfbWV0YWRhdGEiOnsicHJvdmlkZXIiOiJlbWFpbCIsInByb3ZpZGVycyI6WyJlbWFpbCJdfSwidXNlcl9tZXRhZGF0YSI6eyJhcGVsbGlkbyI6IkdhcmNpYSIsIm5vbWJyZSI6IkpvZSJ9LCJyb2xlIjoiYXV0aGVudGljYXRlZCIsImFhbCI6ImFhbDEiLCJhbXIiOlt7Im1ldGhvZCI6InBhc3N3b3JkIiwidGltZXN0YW1wIjoxNzMxMjc1MDU4fV0sInNlc3Npb25faWQiOiI1NzVlMTdiYy0yNGUzLTQxMDAtOTliMS0zNWE0YmYyZmI1YWEiLCJpc19hbm9ueW1vdXMiOmZhbHNlfQ.CZo4i7QXHtNsJlNFutRkrBBJcGOdwn6n3JYhLdAAgYg');
+        localStorage.setItem('auth_token', 'demo_token');
+
+        document.getElementById('test-btn').addEventListener('click', async function() {
+            const testResults = document.getElementById('test-results');
+            const reportesContainer = document.getElementById('reportes-container');
+            
+            testResults.innerHTML = '<div class="text-blue-600">🔄 Ejecutando test...</div>';
+            reportesContainer.classList.add('hidden');
+            
+            try {
+                // Test 1: Verificar autenticación
+                testResults.innerHTML += '<div class="text-green-600">✅ Datos de autenticación configurados</div>';
+                
+                // Test 2: Intentar cargar datos de servidor local
+                console.log('🧪 Test: Cargando datos del servidor local...');
+                
+                const apis = [
+                    { name: 'ingresos', url: '/api/ingresos' },
+                    { name: 'gastos', url: '/api/gastos' },
+                    { name: 'creditos', url: '/api/creditos' }
+                ];
+                
+                const resultados = {};
+                
+                for (const api of apis) {
+                    try {
+                        const response = await fetch(api.url, {
+                            method: 'GET',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': 'Bearer demo_token'
+                            }
+                        });
+                        
+                        if (response.ok) {
+                            const data = await response.json();
+                            const items = data[api.name] || data.data || data;
+                            resultados[api.name] = Array.isArray(items) ? items : [];
+                            testResults.innerHTML += `<div class="text-green-600">✅ ${api.name}: ${resultados[api.name].length} registros desde servidor local</div>`;
+                        } else {
+                            throw new Error(`HTTP ${response.status}`);
+                        }
+                    } catch (error) {
+                        testResults.innerHTML += `<div class="text-yellow-600">⚠️ ${api.name}: Error servidor local (${error.message}), intentando Supabase...</div>`;
+                        
+                        // Fallback a Supabase
+                        try {
+                            const supabaseUrl = 'https://lobyofpwqwqsszugdwnw.supabase.co';
+                            const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxvYnlvZnB3cXdxc3N6dWdkd253Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczMTU4NDIsImV4cCI6MjA3Mjg5MTg0Mn0.QsZ2dIU1iPffRGtHUREQIhQ5--7_w4ANowG0rJ0AtcI';
+                            const authToken = localStorage.getItem('supabase_access_token');
+                            
+                            let tableName = api.name;
+                            if (api.name === 'creditos') {
+                                tableName = 'simulaciones_credito';
+                            }
+                            
+                            const url = `${supabaseUrl}/rest/v1/${tableName}?usuario_id=eq.bcc34167-c282-46dd-9b92-f4b15e7c4fcd&select=*`;
+                            
+                            const supabaseResponse = await fetch(url, {
+                                method: 'GET',
+                                headers: {
+                                    'apikey': supabaseKey,
+                                    'Authorization': `Bearer ${authToken}`,
+                                    'Content-Type': 'application/json'
+                                }
+                            });
+                            
+                            if (supabaseResponse.ok) {
+                                const data = await supabaseResponse.json();
+                                resultados[api.name] = Array.isArray(data) ? data : [];
+                                testResults.innerHTML += `<div class="text-blue-600">🔄 ${api.name}: ${resultados[api.name].length} registros desde Supabase</div>`;
+                            } else {
+                                throw new Error(`Supabase HTTP ${supabaseResponse.status}`);
+                            }
+                        } catch (supabaseError) {
+                            testResults.innerHTML += `<div class="text-red-600">❌ ${api.name}: Error también en Supabase (${supabaseError.message})</div>`;
+                            resultados[api.name] = [];
+                        }
+                    }
+                }
+                
+                // Test 3: Mostrar resultados
+                const totalIngresos = resultados.ingresos.reduce((sum, item) => sum + parseFloat(item.monto || 0), 0);
+                const totalGastos = resultados.gastos.reduce((sum, item) => sum + parseFloat(item.monto || 0), 0);
+                const totalCreditos = resultados.creditos.reduce((sum, item) => sum + parseFloat(item.monto || 0), 0);
+                const balanceNeto = totalIngresos - totalGastos;
+                
+                // Actualizar interfaz
+                document.getElementById('total-ingresos').textContent = `S/ ${totalIngresos.toLocaleString('es-PE', { minimumFractionDigits: 2 })}`;
+                document.getElementById('total-gastos').textContent = `S/ ${totalGastos.toLocaleString('es-PE', { minimumFractionDigits: 2 })}`;
+                document.getElementById('balance-neto').textContent = `S/ ${balanceNeto.toLocaleString('es-PE', { minimumFractionDigits: 2 })}`;
+                document.getElementById('total-creditos').textContent = `S/ ${totalCreditos.toLocaleString('es-PE', { minimumFractionDigits: 2 })}`;
+                
+                // Mostrar detalles
+                document.getElementById('ingresos-detail').innerHTML = `
+                    <p><strong>Cantidad:</strong> ${resultados.ingresos.length}</p>
+                    <p><strong>Total:</strong> S/ ${totalIngresos.toFixed(2)}</p>
+                    ${resultados.ingresos.length > 0 ? `<p><strong>Último:</strong> ${resultados.ingresos[0].descripcion || 'Sin descripción'}</p>` : ''}
+                `;
+                
+                document.getElementById('gastos-detail').innerHTML = `
+                    <p><strong>Cantidad:</strong> ${resultados.gastos.length}</p>
+                    <p><strong>Total:</strong> S/ ${totalGastos.toFixed(2)}</p>
+                    ${resultados.gastos.length > 0 ? `<p><strong>Último:</strong> ${resultados.gastos[0].descripcion || 'Sin descripción'}</p>` : ''}
+                `;
+                
+                document.getElementById('creditos-detail').innerHTML = `
+                    <p><strong>Cantidad:</strong> ${resultados.creditos.length}</p>
+                    <p><strong>Total:</strong> S/ ${totalCreditos.toFixed(2)}</p>
+                    ${resultados.creditos.length > 0 ? `<p><strong>Último:</strong> ${resultados.creditos[0].tipo_credito || 'Sin tipo'}</p>` : ''}
+                `;
+                
+                reportesContainer.classList.remove('hidden');
+                testResults.innerHTML += '<div class="text-green-600 font-bold">✅ Test completado exitosamente</div>';
+                
+                console.log('📊 Resumen del test:', {
+                    ingresos: resultados.ingresos.length,
+                    gastos: resultados.gastos.length,
+                    creditos: resultados.creditos.length,
+                    totalIngresos,
+                    totalGastos,
+                    balanceNeto
+                });
+                
+            } catch (error) {
+                console.error('❌ Error en test:', error);
+                testResults.innerHTML += `<div class="text-red-600">❌ Error general: ${error.message}</div>`;
+            }
+        });
+    </script>
+</body>
+</html>

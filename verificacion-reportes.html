@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 Verificación Módulo Reportes Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-6">
+    <div class="max-w-4xl mx-auto space-y-6">
+        <!-- Header -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h1 class="text-2xl font-bold mb-4">🧪 Verificación Módulo Reportes</h1>
+            <p class="text-gray-600 mb-4">Esta página verifica que el módulo de reportes funciona correctamente</p>
+            
+            <div class="flex space-x-4">
+                <button onclick="ejecutarLogin()" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                    🔐 1. Simular Login
+                </button>
+                <button onclick="probarModulo()" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+                    🧪 2. Probar Módulo
+                </button>
+                <button onclick="probarReporte()" class="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700">
+                    📊 3. Generar Reporte
+                </button>
+            </div>
+        </div>
+
+        <!-- Status -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="bg-white p-4 rounded shadow">
+                <h3 class="font-semibold text-gray-700">🔐 Autenticación</h3>
+                <p id="auth-status" class="text-red-600">❌ No iniciada</p>
+            </div>
+            <div class="bg-white p-4 rounded shadow">
+                <h3 class="font-semibold text-gray-700">📊 Módulo</h3>
+                <p id="module-status" class="text-gray-600">⏳ No probado</p>
+            </div>
+            <div class="bg-white p-4 rounded shadow">
+                <h3 class="font-semibold text-gray-700">📈 Datos</h3>
+                <p id="data-status" class="text-gray-600">⏳ No cargados</p>
+            </div>
+        </div>
+
+        <!-- UI Elements for Reports -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-lg font-semibold mb-4">📊 Elementos UI Reportes</h3>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="bg-green-50 p-4 rounded">
+                    <p class="text-sm text-green-700 font-medium">Total Ingresos</p>
+                    <p id="total-ingresos" class="text-xl font-bold text-green-800">S/ 0.00</p>
+                </div>
+                <div class="bg-red-50 p-4 rounded">
+                    <p class="text-sm text-red-700 font-medium">Total Gastos</p>
+                    <p id="total-gastos" class="text-xl font-bold text-red-800">S/ 0.00</p>
+                </div>
+                <div class="bg-blue-50 p-4 rounded">
+                    <p class="text-sm text-blue-700 font-medium">Balance Neto</p>
+                    <p id="balance-neto" class="text-xl font-bold text-blue-800">S/ 0.00</p>
+                </div>
+                <div class="bg-purple-50 p-4 rounded">
+                    <p class="text-sm text-purple-700 font-medium">Total Créditos</p>
+                    <p id="total-creditos" class="text-xl font-bold text-purple-800">S/ 0.00</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mock filters -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-lg font-semibold mb-4">⚙️ Filtros</h3>
+            <div class="flex space-x-4">
+                <select id="periodo-select" class="px-3 py-2 border rounded">
+                    <option value="mes-actual">Mes Actual</option>
+                    <option value="año">Este Año</option>
+                </select>
+                <input type="date" id="fecha-desde" class="px-3 py-2 border rounded">
+                <input type="date" id="fecha-hasta" class="px-3 py-2 border rounded">
+            </div>
+        </div>
+
+        <!-- Console -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-lg font-semibold mb-4">🖥️ Console</h3>
+            <div id="console" class="bg-black text-green-400 p-4 rounded font-mono text-sm h-64 overflow-y-auto"></div>
+        </div>
+    </div>
+
+    <!-- Load the fixed reports module -->
+    <script src="js/reportes-module-handler-fixed.js"></script>
+    
+    <script>
+        let consoleOutput = '';
+        let reportesHandler = null;
+
+        // Override console
+        const originalConsole = console.log;
+        console.log = function(...args) {
+            originalConsole.apply(console, args);
+            log(args.join(' '));
+        };
+
+        function log(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            consoleOutput += `[${timestamp}] ${message}\n`;
+            document.getElementById('console').textContent = consoleOutput;
+            document.getElementById('console').scrollTop = document.getElementById('console').scrollHeight;
+        }
+
+        function updateStatus(elementId, status, className) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.textContent = status;
+                element.className = className;
+            }
+        }
+
+        function ejecutarLogin() {
+            log('🔐 Ejecutando login simulado...');
+            
+            const userData = {
+                id: '18f58646-fb57-48be-91b8-58beccc21bf5',
+                email: 'joegarcia.1395@gmail.com',
+                name: 'Joe Garcia'
+            };
+            
+            const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzM2Nzk1MDEwLCJpYXQiOjE3MzY3MDg2MTAsImlzcyI6Imh0dHBzOi8vbG9ieW9mcHdxd3Fzc3p1Z2R3bncuc3VwYWJhc2UuY28vYXV0aC92MSIsInN1YiI6IjE4ZjU4NjQ2LWZiNTctNDhiZS05MWI4LTU4YmVjY2MyMWJmNSIsImVtYWlsIjoiam9lZ2FyY2lhLjEzOTVAZ21haWwuY29tIiwicGhvbmUiOiIiLCJhcHBfbWV0YWRhdGEiOnsicHJvdmlkZXIiOiJlbWFpbCIsInByb3ZpZGVycyI6WyJlbWFpbCJdfSwidXNlcl9tZXRhZGF0YSI6e30sInJvbGUiOiJhdXRoZW50aWNhdGVkIiwiYWFsIjoiYWFsMSIsImFtciI6W3sibWV0aG9kIjoicGFzc3dvcmQiLCJ0aW1lc3RhbXAiOjE3MzY3MDg2MTB9XSwic2Vzc2lvbl9pZCI6IjFlNzY5MGRhLTA3ZDMtNGRkNy04MjNiLTgzMjZmZjYzMzJjNyIsImlzX2Fub255bW91cyI6ZmFsc2V9.VZo1ZiJ3hJWCZhIQQKQrFbGPXB7Gb8PGl-qfPDwfNWw';
+            
+            localStorage.setItem('currentUser', JSON.stringify(userData));
+            localStorage.setItem('supabase_access_token', token);
+            
+            log('✅ Datos guardados en localStorage');
+            log('📧 Usuario: ' + userData.email);
+            log('🆔 ID: ' + userData.id);
+            
+            updateStatus('auth-status', '✅ Activa', 'text-green-600');
+        }
+
+        function probarModulo() {
+            log('🧪 Probando módulo de reportes...');
+            
+            if (typeof ReportesModuleHandler === 'undefined') {
+                log('❌ ReportesModuleHandler no encontrado');
+                updateStatus('module-status', '❌ Error', 'text-red-600');
+                return;
+            }
+            
+            log('✅ ReportesModuleHandler encontrado');
+            
+            try {
+                reportesHandler = new ReportesModuleHandler();
+                log('✅ Instancia creada');
+                
+                reportesHandler.init().then(() => {
+                    log('✅ Módulo inicializado correctamente');
+                    updateStatus('module-status', '✅ Funcionando', 'text-green-600');
+                }).catch(error => {
+                    log('❌ Error inicializando: ' + error.message);
+                    updateStatus('module-status', '❌ Error init', 'text-red-600');
+                });
+                
+            } catch (error) {
+                log('❌ Error creando instancia: ' + error.message);
+                updateStatus('module-status', '❌ Error', 'text-red-600');
+            }
+        }
+
+        function probarReporte() {
+            if (!reportesHandler) {
+                log('⚠️ Primero ejecutar "Probar Módulo"');
+                return;
+            }
+            
+            log('📊 Generando reporte...');
+            
+            reportesHandler.generarReporte().then(() => {
+                log('✅ Reporte generado exitosamente');
+                
+                const ingresos = reportesHandler.datosReporte.ingresos.length;
+                const gastos = reportesHandler.datosReporte.gastos.length;
+                const creditos = reportesHandler.datosReporte.creditos.length;
+                
+                log(`📊 Datos cargados: ${ingresos} ingresos, ${gastos} gastos, ${creditos} créditos`);
+                
+                updateStatus('data-status', `✅ ${ingresos + gastos + creditos} registros`, 'text-green-600');
+                
+            }).catch(error => {
+                log('❌ Error generando reporte: ' + error.message);
+                updateStatus('data-status', '❌ Error', 'text-red-600');
+            });
+        }
+
+        // Configurar fechas por defecto
+        document.addEventListener('DOMContentLoaded', () => {
+            const hoy = new Date();
+            const primerDiaMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+            
+            document.getElementById('fecha-desde').value = primerDiaMes.toISOString().split('T')[0];
+            document.getElementById('fecha-hasta').value = hoy.toISOString().split('T')[0];
+            
+            log('📋 Página cargada. Seguir pasos 1 → 2 → 3');
+        });
+    </script>
+</body>
+</html>
